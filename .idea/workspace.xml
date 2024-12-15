@@ -27,9 +27,16 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Python.Mianatra.executor": "Run"
+    "Python.Mianatra.executor": "Run",
+    "Python.test.executor": "Run",
+    "last_opened_file_path": "D:/Njaka_Project/Mianatra_Itk"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Njaka_Project\Mianatra_Itk" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
