@@ -50,6 +50,16 @@ class MyFrame(wx.Frame):
 
         self.SetMenuBar(menubar)
 
+        # Create a toolbar
+        toolbar = self.CreateToolBar()
+
+        # Add some tools to the toolbar
+        tool1 = toolbar.AddTool(wx.ID_ANY, "Tool 1", wx.Bitmap("tool1.png"), "Tool 1 tooltip")
+        tool2 = toolbar.AddTool(wx.ID_ANY, "Tool 2", wx.Bitmap("tool2.png"), "Tool 2 tooltip")
+
+        # Realize the toolbar
+        toolbar.Realize()
+
         # Create a sizer to center the panels
         sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -100,6 +110,14 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem)
         self.Bind(wx.EVT_BUTTON, self.OnPreview, preview_button)
         self.Bind(wx.EVT_BUTTON, self.OnNext, next_button)
+        self.Bind(wx.EVT_TOOL, self.OnTool1, tool1)
+        self.Bind(wx.EVT_TOOL, self.OnTool2, tool2)
+
+    def OnTool1(self, event):
+        print("Tool 1 clicked")
+
+    def OnTool2(self, event):
+        print("Tool 2 clicked")
 
     @staticmethod
     def play_mp3_vlc(file_path):
