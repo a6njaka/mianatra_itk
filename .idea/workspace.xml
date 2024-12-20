@@ -28,7 +28,9 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.Mianatra.executor": "Run",
+    "Python.protect.executor": "Run",
     "Python.test.executor": "Run",
+    "Python.test2.executor": "Run",
     "last_opened_file_path": "D:/Njaka_Project/Mianatra_Itk"
   }
 }]]></component>
