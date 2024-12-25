@@ -28,10 +28,17 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.Mianatra.executor": "Run",
+    "Python.Mianatra2.executor": "Run",
+    "Python.addition_vola_1.executor": "Run",
+    "Python.generate-images.executor": "Run",
+    "Python.lib_addition_3ch_hor.executor": "Run",
+    "Python.mianatra2-add-gen-hor-v2.executor": "Run",
     "Python.protect.executor": "Run",
     "Python.test.executor": "Run",
     "Python.test2.executor": "Run",
-    "last_opened_file_path": "D:/Njaka_Project/Mianatra_Itk"
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "D:/Backup OS/PROGRAMMING",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">

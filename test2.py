@@ -1,87 +1,180 @@
-from PIL import Image, ImageDraw, ImageFont
-import shutil
+import wx
 import os
-import re
-from shutil import copyfile
-from shutil import copyfile
-from sys import exit
-import sys
-import random
-import math
 
+class MyFrame(wx.Frame):
+    def __init__(self, parent, title):
+        wx.Frame.__init__(self, parent, title=title, size=(800, 450), style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE)
 
-class Exercise:
-    def __init__(self, exo_dir, mp3_source, images_source, exo_setting=[10, "", "Yes", "True"], font_exo=None, font_question=None, red_pos=-1):
-        self.w = 600
-        self.h = 250
-        self.exo_dir = exo_dir
-        self.mp3_source = mp3_source
-        self.images_source = images_source
-        self.red = red_pos
-        self.exo_number = 0
-        if font_exo is None:
-            self.font_exo = ImageFont.truetype(r'C:\Windows\Fonts\Arial.ttf', 15)
-        else:
-            self.font_exo = font_exo
-        if font_question is None:
-            self.font_question = ImageFont.truetype(r'C:\Windows\Fonts\Arial.ttf', 20)
-        else:
-            self.font_question = font_question
-        print("*" * 100)
-        self.generate_images_list()
-        print(f"Number of exo = {self.exo_number }")
-        self.imgA = None
-        self.A = None
-        self.imgB = None
-        self.B = None
-        print("*" * 100)
+        # Load background image
+        img_path = os.path.join("images", "A1.png")
+        self.background_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
 
-    def generate_images_list(self):
-        print("-->generate_images_list++")
-        i = 1
-        vola_list = [100, 200, 500, 1000, 2000, 5000]
-        # vola_list = [100, 200]
-        for vola1 in vola_list:
-            for vola2 in vola_list:
-                for vola3 in vola_list:
-                    self.imgA = Image.new('RGB', (self.w, self.h), color=(255, 255, 255))
-                    self.imgB = Image.new('RGB', (self.w, self.h), color=(255, 255, 255))
-                    name_imgA = exo_dir + "A{0}.png".format(i)
-                    name_imgB = exo_dir + "B{0}-{1}.png".format(i, vola1 + vola2 + vola3)
+        # Limit the width of the background image to 800 pixels while maintaining the aspect ratio
+        if self.background_image.GetWidth() > 800:
+            new_width = 800
+            new_height = int(800 * self.background_image.GetHeight() / self.background_image.GetWidth())
+            self.background_image = self.background_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
 
-                    self.A = ImageDraw.Draw(self.imgA)
-                    self.B = ImageDraw.Draw(self.imgB)
-                    sary_vola1 = Image.open(rf"vola\{vola1}.jpg")
-                    sary_vola2 = Image.open(rf"vola\{vola2}.jpg")
-                    sary_vola3 = Image.open(rf"vola\{vola3}.jpg")
-                    width1, height1 = sary_vola1.size
-                    width2, height2 = sary_vola2.size
-                    width3, height3 = sary_vola3.size
-                    div = 2
-                    img_vola1 = sary_vola1.resize((int(width1 / div), int(height1 / div)))
-                    img_vola2 = sary_vola2.resize((int(width2 / div), int(height2 / div)))
-                    img_vola3 = sary_vola3.resize((int(width3 / div), int(height3 / div)))
+        self.background_bitmap = wx.Bitmap(self.background_image)
 
-                    self.A.text((10, 2), "Hoatrinona ireo vola ireo? (Tsy asina Ar/Ariary)", font=self.font_exo, fill=(0, 0, 0))
-                    self.imgA.paste(img_vola1, (50, 30))
-                    self.imgA.paste(img_vola2, (150, 50))
-                    self.imgA.paste(img_vola3, (250, 70))
+        # Create home panel
+        self.home_panel = wx.Panel(self, -1)
 
-                    self.B.text((10, 2), "Hoatrinona ireo vola ireo? (Tsy asina Ar/Ariary)", font=self.font_exo, fill=(0, 0, 0))
-                    self.imgB.paste(img_vola1, (50, 30))
-                    self.imgB.paste(img_vola2, (150, 50))
-                    self.imgB.paste(img_vola3, (250, 70))
-                    self.imgA.save(name_imgA)
-                    self.imgB.save(name_imgB)
+        # Create a menu bar
+        menu_bar = wx.MenuBar()
 
-                i += 1
-        self.exo_number = i
+        # Create a file menu
+        file_menu = wx.Menu()
+        file_menu.Append(wx.ID_ANY, "Settings", "Open settings")
+        file_menu.Append(wx.ID_EXIT, "Exit", "Exit the application")
+        menu_bar.Append(file_menu, "&File")
 
+        # Create a help menu
+        help_menu = wx.Menu()
+        help_menu.Append(wx.ID_ABOUT, "About", "About this application")
+        menu_bar.Append(help_menu, "&Help")
 
-exo_dir = fr"C:/Users/NJAKA/Desktop/Addition_vola_2/"
-mp3_source = "D:/Itokiana-python/mp3/"
-images_source = "D:/Itokiana-python/mp3/"
-q = ""
-exo_setting = [10, f"Addition_vola_02", "Yes", "True"]
+        # Set the menu bar
+        self.SetMenuBar(menu_bar)
 
-p1 = Exercise(exo_dir=exo_dir, mp3_source=mp3_source, images_source=images_source, exo_setting=exo_setting, red_pos=4)
+        # Bind the menu items to events
+        self.Bind(wx.EVT_MENU, self.OnSettings, file_menu.FindItemByPosition(0))
+        self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
+        self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
+
+        # Create a toolbar
+        toolbar = self.CreateToolBar()
+
+        # Add some tools to the toolbar
+        tool1 = toolbar.AddTool(wx.ID_ANY, "Tool 1", wx.Bitmap("tool1.png"), "Tool 1 tooltip")
+        tool2 = toolbar.AddTool(wx.ID_ANY, "Tool 2", wx.Bitmap("tool2.png"), "Tool 2 tooltip")
+
+        # Realize the toolbar
+        toolbar.Realize()
+        self.SetToolBar(toolbar)
+
+        # Create StatusBar
+        self.CreateStatusBar()
+        self.SetStatusText("Ready")
+
+        # Create a sizer to layout controls
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # Add a StaticBitmap for the background
+        self.background_staticbitmap = wx.StaticBitmap(self.home_panel, -1, self.background_bitmap)
+        main_sizer.Add(self.background_staticbitmap, 1, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 10)  # Set proportion to 1 to make it expand
+
+        # Bind click event to the background image
+        self.background_staticbitmap.Bind(wx.EVT_LEFT_DOWN, self.on_background_click)
+
+        # Create a horizontal sizer for the StaticBitmaps
+        self.bitmap_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Create StaticBitmaps with red borders
+        img_paths = ["C1.png", "C2.png", "C3.png", "C4.png", "C5.png"]
+        self.static_bitmaps = []
+        self.messages = [
+            "You clicked on image 1!",
+            "You clicked on image 2!",
+            "You clicked on image 3!",
+            "You clicked on image 4!",
+            "You clicked on image 5!"
+        ]
+
+        for index, img_path in enumerate(img_paths):
+            full_path = os.path.join("images", img_path)
+            img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
+            bitmap = wx.Bitmap(img)
+            static_bitmap = wx.StaticBitmap(self.home_panel, -1, bitmap)
+            static_bitmap.SetMinSize(bitmap.GetSize())  # Maintain aspect ratio
+            static_bitmap.Bind(wx.EVT_LEFT_DOWN, self.on_bitmap_click)  # Bind click event
+            static_bitmap.SetBackgroundColour("red")
+            static_bitmap.SetCursor(wx.Cursor(wx.CURSOR_HAND))  # Change cursor to hand
+            static_bitmap.index = index  # Store the index for reference
+            self.static_bitmaps.append(static_bitmap)
+            self.bitmap_sizer.Add(static_bitmap, 0, wx.ALIGN_CENTER | wx.ALL, 10)
+
+        # Add bitmap_sizer at the bottom with a 10-pixel space from StatusBar
+        main_sizer.Add(self.bitmap_sizer, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
+
+        # Create textCtrl
+        self.valiny = wx.TextCtrl(self.home_panel, -1, "", size=(600, -1), style=wx.TE_CENTER | wx.TE_PROCESS_ENTER)
+        self.valiny.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
+        self.valiny.SetFocus()  # Set initial focus to textCtrl
+        self.valiny.Bind(wx.EVT_TEXT_ENTER, self.on_enter_pressed)  # Bind EVT_TEXT_ENTER
+        main_sizer.Add(self.valiny, 0, wx.ALIGN_CENTER | wx.BOTTOM, 10)
+
+        # Create OK button
+        self.ok_button = wx.Button(self.home_panel, -1, "OK")
+        self.ok_button.Bind(wx.EVT_BUTTON, self.on_ok_button)
+        main_sizer.Add(self.ok_button, 0, wx.ALIGN_CENTER | wx.BOTTOM, 10)
+
+        self.home_panel.SetSizer(main_sizer)
+        self.home_panel.Layout()
+
+        self.Bind(wx.EVT_TOOL, self.OnTool1, tool1)
+        self.Bind(wx.EVT_TOOL, self.OnTool2, tool2)
+
+        self.Show()
+
+    def OnSettings(self, event):
+        wx.MessageBox("Settings", "Info", wx.OK | wx.ICON_INFORMATION)
+
+    def OnExit(self, event):
+        self.Close(True)
+
+    def OnAbout(self, event):
+        wx.MessageBox("Fianarana 1.0", "About", wx.OK | wx.ICON_INFORMATION)
+
+    def OnTool1(self, event):
+        # Hide img_paths and display self.valiny and self.ok_button
+        for static_bitmap in self.static_bitmaps:
+            static_bitmap.Hide()
+        self.valiny.Show()
+        self.ok_button.Show()
+        self.home_panel.Layout()
+
+    def OnTool2(self, event):
+        # Hide self.valiny and self.ok_button, then display img_paths
+        self.valiny.Hide()
+        self.ok_button.Hide()
+        for static_bitmap in self.static_bitmaps:
+            static_bitmap.Show()
+        self.home_panel.Layout()
+
+    def on_ok_button(self, event):
+        # Change the background image
+        img_path = os.path.join("images", "A2.png")  # Replace with the desired image path
+        new_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
+        # Limit the width of the new image to 800 pixels while maintaining the aspect ratio
+        if new_image.GetWidth() > 800:
+            new_width = 800
+            new_height = int(800 * new_image.GetHeight() / new_image.GetWidth())
+            new_image = new_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
+        new_bitmap = wx.Bitmap(new_image)
+        self.background_staticbitmap.SetBitmap(new_bitmap)
+        self.home_panel.Refresh()
+        self.SetStatusText("Background image changed.")
+
+    def on_background_click(self, event):
+        wx.MessageBox("Image Clicked", "Info", wx.OK | wx.ICON_INFORMATION)
+
+    def on_enter_pressed(self, event):
+        self.valiny.SetValue("Mety Tsara")  # Display the message when Enter is pressed
+
+    def on_bitmap_click(self, event):
+        # Get the clicked static bitmap
+        clicked_bitmap = event.GetEventObject()
+        # Get the index of the clicked image
+        index = clicked_bitmap.index
+        # Display message box with the customized message
+        wx.MessageBox(self.messages[index], "Info", wx.OK | wx.ICON_INFORMATION)
+        # Change the border color to red
+        clicked_bitmap.SetBackgroundColour("red")
+        self.home_panel.Layout()
+        clicked_bitmap.Refresh()
+
+if __name__ == "__main__":
+    app = wx.App()
+    frame = MyFrame(None, "My GUI")
+    app.MainLoop()

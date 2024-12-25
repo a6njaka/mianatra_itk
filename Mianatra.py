@@ -101,6 +101,24 @@ class MyFrame(wx.Frame):
         sizer.Add(self.home_panel, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 10)
         sizer.Add(tools_panel, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 10)
 
+        # Add a TextCtrl and a Button to the bottom of the home_panel
+        text_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Create the TextCtrl and Button
+        text_ctrl = wx.TextCtrl(self.home_panel, size=(200, -1))  # Width: 200, Height: default
+        send_button = wx.Button(self.home_panel, label="Send")
+
+        # Add the TextCtrl and Button to the horizontal sizer
+        text_button_sizer.Add(text_ctrl, 1, wx.EXPAND | wx.ALL, 5)
+        text_button_sizer.Add(send_button, 0, wx.EXPAND | wx.ALL, 5)
+
+        # Add the horizontal sizer to the home_panel's sizer
+        self.home_panel.GetSizer().Add(text_button_sizer, 0, wx.ALIGN_CENTER | wx.ALL, 10)
+
+        # Refresh the layout
+        self.home_panel.Layout()
+        self.Layout()
+
         self.SetSizer(sizer)
         self.Maximize(True)  # Maximize the window
         self.Centre()

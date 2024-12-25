@@ -1,28 +1,19 @@
-import cv2
+n = 0
+for i in range(0, 11):
+    for j in range(0, 11):
+        print(f"{i} + {j} = {i + j}")
+        n += 1
 
-# Open the webcam (default is device 0, change to 1, 2, etc., for other webcams)
-cap = cv2.VideoCapture(0)
+print(f"Total = {n}")
 
-if not cap.isOpened():
-    print("Cannot access the webcam.")
-    exit()
 
-# Read a frame from the webcam
-ret, frame = cap.read()
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
 
-if ret:
-    # Display the frame in a window
-    cv2.imshow("Captured Image", frame)
 
-    # Save the image to a file
-    cv2.imwrite("captured_image.jpg", frame)
-    print("Photo saved as 'captured_image.jpg'.")
+p1 = Person("John", 36)
 
-    # Wait for a key press and close the window
-    cv2.waitKey(0)
-else:
-    print("Failed to capture an image.")
-
-# Release the webcam and close all OpenCV windows
-cap.release()
-cv2.destroyAllWindows()
+print(p1.name)
+print(p1.age)
