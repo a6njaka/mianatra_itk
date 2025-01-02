@@ -1,17 +1,17 @@
 import json
 import random
 import lib_addition_3ch_hor
-from datetime import date, timedelta
+from datetime import date
 import os
 
 
 class ExoSchedule:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
+    def __init__(self):
         self.exo_dir = r"C:\Users\NJAKA\Desktop\exo_itk"
         self.exo_schedule = "exo_schedule.json"
         self.all_exo = {}
+        self.load_all_exo()
+        self.update_all_exo()
 
     @staticmethod
     def get_today_weekday():
@@ -47,13 +47,32 @@ class ExoSchedule:
             if os.path.isfile(json_config_path):
                 with open(json_config_path) as json_file:
                     data = json.load(json_file)
-                    # print(data)
-                    # TODO: Need to check the data if correct
-                    self.all_exo[exo] = data
+                    try:
+                        self.all_exo[exo]["exo"] = []
+                        self.all_exo[exo]["min"] = int(data["min"])
+                        self.all_exo[exo]["max"] = int(data["max"])
+                        self.all_exo[exo]["level"] = data["level"]
+                        self.all_exo[exo]["rand"] = data["rand"]
+                        self.all_exo[exo]["type"] = data["type"]
+                        self.all_exo[exo]["case sensitive"] = data["case sensitive"]
+                        self.all_exo[exo]["comment"] = data["comment"]
+
+                        if exo == "addition_3ch_hor":
+                            for _ in range(int(data["max"])):
+                                exo_tmp = {
+                                    "image1": lib_addition_3ch_hor.get_image(),
+                                    "image2": lib_addition_3ch_hor.get_image(),
+                                    "mp3": None,
+                                    "answer": 6,
+                                    "text": "andrana"
+                                }
+                                self.all_exo[exo]["exo"].append(exo_tmp)
+                    except KeyError:
+                        self.all_exo[exo] = {}
+                        print("Error 12")
+
                 # print(json_config_path)
 
 
-p1 = ExoSchedule("John", 36)
-p1.load_all_exo()
-p1.update_all_exo()
-p1.display_all_exo()
+p1 = ExoSchedule()
+# p1.display_all_exo()

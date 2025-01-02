@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 import random
 
 
-def addition_3ch_hor(level=0):
+def get_image(level=0):
     a = random.randint(0, 9 + level * 10)
     b = random.randint(0, 9 + level * 10)
     c = random.randint(0, 9 + level * 10)
@@ -47,6 +47,9 @@ def addition_3ch_hor(level=0):
 
     pil_image.save("njk.png")
 
+    # print(type(image_data))
+
     return image_data
 
-addition_3ch_hor(5)
+
+get_image(5)

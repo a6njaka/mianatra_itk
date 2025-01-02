@@ -110,9 +110,6 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_TOOL, self.OnTool1, tool1)
         self.Bind(wx.EVT_TOOL, self.OnTool2, tool2)
 
-        self.all_exo = {}
-        p1 = load_exo.ExoSchedule()
-        self.all_exo = p1.all_exo
 
         self.Show()
 
@@ -187,7 +184,14 @@ class MyFrame(wx.Frame):
             static_bitmap.Show()
         self.home_panel.Layout()
 
-    def load_image(self, img_path):
+    def on_ok_button(self, event):
+        # wx.MessageBox(self.ok_button.GetLabel(), "Info", wx.OK | wx.ICON_INFORMATION)
+        if self.ok_button.GetLabel() == "START":
+            self.ok_button.SetLabel("OK")
+            self.valiny.Show()
+            self.home_panel.Layout()
+        # Change the background image
+        img_path = os.path.join("images", "A4.png")  # Replace with the desired image path
         new_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
         # Limit the width of the new image to 800 pixels while maintaining the aspect ratio
         if new_image.GetWidth() > 854:
@@ -199,17 +203,6 @@ class MyFrame(wx.Frame):
         self.home_panel.Refresh()
         self.SetStatusText("Background image changed.")
         self.home_panel.Layout()
-
-    def on_ok_button(self, event):
-        # wx.MessageBox(self.ok_button.GetLabel(), "Info", wx.OK | wx.ICON_INFORMATION)
-        if self.ok_button.GetLabel() == "START":
-            self.ok_button.SetLabel("OK")
-            self.valiny.Show()
-            self.home_panel.Layout()
-        # Change the background image
-        img_path = os.path.join("images", "A2.png")
-        self.load_image(img_path)
-
 
     def on_background_click(self, event):
         wx.MessageBox("Image Clicked", "Info", wx.OK | wx.ICON_INFORMATION)
