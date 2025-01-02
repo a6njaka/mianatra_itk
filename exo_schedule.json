@@ -1,0 +1,16 @@
+{
+   "Itokiana": [
+      {
+         "Activate": true,
+         "exo_group": ["addition_3ch_hor"],
+         "exo_number": 1,
+         "exo_weekdays": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+      },
+      {
+         "Activate": true,
+         "exo_group": ["addition_1", "addition_2", "addition_3", "addition_4", "addition_5", "addition_6"],
+         "exo_number": 3,
+         "exo_weekdays": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+      }
+   ]
+}

@@ -1,7 +1,5 @@
 import wx
 import os
-from PIL import Image, ImageDraw, ImageFont
-import random
 import lib_addition_3ch_hor
 
 
@@ -9,8 +7,19 @@ class MyFrame(wx.Frame):
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title, size=(800, 450), style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE)
 
+        self.choice_answer_available = False
+        self.all_exo = {
+            "exo": [],
+            "min": 5,
+            "max": 10,
+            "case_sensitive": False,
+            "randomize": False,
+            "type": "entry",
+            "level": 0
+        }
+
         # Load background image
-        img_path = os.path.join("images", "A1.png")
+        img_path = os.path.join("images", "A3.png")
         self.background_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
 
         # Limit the width of the background image to 800 pixels while maintaining the aspect ratio
@@ -74,36 +83,14 @@ class MyFrame(wx.Frame):
         # Create a horizontal sizer for the StaticBitmaps
         self.bitmap_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        # Create StaticBitmaps with red borders
-        img_paths = ["C1.png", "C2.png", "C3.png", "C4.png", "C5.png"]
-        self.static_bitmaps = []
-        self.messages = [
-            "You clicked on image 1!",
-            "You clicked on image 2!",
-            "You clicked on image 3!",
-            "You clicked on image 4!",
-            "You clicked on image 5!"
-        ]
-
-        for index, img_path in enumerate(img_paths):
-            full_path = os.path.join("images", img_path)
-            img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
-            bitmap = wx.Bitmap(img)
-            static_bitmap = wx.StaticBitmap(self.home_panel, -1, bitmap)
-            static_bitmap.SetMinSize(bitmap.GetSize())  # Maintain aspect ratio
-            static_bitmap.Bind(wx.EVT_LEFT_DOWN, self.on_bitmap_click)  # Bind click event
-            static_bitmap.SetBackgroundColour("red")
-            static_bitmap.SetCursor(wx.Cursor(wx.CURSOR_HAND))  # Change cursor to hand
-            static_bitmap.index = index  # Store the index for reference
-            self.static_bitmaps.append(static_bitmap)
-            self.bitmap_sizer.Add(static_bitmap, 0, wx.ALIGN_CENTER | wx.ALL, 10)
+        # self.create_static_bitmaps()
 
         # Add bitmap_sizer at the bottom with a 10-pixel space from StatusBar
         main_sizer.Add(self.bitmap_sizer, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
         # Create textCtrl
         self.valiny = wx.TextCtrl(self.home_panel, -1, "", size=(854, -1), style=wx.TE_LEFT | wx.TE_PROCESS_ENTER)
-        self.valiny.SetFont(wx.Font(26, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
+        self.valiny.SetFont(wx.Font(21, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
         self.valiny.SetFocus()  # Set initial focus to textCtrl
         self.valiny.Bind(wx.EVT_TEXT_ENTER, self.on_enter_pressed)  # Bind EVT_TEXT_ENTER
         main_sizer.Add(self.valiny, 0, wx.ALIGN_CENTER | wx.BOTTOM, 10)
@@ -122,6 +109,37 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_TOOL, self.OnTool2, tool2)
 
         self.Show()
+
+    def create_static_bitmaps(self):
+        """Creates StaticBitmaps with red borders and adds them to the bitmap_sizer."""
+        img_paths = ["C1.png", "C2.png", "C3.png", "C4.png", "C5.png"]
+        self.static_bitmaps = []
+
+        for index, img_path in enumerate(img_paths):
+            full_path = os.path.join("images", img_path)
+            img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
+            bitmap = wx.Bitmap(img)
+            static_bitmap = wx.StaticBitmap(self.home_panel, -1, bitmap)
+            static_bitmap.SetMinSize(bitmap.GetSize())
+            static_bitmap.Bind(wx.EVT_LEFT_DOWN, self.on_bitmap_click)
+            static_bitmap.SetBackgroundColour("red")
+            static_bitmap.SetCursor(wx.Cursor(wx.CURSOR_HAND))
+            static_bitmap.index = index
+            self.static_bitmaps.append(static_bitmap)
+            self.bitmap_sizer.Add(static_bitmap, 0, wx.ALIGN_CENTER | wx.ALL, 10)
+        self.choice_answer_available = True
+
+    def hide_static_bitmaps(self):
+        """Hides all StaticBitmaps."""
+        for static_bitmap in self.static_bitmaps:
+            static_bitmap.Hide()
+        self.choice_answer_available = False
+
+    def show_static_bitmaps(self):
+        """Shows all StaticBitmaps."""
+        for static_bitmap in self.static_bitmaps:
+            static_bitmap.Show()
+        self.choice_answer_available = True
 
     def test_app(self, level):
         image_data = lib_addition_3ch_hor.addition_3ch_hor(level)
@@ -147,8 +165,10 @@ class MyFrame(wx.Frame):
         self.test_app(level=0)
 
         # Hide img_paths and display self.valiny and self.ok_button
-        for static_bitmap in self.static_bitmaps:
-            static_bitmap.Hide()
+        if self.choice_answer_available:
+            for static_bitmap in self.static_bitmaps:
+                static_bitmap.Hide()
+
         self.valiny.Show()
         self.ok_button.Show()
         self.home_panel.Layout()
@@ -163,7 +183,7 @@ class MyFrame(wx.Frame):
 
     def on_ok_button(self, event):
         # Change the background image
-        img_path = os.path.join("images", "A3.png")  # Replace with the desired image path
+        img_path = os.path.join("images", "A4.png")  # Replace with the desired image path
         new_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
         # Limit the width of the new image to 800 pixels while maintaining the aspect ratio
         if new_image.GetWidth() > 854:
@@ -189,7 +209,7 @@ class MyFrame(wx.Frame):
         # Get the index of the clicked image
         index = clicked_bitmap.index
         # Display message box with the customized message
-        wx.MessageBox(self.messages[index], "Info", wx.OK | wx.ICON_INFORMATION)
+        wx.MessageBox(f"Vous avez choisi l'image {index + 1}!", "Info", wx.OK | wx.ICON_INFORMATION)
         # Change the border color to red
         clicked_bitmap.SetBackgroundColour("red")
         clicked_bitmap.Refresh()
@@ -198,5 +218,5 @@ class MyFrame(wx.Frame):
 
 if __name__ == "__main__":
     app = wx.App()
-    frame = MyFrame(None, "My GUI")
+    frame = MyFrame(None, "Fianarana")
     app.MainLoop()

@@ -4,6 +4,7 @@ import vlc
 import threading
 from PIL import Image, ImageDraw
 
+
 class MediaPlayer:
     def __init__(self, panel):
         self.Instance = vlc.Instance()
@@ -75,7 +76,6 @@ class MyFrame(wx.Frame):
         self.player = None
 
         self.player2 = MediaPlayer(self.home_panel)
-
 
         # Create the Tools panel
         tools_panel = wx.Panel(self, size=(854, 150))
@@ -171,8 +171,6 @@ class MyFrame(wx.Frame):
     def OnAbout(self, event):
         wx.MessageBox("FIANARANA: Your Personalized Tool", "About FIANARANA", wx.OK | wx.ICON_INFORMATION)
 
-
-
     # def OnPreview(self, event):
     #     # self.play_video(r"D:\TMP\cours.mp4")
     #     image_bitmap = self.load_image(r"D:\Njaka_Project\Mianatra_Itk\test.png")
@@ -251,7 +249,6 @@ class MyFrame(wx.Frame):
         self.player.set_hwnd(handle)
 
         self.player.play()
-
 
     def update_video(self):
         while self.player.is_playing():

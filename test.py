@@ -1,19 +1,14 @@
-n = 0
-for i in range(0, 11):
-    for j in range(0, 11):
-        print(f"{i} + {j} = {i + j}")
-        n += 1
+import json
 
-print(f"Total = {n}")
+data = {
+    "min": 1,
+    "max": 5,
+    "level": 0,
+    "rand": False,
+    "type": "entry",
+    "case sensitive": False,
+    "comment": "",
+}
 
-
-class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-
-p1 = Person("John", 36)
-
-print(p1.name)
-print(p1.age)
+with open(r"C:\Users\NJAKA\Desktop\exo_itk\config.json", 'w') as outfile:
+    json.dump(data, outfile, indent=3)
