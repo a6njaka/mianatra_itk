@@ -60,8 +60,10 @@ class ExoSchedule:
                         if exo == "addition_3ch_hor":
                             for _ in range(int(data["max"])):
                                 exo_tmp = {
-                                    "image1": lib_addition_3ch_hor.get_image(),
-                                    "image2": lib_addition_3ch_hor.get_image(),
+                                    # "image1": lib_addition_3ch_hor.get_image(),
+                                    # "image2": lib_addition_3ch_hor.get_image(),
+                                    "image1": "image1.png",
+                                    "image2": "image2.png",
                                     "mp3": None,
                                     "answer": 6,
                                     "text": "andrana"
@@ -75,4 +77,4 @@ class ExoSchedule:
 
 
 p1 = ExoSchedule()
-# p1.display_all_exo()
+p1.display_all_exo()

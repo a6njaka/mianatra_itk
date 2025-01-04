@@ -2,6 +2,7 @@ import wx
 import os
 import lib_addition_3ch_hor
 import load_exo
+import random
 
 
 class MyFrame(wx.Frame):
@@ -9,15 +10,6 @@ class MyFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title=title, size=(800, 450), style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE)
 
         self.choice_answer_available = False
-        self.all_exo = {
-            "exo": [],
-            "min": 5,
-            "max": 10,
-            "case_sensitive": False,
-            "randomize": False,
-            "type": "entry",
-            "level": 0
-        }
 
         # Load background image
         img_path = os.path.join("images", "A3.png")
@@ -113,8 +105,106 @@ class MyFrame(wx.Frame):
         self.all_exo = {}
         p1 = load_exo.ExoSchedule()
         self.all_exo = p1.all_exo
+        self.current_exo_name = ""
+        self.exo_list = list(self.all_exo)
+        self.exo_done = []
+        self.all_exo_completed = False
+
+        self.stage_min = 2
+        self.stage_max = 5
+        self.stage_rand = False
+        self.stage_level = 0
+        self.stage_type = "entry"
+        self.stage_case_sensitive = False
+        self.stage_comment = "Comment"
+
+        self.stage_current_index = None
+        self.stage_index_done = []
 
         self.Show()
+
+    def next_exo(self):
+        print("---->>next_exo")
+        if self.current_exo_name not in self.exo_list:
+            self.current_exo_name = self.get_next_exo_name()
+            self.refresh_level_config()
+
+        if self.current_exo_name in self.exo_list:
+            if len(self.stage_index_done) <= self.stage_min:
+                self.stage_current_index = self.get_exo_next_index()
+                print(f"     INDEX = {self.stage_current_index}")
+            else:
+                self.exo_done.append(self.current_exo_name)
+                print(f"     Stage complete")
+                self.current_exo_name = self.get_next_exo_name()
+                self.refresh_level_config()
+
+    def get_exo_next_index(self):
+        print("--->>get_exo_next_index")
+        list1 = list(range(len(self.all_exo[self.current_exo_name]["exo"])))
+        list2 = self.stage_index_done
+        r = self.all_exo[self.current_exo_name]["rand"]
+        nd = [x for x in list1 if x not in list2]
+        print("     full: ", list1)
+        print("     done: ", self.stage_index_done)
+        print("     not done: ", nd)
+        if len(nd) > 0:
+            if r:
+                return random.choice(list1)
+            else:
+                return nd[0]
+        else:
+            return None
+
+    def get_next_exo_name(self):
+        print("-"*100)
+        print("--->>get_next_exo_name")
+        self.stage_current_index = None
+        list1 = self.exo_list
+        list2 = self.exo_done
+
+        # TODO: randomize the exo
+        r = False
+        nd = [x for x in list1 if x not in list2]
+        if len(nd) > 0:
+            if r:
+                return nd[random.choice(list1)]
+            else:
+                print(f"    --->exo Name: {nd[0]}")
+                return nd[0]
+        else:
+            self.all_exo_completed = True
+            return None
+
+    def verify_correctness_all_exo(self):
+        print("---->>verify_correctness_all_exo")
+
+    def verify_answer(self):
+        print("--->>verify_answer")
+        print(f"    --1->>{self.current_exo_name}")
+        print(f"    --2->>{self.stage_current_index}")
+        # for e in self.all_exo:
+        #     print(f"{e}: {self.all_exo[e]}")
+        user_answer = self.valiny.GetValue()
+        exo_answer = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["answer"]
+        print(f"    '{user_answer}' VS '{exo_answer}'")
+        if f"{user_answer}" == f"{exo_answer}":
+            self.stage_index_done.append(self.stage_current_index)
+            print("    --->>MARINA")
+            return True
+        else:
+            print("    --->>DISO")
+            return False
+
+    def refresh_level_config(self):
+        if self.current_exo_name in self.exo_list:
+            self.stage_min = self.all_exo[self.current_exo_name]["min"]
+            self.stage_max = self.all_exo[self.current_exo_name]["max"]
+            self.stage_rand = self.all_exo[self.current_exo_name]["rand"]
+            self.stage_level = self.all_exo[self.current_exo_name]["level"]
+            self.stage_type = self.all_exo[self.current_exo_name]["type"]
+            self.stage_case_sensitive = self.all_exo[self.current_exo_name]["case sensitive"]
+            self.stage_comment = self.all_exo[self.current_exo_name]["comment"]
 
     def create_static_bitmaps(self):
         """Creates StaticBitmaps with red borders and adds them to the bitmap_sizer."""
@@ -204,12 +294,16 @@ class MyFrame(wx.Frame):
         # wx.MessageBox(self.ok_button.GetLabel(), "Info", wx.OK | wx.ICON_INFORMATION)
         if self.ok_button.GetLabel() == "START":
             self.ok_button.SetLabel("OK")
+            self.verify_correctness_all_exo()
+            self.stage_index_done = []
             self.valiny.Show()
             self.home_panel.Layout()
-        # Change the background image
-        img_path = os.path.join("images", "A2.png")
-        self.load_image(img_path)
-
+            # Change the background image
+            # img_path = os.path.join("images", "A2.png")
+            # self.load_image(img_path)
+        else:
+            self.verify_answer()
+        self.next_exo()
 
     def on_background_click(self, event):
         wx.MessageBox("Image Clicked", "Info", wx.OK | wx.ICON_INFORMATION)
