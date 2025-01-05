@@ -55,8 +55,8 @@ class MyFrame(wx.Frame):
         toolbar = self.CreateToolBar()
 
         # Add some tools to the toolbar
-        tool1 = toolbar.AddTool(wx.ID_ANY, "Tool 1", wx.Bitmap("tool1.png"), "Tool 1 tooltip")
-        tool2 = toolbar.AddTool(wx.ID_ANY, "Tool 2", wx.Bitmap("tool2.png"), "Tool 2 tooltip")
+        tool1 = toolbar.AddTool(wx.ID_ANY, "Tool 1", wx.Bitmap("images/tool1.png"), "Tool 1 tooltip")
+        tool2 = toolbar.AddTool(wx.ID_ANY, "Tool 2", wx.Bitmap("images/tool2.png"), "Tool 2 tooltip")
 
         # Realize the toolbar
         toolbar.Realize()
@@ -136,14 +136,6 @@ class MyFrame(wx.Frame):
 
     def OnTool2(self, event):
         print("Tool 2 clicked")
-
-    @staticmethod
-    def play_mp3_vlc(file_path):
-        Instance = vlc.Instance()
-        player = Instance.media_player_new()
-        Media = Instance.media_new(file_path)
-        player.set_media(Media)
-        player.play()
 
     def OnPreview(self, event):
         # self.player2.play_media(r"D:\SONG\00000\Tsy mankaiza.MP3")

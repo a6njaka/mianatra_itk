@@ -2,6 +2,38 @@ import wx
 import os
 import load_exo
 import random
+import vlc
+import re
+
+
+class MediaPlayer:
+    def __init__(self, panel):
+        self.Instance = vlc.Instance()
+        self.player = self.Instance.media_player_new()
+        self.is_playing = False
+        self.panel = panel  # Reference to the panel
+
+    def play_media(self, file_path):
+        if self.is_playing:
+            self.player.stop()
+            self.is_playing = False
+
+        Media = self.Instance.media_new(file_path)
+        self.player.set_media(Media)
+
+        # Get the handle of the panel
+        handle = self.panel.GetHandle()
+        self.player.set_hwnd(handle)
+
+        # Set video dimensions
+        self.player.video_set_aspect_ratio("854:x")
+
+        self.player.play()
+        self.is_playing = True
+        if re.search("mp3$", file_path) is not None:
+            self.panel.Hide()
+        else:
+            self.panel.Show()
 
 
 class MyFrame(wx.Frame):
@@ -30,8 +62,9 @@ class MyFrame(wx.Frame):
 
         # Create a file menu
         file_menu = wx.Menu()
-        file_menu.Append(wx.ID_ANY, "Settings", "Open settings")
-        file_menu.Append(wx.ID_EXIT, "Exit", "Exit the application")
+        restart_item = file_menu.Append(wx.ID_ANY, "Restart\tCtrl+R", "Open settings")
+        file_menu.Append(wx.ID_ANY, "Settings\tCtrl+S", "Open settings")
+        file_menu.Append(wx.ID_EXIT, "Exit\tAlt+F4", "Exit the application")
         menu_bar.Append(file_menu, "&File")
 
         # Create a help menu
@@ -39,13 +72,10 @@ class MyFrame(wx.Frame):
         help_menu.Append(wx.ID_ABOUT, "About", "About this application")
         menu_bar.Append(help_menu, "&Help")
 
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
+
         # Set the menu bar
         self.SetMenuBar(menu_bar)
-
-        # Bind the menu items to events
-        self.Bind(wx.EVT_MENU, self.OnSettings, file_menu.FindItemByPosition(0))
-        self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
-        self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
 
         # Create a toolbar
         toolbar = self.CreateToolBar()
@@ -57,10 +87,6 @@ class MyFrame(wx.Frame):
         # Realize the toolbar
         toolbar.Realize()
         self.SetToolBar(toolbar)
-
-        # Create StatusBar OLD
-        # self.CreateStatusBar()
-        # self.SetStatusText("Ready")
 
         # Create a status bar
         self.status_bar = self.CreateStatusBar()
@@ -75,11 +101,9 @@ class MyFrame(wx.Frame):
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Add a StaticBitmap for the background
+        # self.background_staticbitmap = wx.StaticBitmap(self.home_panel, -1, self.background_bitmap, style=wx.SIMPLE_BORDER)
         self.background_staticbitmap = wx.StaticBitmap(self.home_panel, -1, self.background_bitmap)
         main_sizer.Add(self.background_staticbitmap, 1, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 10)  # Set proportion to 1 to make it expand
-
-        # Bind click event to the background image
-        self.background_staticbitmap.Bind(wx.EVT_LEFT_DOWN, self.on_background_click)
 
         # Create a horizontal sizer for the StaticBitmaps
         self.bitmap_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -89,19 +113,32 @@ class MyFrame(wx.Frame):
         # Add bitmap_sizer at the bottom with a 10-pixel space from StatusBar
         main_sizer.Add(self.bitmap_sizer, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
+        # Create a panel to hold the video
+        self.video_panel = wx.Panel(self.home_panel, style=wx.SIMPLE_BORDER)
+        # self.video_panel.SetMaxSize((854, 200))
+        self.video_panel.SetBackgroundColour(wx.WHITE)  # Set background color to white
+        main_sizer.Add(self.video_panel, 1, wx.EXPAND | wx.ALL, 10)
+        self.video_panel.Hide()
+
+        # Create a horizontal sizer for the video panel
+        # video_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # video_sizer.Add(self.video_panel, 1, wx.ALIGN_CENTER)
+        # main_sizer.Add(video_sizer, 1, wx.EXPAND | wx.ALL, 10)
+
         # Create textCtrl
         self.valiny = wx.TextCtrl(self.home_panel, -1, "", size=(854, -1), style=wx.TE_LEFT | wx.TE_PROCESS_ENTER)
         self.valiny.SetFont(wx.Font(21, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
         self.valiny.SetFocus()  # Set initial focus to textCtrl
-        self.valiny.Bind(wx.EVT_TEXT_ENTER, self.on_enter_pressed)  # Bind EVT_TEXT_ENTER
         main_sizer.Add(self.valiny, 0, wx.ALIGN_CENTER | wx.BOTTOM, 10)
 
         # Create OK button
         self.ok_button = wx.Button(self.home_panel, -1, "START")
         font = wx.Font(20, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
         self.ok_button.SetFont(font)
-        self.ok_button.Bind(wx.EVT_BUTTON, self.on_ok_button)
         main_sizer.Add(self.ok_button, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
+
+        # self.player = MediaPlayer(self.home_panel)
+        self.player = MediaPlayer(self.video_panel)
 
         self.home_panel.SetSizer(main_sizer)
         self.valiny.Hide()
@@ -110,6 +147,13 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_TOOL, self.OnTool1, tool1)
         self.Bind(wx.EVT_TOOL, self.OnTool2, tool2)
         self.Bind(wx.EVT_SIZE, self.on_resize)
+        self.valiny.Bind(wx.EVT_TEXT_ENTER, self.on_enter_pressed)
+        self.ok_button.Bind(wx.EVT_BUTTON, self.on_ok_button)
+        self.background_staticbitmap.Bind(wx.EVT_LEFT_DOWN, self.on_background_click)
+        self.Bind(wx.EVT_MENU, self.OnRestart, restart_item)
+        self.Bind(wx.EVT_MENU, self.OnSettings, file_menu.FindItemByPosition(1))
+        self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
+        self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
 
         self.all_exo = {}
         p1 = load_exo.ExoSchedule()
@@ -166,6 +210,7 @@ class MyFrame(wx.Frame):
             self.refresh_level_config()
 
         print(f"    -cc->{self.current_exo_name}")
+        self.SetStatusText(f"Exercise: {self.current_exo_name}", 1)
 
         if self.current_exo_name in self.exo_list:
             if len(self.stage_index_done) <= self.stage_min:
@@ -257,10 +302,12 @@ class MyFrame(wx.Frame):
             self.stage_index_done.append(self.stage_current_index)
             print("    --->>MARINA")
             self.SetStatusText("MARINA !")
+            self.player.play_media(r"mp3/right.mp3")
             return True
         else:
             print("    --->>DISO")
             self.SetStatusText("DISO !")
+            self.player.play_media(r"mp3/wrong.mp3")
             return False
 
     def refresh_level_config(self):
@@ -308,6 +355,9 @@ class MyFrame(wx.Frame):
     def OnSettings(self, event):
         wx.MessageBox("Settings", "Info", wx.OK | wx.ICON_INFORMATION)
 
+    def OnRestart(self, event):
+        wx.MessageBox("OnRestart", "Info", wx.OK | wx.ICON_INFORMATION)
+
     def OnExit(self, event):
         self.Close(True)
 
@@ -316,9 +366,15 @@ class MyFrame(wx.Frame):
 
     def OnTool1(self, event):
         print("-->OnTool1 Clicked")
+        # self.player.play_media(r"D:\SONG\00000\Tsy mankaiza.MP3")
+        self.player.play_media(r"D:\USB\1 minute funny videos.mp4")
+        self.background_staticbitmap.Hide()
+        self.home_panel.Layout()
 
     def OnTool2(self, event):
         print("-->OnTool2 Clicked")
+        self.player.play_media(r"D:\SONG\00000\Tsy mankaiza.MP3")
+        self.video_panel.Hide()
 
     def load_image(self, img_path):
         if os.path.isfile(img_path):
@@ -353,6 +409,9 @@ class MyFrame(wx.Frame):
             self.stage_index_done = []
             self.valiny.Show()
             self.home_panel.Layout()
+            self.video_panel.Hide()
+            self.background_staticbitmap.Show()
+            self.player.player.stop()
             # Change the background image
             # img_path = os.path.join("images", "A2.png")
             # self.load_image(img_path)
@@ -369,6 +428,7 @@ class MyFrame(wx.Frame):
         # TODO: Display Bravo image
         self.ok_button.SetLabel("BRAVO !")
         img_path = os.path.join("images", "Bravo.jpg")
+        self.player.play_media(r"mp3/bravo.mp3")
         self.load_image(img_path)
         self.valiny.Hide()
         self.home_panel.Layout()
@@ -395,5 +455,5 @@ class MyFrame(wx.Frame):
 
 if __name__ == "__main__":
     app = wx.App()
-    frame = MyFrame(None, "Fianarana")
+    frame = MyFrame(None, "FIANARANA 1.0")
     app.MainLoop()

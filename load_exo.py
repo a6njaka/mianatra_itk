@@ -57,7 +57,7 @@ class ExoSchedule:
                         self.all_exo[exo]["case sensitive"] = data["case sensitive"]
                         self.all_exo[exo]["comment"] = data["comment"]
 
-                        if exo == "addition_3ch_hor":
+                        if exo == "addition_3ch_hor" or exo == "addition_1":
                             for _ in range(int(data["max"])):
                                 image1, image2, answer = lib_addition_3ch_hor.get_image(1)
                                 exo_tmp = {
