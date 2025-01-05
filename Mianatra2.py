@@ -1,6 +1,5 @@
 import wx
 import os
-import lib_addition_3ch_hor
 import load_exo
 import random
 
@@ -59,9 +58,18 @@ class MyFrame(wx.Frame):
         toolbar.Realize()
         self.SetToolBar(toolbar)
 
-        # Create StatusBar
-        self.CreateStatusBar()
-        self.SetStatusText("Ready")
+        # Create StatusBar OLD
+        # self.CreateStatusBar()
+        # self.SetStatusText("Ready")
+
+        # Create a status bar
+        self.status_bar = self.CreateStatusBar()
+        self.status_bar.SetFieldsCount(4)  # Split into 4 parts
+        self.status_bar.SetStatusWidths([-1, -1, -1, 100])  # Set relative widths
+
+        # Add a progress bar to the last part
+        self.add_progress_bar_to_status_bar()
+        self.progress_bar.SetValue(50)
 
         # Create a sizer to layout controls
         main_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -101,6 +109,7 @@ class MyFrame(wx.Frame):
 
         self.Bind(wx.EVT_TOOL, self.OnTool1, tool1)
         self.Bind(wx.EVT_TOOL, self.OnTool2, tool2)
+        self.Bind(wx.EVT_SIZE, self.on_resize)
 
         self.all_exo = {}
         p1 = load_exo.ExoSchedule()
@@ -122,12 +131,41 @@ class MyFrame(wx.Frame):
         self.stage_index_done = []
 
         self.Show()
+        self.ok_button.SetFocus()
+
+    def add_progress_bar_to_status_bar(self):
+        # Create a panel for embedding controls in the status bar
+        self.progress_panel = wx.Panel(self.status_bar)
+        self.progress_panel.SetBackgroundColour(self.status_bar.GetBackgroundColour())
+
+        # Create a progress bar in determinate mode
+        self.progress_bar = wx.Gauge(self.progress_panel, range=100, style=wx.GA_HORIZONTAL)
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(self.progress_bar, 1, wx.EXPAND | wx.ALL, 1)
+        self.progress_panel.SetSizer(sizer)
+
+        # Set the initial position and size of the panel
+        self.update_progress_bar_position()
+
+    def update_progress_bar_position(self):
+        """Update the position and size of the progress panel based on the status bar field."""
+        rect = self.status_bar.GetFieldRect(3)  # Field index 3 (last field)
+        self.progress_panel.SetPosition((rect.x, rect.y))
+        self.progress_panel.SetSize((rect.width, rect.height))
+        self.progress_panel.Layout()
+
+    def on_resize(self, event):
+        """Handle window resizing and adjust the progress bar's size."""
+        self.update_progress_bar_position()
+        event.Skip()  # Ensure the default resize behavior happens
 
     def next_exo(self):
         print("---->>next_exo")
         if self.current_exo_name not in self.exo_list:
             self.current_exo_name = self.get_next_exo_name()
             self.refresh_level_config()
+
+        print(f"    -cc->{self.current_exo_name}")
 
         if self.current_exo_name in self.exo_list:
             if len(self.stage_index_done) <= self.stage_min:
@@ -138,6 +176,18 @@ class MyFrame(wx.Frame):
                 print(f"     Stage complete")
                 self.current_exo_name = self.get_next_exo_name()
                 self.refresh_level_config()
+
+            # TODO: Display the exo image in the screen
+            if self.current_exo_name is not None:
+                print(f"    --exo-->{self.current_exo_name}/ idx: {self.stage_current_index}")
+                # print(f"    --exo-->{self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]}")
+                self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1'])
+        else:
+            print("Completed")
+
+        if self.valiny.IsShown():
+            self.valiny.SetValue("")
+            self.valiny.SetFocus()
 
     def get_exo_next_index(self):
         print("--->>get_exo_next_index")
@@ -157,7 +207,7 @@ class MyFrame(wx.Frame):
             return None
 
     def get_next_exo_name(self):
-        print("-"*100)
+        print("-" * 100)
         print("--->>get_next_exo_name")
         self.stage_current_index = None
         list1 = self.exo_list
@@ -174,10 +224,24 @@ class MyFrame(wx.Frame):
                 return nd[0]
         else:
             self.all_exo_completed = True
+            print("Completed2")
+            self.display_exo_complete()
             return None
 
     def verify_correctness_all_exo(self):
         print("---->>verify_correctness_all_exo")
+        new_all_exo = {}
+        for exo in self.exo_list:
+            try:
+                if not len(self.all_exo[exo]["exo"]) == 0:
+                    new_all_exo[exo] = self.all_exo[exo]
+                    print(f"    -->Add '{exo}'")
+                else:
+                    print(f"    -->Removed '{exo}'")
+            except KeyError:
+                print(f"    -->Removed '{exo}'")
+        self.all_exo = new_all_exo
+        self.exo_list = list(self.all_exo)
 
     def verify_answer(self):
         print("--->>verify_answer")
@@ -188,15 +252,19 @@ class MyFrame(wx.Frame):
         user_answer = self.valiny.GetValue()
         exo_answer = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["answer"]
         print(f"    '{user_answer}' VS '{exo_answer}'")
+
         if f"{user_answer}" == f"{exo_answer}":
             self.stage_index_done.append(self.stage_current_index)
             print("    --->>MARINA")
+            self.SetStatusText("MARINA !")
             return True
         else:
             print("    --->>DISO")
+            self.SetStatusText("DISO !")
             return False
 
     def refresh_level_config(self):
+        print("---->>refresh_level_config")
         if self.current_exo_name in self.exo_list:
             self.stage_min = self.all_exo[self.current_exo_name]["min"]
             self.stage_max = self.all_exo[self.current_exo_name]["max"]
@@ -237,16 +305,6 @@ class MyFrame(wx.Frame):
             static_bitmap.Show()
         self.choice_answer_available = True
 
-    def test_app(self, level):
-        image_data = lib_addition_3ch_hor.get_image(level)
-
-        wx_image = wx.Image(854, 480)
-        wx_image.SetData(image_data)
-        wx_bitmap = wx.Bitmap(wx_image)
-
-        self.background_staticbitmap.SetBitmap(wx_bitmap)
-        self.home_panel.Refresh()
-
     def OnSettings(self, event):
         wx.MessageBox("Settings", "Info", wx.OK | wx.ICON_INFORMATION)
 
@@ -257,40 +315,37 @@ class MyFrame(wx.Frame):
         wx.MessageBox("Fianarana 1.0", "About", wx.OK | wx.ICON_INFORMATION)
 
     def OnTool1(self, event):
-        # Call the test_app function
-        self.test_app(level=0)
-
-        # Hide img_paths and display self.valiny and self.ok_button
-        if self.choice_answer_available:
-            for static_bitmap in self.static_bitmaps:
-                static_bitmap.Hide()
-
-        self.valiny.Show()
-        self.ok_button.Show()
-        self.home_panel.Layout()
+        print("-->OnTool1 Clicked")
 
     def OnTool2(self, event):
-        # Hide self.valiny and self.ok_button, then display img_paths
-        self.valiny.Hide()
-        self.ok_button.Hide()
-        for static_bitmap in self.static_bitmaps:
-            static_bitmap.Show()
-        self.home_panel.Layout()
+        print("-->OnTool2 Clicked")
 
     def load_image(self, img_path):
-        new_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
-        # Limit the width of the new image to 800 pixels while maintaining the aspect ratio
-        if new_image.GetWidth() > 854:
-            new_width = 854
-            new_height = int(854 * new_image.GetHeight() / new_image.GetWidth())
-            new_image = new_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
-        new_bitmap = wx.Bitmap(new_image)
-        self.background_staticbitmap.SetBitmap(new_bitmap)
-        self.home_panel.Refresh()
-        self.SetStatusText("Background image changed.")
+        if os.path.isfile(img_path):
+            new_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
+            if new_image.GetWidth() > 854:
+                new_width = 854
+                new_height = int(854 * new_image.GetHeight() / new_image.GetWidth())
+                new_image = new_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
+            new_bitmap = wx.Bitmap(new_image)
+            self.background_staticbitmap.SetBitmap(new_bitmap)
+            self.home_panel.Refresh()
+
+        # Bytes_Type
+        if type(img_path) is bytes:
+            # image_data = lib_addition_3ch_hor.get_image(0)
+            image_data = img_path
+            wx_image = wx.Image(854, 480)
+            wx_image.SetData(image_data)
+            wx_bitmap = wx.Bitmap(wx_image)
+            self.background_staticbitmap.SetBitmap(wx_bitmap)
+            self.home_panel.Refresh()
+
+        # self.SetStatusText("Background image changed.")
         self.home_panel.Layout()
 
     def on_ok_button(self, event):
+        print(f"---->>OK_BUTTON")
         # wx.MessageBox(self.ok_button.GetLabel(), "Info", wx.OK | wx.ICON_INFORMATION)
         if self.ok_button.GetLabel() == "START":
             self.ok_button.SetLabel("OK")
@@ -301,9 +356,22 @@ class MyFrame(wx.Frame):
             # Change the background image
             # img_path = os.path.join("images", "A2.png")
             # self.load_image(img_path)
-        else:
+        elif self.current_exo_name is None and self.ok_button.GetLabel() != "BRAVO !":
+            self.display_exo_complete()
+
+        elif self.ok_button.GetLabel() == "OK":
             self.verify_answer()
-        self.next_exo()
+
+        if self.ok_button.GetLabel() == "OK":
+            self.next_exo()
+
+    def display_exo_complete(self):
+        # TODO: Display Bravo image
+        self.ok_button.SetLabel("BRAVO !")
+        img_path = os.path.join("images", "Bravo.jpg")
+        self.load_image(img_path)
+        self.valiny.Hide()
+        self.home_panel.Layout()
 
     def on_background_click(self, event):
         wx.MessageBox("Image Clicked", "Info", wx.OK | wx.ICON_INFORMATION)

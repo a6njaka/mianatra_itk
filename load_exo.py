@@ -59,13 +59,14 @@ class ExoSchedule:
 
                         if exo == "addition_3ch_hor":
                             for _ in range(int(data["max"])):
+                                image1, image2, answer = lib_addition_3ch_hor.get_image(1)
                                 exo_tmp = {
-                                    # "image1": lib_addition_3ch_hor.get_image(),
-                                    # "image2": lib_addition_3ch_hor.get_image(),
-                                    "image1": "image1.png",
-                                    "image2": "image2.png",
+                                    "image1": image1,
+                                    "image2": image2,
+                                    # "image1": "images/A1.png",
+                                    # "image2": "images/A4.png",
                                     "mp3": None,
-                                    "answer": 6,
+                                    "answer": answer,
                                     "text": "andrana"
                                 }
                                 self.all_exo[exo]["exo"].append(exo_tmp)
@@ -76,5 +77,5 @@ class ExoSchedule:
                 # print(json_config_path)
 
 
-p1 = ExoSchedule()
-p1.display_all_exo()
+# p1 = ExoSchedule()
+# p1.display_all_exo()

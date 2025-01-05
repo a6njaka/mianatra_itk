@@ -2,10 +2,11 @@ from PIL import Image, ImageDraw, ImageFont
 import random
 
 
-def get_image(level=0):
-    a = random.randint(0, 9 + level * 10)
-    b = random.randint(0, 9 + level * 10)
-    c = random.randint(0, 9 + level * 10)
+def get_image(level=1):
+    a = random.randint(0, 10 ** level - 1)
+    b = random.randint(0, 10 ** level - 1)
+    c = random.randint(0, 10 ** level - 1)
+    answer = a + b + c
     # Create a blank white image
     pil_image = Image.new('RGB', (854, 480), color=(255, 255, 255))
 
@@ -49,7 +50,7 @@ def get_image(level=0):
 
     # print(type(image_data))
 
-    return image_data
+    return image_data, image_data, answer
 
 
 get_image(5)
