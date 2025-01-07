@@ -52,8 +52,8 @@ def get_image(level=1):
     # print(type(image_data))
 
     # TODO: Use regex for the answer
-
-    return image_data, image_data, answer
+    answer = f"{answer}"
+    return image_data, image_data, re.compile(rf"\s*{re.escape(answer)}\s*")
 
 
 get_image(5)
