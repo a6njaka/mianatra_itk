@@ -3,6 +3,7 @@ import random
 import lib_addition_3ch_hor
 from datetime import date
 import os
+import re
 
 
 class ExoSchedule:
@@ -60,6 +61,7 @@ class ExoSchedule:
                         if exo == "addition_3ch_hor" or exo == "addition_1":
                             for _ in range(int(data["max"])):
                                 image1, image2, answer = lib_addition_3ch_hor.get_image(1)
+                                answer = re.compile(r"\s*\d\s*")
                                 exo_tmp = {
                                     "image1": image1,
                                     "image2": image2,

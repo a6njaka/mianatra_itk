@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 import random
+import re
 
 
 def get_image(level=1):
@@ -49,6 +50,8 @@ def get_image(level=1):
     pil_image.save("njk.png")
 
     # print(type(image_data))
+
+    # TODO: Use regex for the answer
 
     return image_data, image_data, answer
 

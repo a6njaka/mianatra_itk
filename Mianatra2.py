@@ -90,8 +90,8 @@ class MyFrame(wx.Frame):
 
         # Create a status bar
         self.status_bar = self.CreateStatusBar()
-        self.status_bar.SetFieldsCount(4)  # Split into 4 parts
-        self.status_bar.SetStatusWidths([-1, -1, -1, 100])  # Set relative widths
+        self.status_bar.SetFieldsCount(5)  # Split into 4 parts
+        self.status_bar.SetStatusWidths([-1, -1, -1, -1, 100])  # Set relative widths
 
         # Add a progress bar to the last part
         self.add_progress_bar_to_status_bar()
@@ -156,11 +156,9 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
 
         self.all_exo = {}
-        p1 = load_exo.ExoSchedule()
-        self.all_exo = p1.all_exo
         self.current_exo_name = ""
-        self.exo_list = list(self.all_exo)
         self.exo_done = []
+        self.exo_list = []
         self.all_exo_completed = False
 
         self.stage_min = 2
@@ -193,7 +191,7 @@ class MyFrame(wx.Frame):
 
     def update_progress_bar_position(self):
         """Update the position and size of the progress panel based on the status bar field."""
-        rect = self.status_bar.GetFieldRect(3)  # Field index 3 (last field)
+        rect = self.status_bar.GetFieldRect(4)  # Field index 3 (last field)
         self.progress_panel.SetPosition((rect.x, rect.y))
         self.progress_panel.SetSize((rect.width, rect.height))
         self.progress_panel.Layout()
@@ -203,39 +201,21 @@ class MyFrame(wx.Frame):
         self.update_progress_bar_position()
         event.Skip()  # Ensure the default resize behavior happens
 
-    def next_exo(self):
-        print("---->>next_exo")
-        if self.current_exo_name not in self.exo_list:
-            self.current_exo_name = self.get_next_exo_name()
-            self.refresh_level_config()
+    def display_exo(self):
+        print("---->>display_exo")
+        self.valiny.Show()
+        self.valiny.SetValue("")
+        self.valiny.SetFocus()
+        self.home_panel.Layout()
+        self.video_panel.Hide()
+        self.background_staticbitmap.Show()
+        # self.player.player.stop()
+        print(f"    --display-->{self.current_exo_name}/ idx: {self.stage_current_index}")
+        self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1'])
 
-        print(f"    -cc->{self.current_exo_name}")
-        self.SetStatusText(f"Exercise: {self.current_exo_name}", 1)
-
-        if self.current_exo_name in self.exo_list:
-            if len(self.stage_index_done) <= self.stage_min:
-                self.stage_current_index = self.get_exo_next_index()
-                print(f"     INDEX = {self.stage_current_index}")
-            else:
-                self.exo_done.append(self.current_exo_name)
-                print(f"     Stage complete")
-                self.current_exo_name = self.get_next_exo_name()
-                self.refresh_level_config()
-
-            # TODO: Display the exo image in the screen
-            if self.current_exo_name is not None:
-                print(f"    --exo-->{self.current_exo_name}/ idx: {self.stage_current_index}")
-                # print(f"    --exo-->{self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]}")
-                self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1'])
-        else:
-            print("Completed")
-
-        if self.valiny.IsShown():
-            self.valiny.SetValue("")
-            self.valiny.SetFocus()
-
-    def get_exo_next_index(self):
-        print("--->>get_exo_next_index")
+    def get_exo_index(self):
+        print("--->>get_exo_index")
+        ret = ""
         list1 = list(range(len(self.all_exo[self.current_exo_name]["exo"])))
         list2 = self.stage_index_done
         r = self.all_exo[self.current_exo_name]["rand"]
@@ -243,35 +223,47 @@ class MyFrame(wx.Frame):
         print("     full: ", list1)
         print("     done: ", self.stage_index_done)
         print("     not done: ", nd)
-        if len(nd) > 0:
+        if 0 < len(nd) and len(self.stage_index_done) < self.stage_min:
             if r:
-                return random.choice(list1)
+                ret = random.choice(list1)
             else:
-                return nd[0]
+                ret = nd[0]
         else:
-            return None
+            ret = None
+        self.stage_current_index = ret
+        print("     -->index =", ret)
 
-    def get_next_exo_name(self):
+    def get_exo_name(self):
         print("-" * 100)
-        print("--->>get_next_exo_name")
+        print("--->>get_exo_name")
         self.stage_current_index = None
         list1 = self.exo_list
         list2 = self.exo_done
+        ret = ""
 
         # TODO: randomize the exo
         r = False
         nd = [x for x in list1 if x not in list2]
         if len(nd) > 0:
             if r:
-                return nd[random.choice(list1)]
+                print(f"     -->exo Name: {nd[0]}")
+                tmp_exo_name = nd[random.choice(list1)]
+                self.SetStatusText(f"Exercise: {tmp_exo_name}", 1)
+                ret = tmp_exo_name
+                self.exo_done.append(ret)
             else:
-                print(f"    --->exo Name: {nd[0]}")
-                return nd[0]
+                print(f"     -->exo Name: {nd[0]}")
+                tmp_exo_name = nd[0]
+                self.SetStatusText(f"Exercise: {tmp_exo_name}", 1)
+                ret = nd[0]
+                self.exo_done.append(ret)
         else:
             self.all_exo_completed = True
             print("Completed2")
+            self.SetStatusText(f"Exercise: Completed", 1)
             self.display_exo_complete()
-            return None
+            ret = None
+        self.current_exo_name = ret
 
     def verify_correctness_all_exo(self):
         print("---->>verify_correctness_all_exo")
@@ -298,7 +290,9 @@ class MyFrame(wx.Frame):
         exo_answer = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["answer"]
         print(f"    '{user_answer}' VS '{exo_answer}'")
 
-        if f"{user_answer}" == f"{exo_answer}":
+        # if f"{user_answer}" == f"{exo_answer}":
+        match = exo_answer.search(user_answer)
+        if match:
             self.stage_index_done.append(self.stage_current_index)
             print("    --->>MARINA")
             self.SetStatusText("MARINA !")
@@ -308,10 +302,12 @@ class MyFrame(wx.Frame):
             print("    --->>DISO")
             self.SetStatusText("DISO !")
             self.player.play_media(r"mp3/wrong.mp3")
+            if self.stage_min < self.stage_max:
+                self.stage_min += 1
             return False
 
-    def refresh_level_config(self):
-        print("---->>refresh_level_config")
+    def get_level_config(self):
+        print("---->>get_level_config")
         if self.current_exo_name in self.exo_list:
             self.stage_min = self.all_exo[self.current_exo_name]["min"]
             self.stage_max = self.all_exo[self.current_exo_name]["max"]
@@ -320,6 +316,14 @@ class MyFrame(wx.Frame):
             self.stage_type = self.all_exo[self.current_exo_name]["type"]
             self.stage_case_sensitive = self.all_exo[self.current_exo_name]["case sensitive"]
             self.stage_comment = self.all_exo[self.current_exo_name]["comment"]
+
+            print(f"     ->stage_min: {self.stage_min}")
+            print(f"     ->stage_max: {self.stage_max}")
+            print(f"     ->stage_rand: {self.stage_rand}")
+            print(f"     ->stage_level: {self.stage_level}")
+            print(f"     ->stage_type: {self.stage_type}")
+            print(f"     ->stage_case_sensitive: {self.stage_case_sensitive}")
+            print(f"     ->stage_comment: {self.stage_comment}")
 
     def create_static_bitmaps(self):
         """Creates StaticBitmaps with red borders and adds them to the bitmap_sizer."""
@@ -400,29 +404,46 @@ class MyFrame(wx.Frame):
         # self.SetStatusText("Background image changed.")
         self.home_panel.Layout()
 
+    def load_all_exo(self):
+        print("---->>load_all_exo")
+        p1 = load_exo.ExoSchedule()
+        self.all_exo = p1.all_exo
+        self.exo_list = list(self.all_exo)
+        self.all_exo_completed = False
+
     def on_ok_button(self, event):
         print(f"---->>OK_BUTTON")
-        # wx.MessageBox(self.ok_button.GetLabel(), "Info", wx.OK | wx.ICON_INFORMATION)
+        # if self.ok_button.GetLabel() == "OK":
+        #     self.get_exo()
         if self.ok_button.GetLabel() == "START":
+            print("  -->>START")
             self.ok_button.SetLabel("OK")
+            self.load_all_exo()
             self.verify_correctness_all_exo()
             self.stage_index_done = []
-            self.valiny.Show()
-            self.home_panel.Layout()
-            self.video_panel.Hide()
-            self.background_staticbitmap.Show()
-            self.player.player.stop()
-            # Change the background image
-            # img_path = os.path.join("images", "A2.png")
-            # self.load_image(img_path)
+            self.get_exo_name()
+            self.get_level_config()
+            if self.current_exo_name is not None:
+                self.get_exo_index()
+                if self.stage_current_index is not None:
+                    self.display_exo()
+
         elif self.current_exo_name is None and self.ok_button.GetLabel() != "BRAVO !":
             self.display_exo_complete()
-
         elif self.ok_button.GetLabel() == "OK":
             self.verify_answer()
+            self.get_exo_index()
+            if self.stage_current_index is not None:
+                self.display_exo()
+            else:
+                self.stage_index_done = []
+                self.get_exo_name()
+                self.get_level_config()
+                if self.current_exo_name is not None:
+                    self.get_exo_index()
+                    if self.stage_current_index is not None:
+                        self.display_exo()
 
-        if self.ok_button.GetLabel() == "OK":
-            self.next_exo()
 
     def display_exo_complete(self):
         # TODO: Display Bravo image
