@@ -4,6 +4,7 @@ import load_exo
 import random
 import vlc
 import re
+import time
 
 
 class MediaPlayer:
@@ -133,6 +134,7 @@ class MyFrame(wx.Frame):
 
         # Create OK button
         self.ok_button = wx.Button(self.home_panel, -1, "START")
+        self.ok_button.SetCursor(wx.Cursor(wx.CURSOR_HAND))
         font = wx.Font(20, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
         self.ok_button.SetFont(font)
         main_sizer.Add(self.ok_button, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
@@ -211,7 +213,18 @@ class MyFrame(wx.Frame):
         self.background_staticbitmap.Show()
         # self.player.player.stop()
         print(f"    --display-->{self.current_exo_name}/ idx: {self.stage_current_index}")
+        print("    -->>", "image1 : ", type(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1']))
+        print("    -->>", "image2 : ", type(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2']))
+        mp3 = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['mp3']
+        print("    -->>", "mp3 : ", mp3)
+        print("    -->>", "answer : ", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['answer'])
+        print("    -->>", "text : ", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'])
+
         self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1'])
+
+        self.play_combined_mp3(mp3)
+
+        self.background_staticbitmap.SetCursor(wx.Cursor(wx.CURSOR_HAND))
 
     def get_exo_index(self):
         print("--->>get_exo_index")
@@ -291,12 +304,18 @@ class MyFrame(wx.Frame):
         print(f"    '{user_answer}' VS '{exo_answer}'")
 
         # if f"{user_answer}" == f"{exo_answer}":
+        self.valiny.SetValue("1234567890")
         match = exo_answer.search(user_answer)
-        if match:
+        if f"{user_answer}".strip() == "":
+            self.player.play_media(r"mp3/wrong.mp3")
+        elif match:
             self.stage_index_done.append(self.stage_current_index)
             print("    --->>MARINA")
             self.SetStatusText("MARINA !")
             self.player.play_media(r"mp3/right.mp3")
+            self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2'])
+            self.valiny.SetValue("")
+            time.sleep(3)
             return True
         else:
             print("    --->>DISO")
@@ -423,6 +442,7 @@ class MyFrame(wx.Frame):
             self.stage_index_done = []
             self.get_exo_name()
             self.get_level_config()
+            self.home_panel.Layout()
             if self.current_exo_name is not None:
                 self.get_exo_index()
                 if self.stage_current_index is not None:
@@ -443,7 +463,7 @@ class MyFrame(wx.Frame):
                     self.get_exo_index()
                     if self.stage_current_index is not None:
                         self.display_exo()
-
+        self.SetStatusText(f"Stage {len(self.stage_index_done) + 1}/{self.stage_min}", 2)
 
     def display_exo_complete(self):
         # TODO: Display Bravo image
@@ -455,7 +475,20 @@ class MyFrame(wx.Frame):
         self.home_panel.Layout()
 
     def on_background_click(self, event):
-        wx.MessageBox("Image Clicked", "Info", wx.OK | wx.ICON_INFORMATION)
+        try:
+            files_exist = True
+            all_mp3 = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['mp3']
+            if len(all_mp3) >0:
+                for mp3 in all_mp3:
+                    if not os.path.isfile(mp3):
+                        files_exist = False
+                        break
+                if files_exist:
+                    self.play_combined_mp3(all_mp3)
+        except:
+            print("MP3 not correct!")
+
+        # wx.MessageBox("Image Clicked", "Info", wx.OK | wx.ICON_INFORMATION)
 
     def on_enter_pressed(self, event):
         self.on_ok_button(event)
@@ -472,6 +505,32 @@ class MyFrame(wx.Frame):
         clicked_bitmap.SetBackgroundColour("red")
         clicked_bitmap.Refresh()
         self.home_panel.Layout()
+
+    @staticmethod
+    def play_combined_mp3(mp3_files):
+        instance = vlc.Instance()
+        player = instance.media_player_new()
+        media_list = instance.media_list_new()
+
+        for mp3_file in mp3_files:
+            media = instance.media_new(mp3_file)
+            media_list.add_media(media)
+
+        list_player = instance.media_list_player_new()
+        list_player.set_media_player(player)
+        list_player.set_media_list(media_list)
+
+        list_player.play()
+
+        # Wait for playback to finish
+        while list_player.get_state() != vlc.State.Ended:
+            time.sleep(0.1)
+
+        # Close the player after playback
+        list_player.stop()
+        list_player.release()
+        player.release()
+        instance.release()
 
 
 if __name__ == "__main__":

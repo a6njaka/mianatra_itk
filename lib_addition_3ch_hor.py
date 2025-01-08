@@ -9,10 +9,12 @@ def get_image(level=1):
     c = random.randint(0, 10 ** level - 1)
     answer = a + b + c
     # Create a blank white image
-    pil_image = Image.new('RGB', (854, 480), color=(255, 255, 255))
+    image1 = Image.new('RGB', (854, 480), color=(220, 220, 220))
+    image2 = Image.new('RGB', (854, 480), color=(220, 220, 220))
 
     # Initialize the drawing context
-    draw = ImageDraw.Draw(pil_image)
+    draw1 = ImageDraw.Draw(image1)
+    draw2 = ImageDraw.Draw(image2)
 
     # Define font size and load font
     font_size = 70
@@ -26,8 +28,8 @@ def get_image(level=1):
     question_mark = " ?"
 
     # Calculate text positions using textbbox
-    text_bbox = draw.textbbox((0, 0), text, font=font)
-    q_bbox = draw.textbbox((0, 0), question_mark, font=font)
+    text_bbox = draw1.textbbox((0, 0), text, font=font)
+    q_bbox = draw1.textbbox((0, 0), question_mark, font=font)
 
     text_width, text_height = text_bbox[2] - text_bbox[0], text_bbox[3] - text_bbox[1]
     q_width, q_height = q_bbox[2] - q_bbox[0], q_bbox[3] - q_bbox[1]
@@ -38,22 +40,26 @@ def get_image(level=1):
     y_start = (480 - text_height) // 2
 
     # Draw the equation text
-    draw.text((x_start, y_start), text, fill=(0, 0, 0), font=font)
+    draw1.text((x_start, y_start), text, fill=(0, 0, 0), font=font)
+    draw2.text((x_start, y_start), text, fill=(0, 0, 0), font=font)
 
     # Draw the question mark in red
-    draw.text((x_start + text_width, y_start), question_mark, fill=(255, 0, 0), font=font)
+    draw1.text((x_start + text_width, y_start), question_mark, fill=(255, 0, 0), font=font)
+    draw2.text((x_start + text_width, y_start), f"{answer}", fill=(255, 0, 0), font=font)
 
     # Ensure RGB mode for wxPython and convert to bytes
-    pil_image = pil_image.convert('RGB')
-    image_data = pil_image.tobytes()
+    pil_image1 = image1.convert('RGB')
+    pil_image2 = image2.convert('RGB')
 
-    pil_image.save("njk.png")
+    pil_image1.save("image1.png")
+    pil_image2.save("image2.png")
 
-    # print(type(image_data))
+    image_data1 = pil_image1.tobytes()
+    image_data2 = pil_image2.tobytes()
 
     # TODO: Use regex for the answer
     answer = f"{answer}"
-    return image_data, image_data, re.compile(rf"\s*{re.escape(answer)}\s*")
+    return image_data1, image_data2, re.compile(rf"\s*{re.escape(answer)}\s*")
 
 
-get_image(5)
+get_image(1)
