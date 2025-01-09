@@ -250,6 +250,8 @@ class MyFrame(wx.Frame):
         list1 = self.exo_list
         list2 = self.exo_done
         ret = ""
+        self.progress_bar.SetValue(int(len(self.exo_done) / len(self.exo_list) * 100))
+        print(f"    --VS-->>{self.exo_done} VS {self.exo_list}")
 
         # TODO: randomize the exo
         r = False
@@ -318,7 +320,7 @@ class MyFrame(wx.Frame):
             # time.sleep(10)
             # self.valiny.Show()
             # self.valiny.Enable(True)
-            self.progress_bar.SetValue(int(len(self.exo_list)/len(self.exo_done)*100))
+
             return True
         else:
             print("    --->>DISO")
@@ -327,7 +329,6 @@ class MyFrame(wx.Frame):
             time.sleep(1)
             if self.stage_min < self.stage_max:
                 self.stage_min += 1
-            self.progress_bar.SetValue(int(len(self.exo_list)/len(self.exo_done)*100))
             return False
 
     def get_level_config(self):
