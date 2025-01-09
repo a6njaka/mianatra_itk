@@ -304,7 +304,7 @@ class MyFrame(wx.Frame):
         print(f"    '{user_answer}' VS '{exo_answer}'")
 
         # if f"{user_answer}" == f"{exo_answer}":
-        self.valiny.SetValue("1234567890")
+        # self.valiny.SetValue("1234567890")
         match = exo_answer.search(user_answer)
         if f"{user_answer}".strip() == "":
             self.player.play_media(r"mp3/wrong.mp3")
