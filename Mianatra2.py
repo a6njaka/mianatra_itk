@@ -12,7 +12,7 @@ class MediaPlayer:
         self.Instance = vlc.Instance()
         self.player = self.Instance.media_player_new()
         self.is_playing = False
-        self.panel = panel  # Reference to the panel
+        self.panel = panel
 
     def play_media(self, file_path):
         if self.is_playing:
@@ -96,7 +96,7 @@ class MyFrame(wx.Frame):
 
         # Add a progress bar to the last part
         self.add_progress_bar_to_status_bar()
-        self.progress_bar.SetValue(50)
+        self.progress_bar.SetValue(0)
 
         # Create a sizer to layout controls
         main_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -212,7 +212,6 @@ class MyFrame(wx.Frame):
         self.video_panel.Hide()
         self.background_staticbitmap.Show()
         # self.player.player.stop()
-        print(f"    --display-->{self.current_exo_name}/ idx: {self.stage_current_index}")
         print("    -->>", "image1 : ", type(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1']))
         print("    -->>", "image2 : ", type(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2']))
         mp3 = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['mp3']
@@ -221,10 +220,8 @@ class MyFrame(wx.Frame):
         print("    -->>", "text : ", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'])
 
         self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1'])
-
-        self.play_combined_mp3(mp3)
-
         self.background_staticbitmap.SetCursor(wx.Cursor(wx.CURSOR_HAND))
+        self.play_combined_mp3(mp3)
 
     def get_exo_index(self):
         print("--->>get_exo_index")
@@ -313,10 +310,15 @@ class MyFrame(wx.Frame):
             self.stage_index_done.append(self.stage_current_index)
             print("    --->>MARINA")
             self.SetStatusText("MARINA !")
-            self.player.play_media(r"mp3/right.mp3")
-            self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2'])
             self.valiny.SetValue("")
-            time.sleep(3)
+            # self.player.play_media(r"mp3/right.mp3")
+            self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2'])
+            # self.valiny.Enable(False)
+            self.home_panel.Layout()
+            # time.sleep(10)
+            # self.valiny.Show()
+            # self.valiny.Enable(True)
+            self.progress_bar.SetValue(int(len(self.exo_list)/len(self.exo_done)*100))
             return True
         else:
             print("    --->>DISO")
@@ -325,6 +327,7 @@ class MyFrame(wx.Frame):
             time.sleep(1)
             if self.stage_min < self.stage_max:
                 self.stage_min += 1
+            self.progress_bar.SetValue(int(len(self.exo_list)/len(self.exo_done)*100))
             return False
 
     def get_level_config(self):
