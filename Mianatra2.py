@@ -308,6 +308,7 @@ class MyFrame(wx.Frame):
         match = exo_answer.search(user_answer)
         if f"{user_answer}".strip() == "":
             self.player.play_media(r"mp3/wrong.mp3")
+            time.sleep(1)
         elif match:
             self.stage_index_done.append(self.stage_current_index)
             print("    --->>MARINA")
@@ -321,6 +322,7 @@ class MyFrame(wx.Frame):
             print("    --->>DISO")
             self.SetStatusText("DISO !")
             self.player.play_media(r"mp3/wrong.mp3")
+            time.sleep(1)
             if self.stage_min < self.stage_max:
                 self.stage_min += 1
             return False

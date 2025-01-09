@@ -45,7 +45,7 @@ def get_image(level=1):
 
     # Draw the question mark in red
     draw1.text((x_start + text_width, y_start), question_mark, fill=(255, 0, 0), font=font)
-    draw2.text((x_start + text_width, y_start), f"{answer}", fill=(255, 0, 0), font=font)
+    draw2.text((x_start + text_width, y_start), f" {answer}", fill=(255, 0, 0), font=font)
 
     # Ensure RGB mode for wxPython and convert to bytes
     pil_image1 = image1.convert('RGB')
