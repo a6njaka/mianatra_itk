@@ -1,79 +1,53 @@
-import random
+from PIL import Image, ImageDraw, ImageFont
 
+def addition2number_vertical(a, b, output_path="addition_result.png"):
+    # Create a blank white image
+    width, height = 854, 480
+    image = Image.new("RGB", (width, height), "white")
+    draw = ImageDraw.Draw(image)
 
-def number_to_french(n):
-    if n < 0 or n > 999999:
-        return "Nombre hors de portée (0 - 999999 uniquement)."
+    # Load font with size 70
+    try:
+        font = ImageFont.truetype("arial.ttf", 70)  # Use a default font
+    except IOError:
+        font = ImageFont.load_default()
 
-    units = ["", "un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf"]
-    teens = ["dix", "onze", "douze", "treize", "quatorze", "quinze", "seize", "dix-sept", "dix-huit", "dix-neuf"]
-    tens = ["", "dix", "vingt", "trente", "quarante", "cinquante", "soixante", "soixante-dix", "quatre-vingt", "quatre-vingt-dix"]
+    # Convert numbers to strings, with "+" added to a and b
+    a_str = f"{a}"
+    b_str = f"{b}"
+    sum_str = str(a + b)
 
-    def below_hundred(n):
-        if n < 10:
-            return units[n]
-        elif n < 20:
-            return teens[n - 10]
-        elif n < 70:
-            if n % 10 == 1 and n != 71:
-                return tens[n // 10] + "-et-" + units[n % 10]
-            else:
-                return tens[n // 10] + ("-" + units[n % 10] if n % 10 != 0 else "")
-        elif n < 80:
-            return "soixante-" + below_hundred(n - 60)
-        else:
-            # Handle numbers 80 to 99
-            if n == 80:  # Special case for standalone 80
-                return "quatre-vingts"
-            elif n < 90:
-                return "quatre-vingt" + ("-" + units[n - 80] if n % 10 != 0 else "")
-            else:  # Numbers 90 to 99
-                return "quatre-vingt-" + teens[n - 90]
+    # Calculate text dimensions
+    text_width_a, text_height_a = draw.textbbox((0, 0), a_str, font=font)[2:]
+    text_width_b, text_height_b = draw.textbbox((0, 0), b_str, font=font)[2:]
+    text_width_sum, text_height_sum = draw.textbbox((0, 0), sum_str, font=font)[2:]
 
-    def below_thousand(n):
-        if n == 0:
-            return ""
-        elif n < 100:
-            return below_hundred(n)
-        else:
-            hundreds = n // 100
-            remainder = n % 100
-            if hundreds == 1:
-                return "cent" + (" " + below_hundred(remainder) if remainder != 0 else "")
-            else:
-                return units[hundreds] + " cent" + (" " + below_hundred(remainder) if remainder != 0 else "")
+    # Define positions (aligned to the right)
+    x_right = 500  # Right margin
+    y_start = height // 4
 
-    if n == 0:
-        return "zéro"
+    # Positions for a, b, and sum
+    x_a = x_right - text_width_a
+    y_a = y_start
 
-    thousands = n // 1000
-    remainder = n % 1000
+    x_b = x_right - text_width_b
+    y_b = y_a + text_height_a + 20
 
-    thousands_part = ""
-    if thousands > 1:
-        thousands_part = below_thousand(thousands) + " mille"
-    elif thousands == 1:
-        thousands_part = "mille"
+    line_y = y_b + text_height_b + 10  # Line below b
 
-    remainder_part = below_thousand(remainder)
-    if thousands_part and remainder_part:
-        return thousands_part + " " + remainder_part
-    else:
-        return thousands_part + remainder_part
+    x_sum = x_right - text_width_sum
+    y_sum = line_y + 20
 
+    # Draw the text and line
+    draw.text((x_a, y_a), a_str, fill="black", font=font)  # Draw a
+    draw.text((x_b, y_b), b_str, fill="black", font=font)  # Draw b
+    draw.text((x_right - max(text_width_a, text_width_b) - 50, (y_a + y_b)/2), "+", fill="black", font=font)  # Draw b
+    draw.line([(x_right - max(text_width_a, text_width_b), line_y), (x_right, line_y)], fill="black", width=7)  # Draw line
+    draw.text((x_sum, y_sum), sum_str, fill="red", font=font)  # Draw sum in red
 
-# Examples
-print(number_to_french(1200))  # quatre-vingts
-print(number_to_french(12000))  # quatre-vingt-dix
-print(number_to_french(91))  # quatre-vingt-onze
-print(number_to_french(99))  # quatre-vingt-dix-neuf
-print(number_to_french(100))  # cent
-print(number_to_french(81))  # quatre-vingt-un
-print(number_to_french(12000))  # douze mille
+    # Save the image
+    image.save(output_path)
+    print(f"Image saved as {output_path}")
 
-print("-" * 100)
-
-for i in range(0, 11):
-    n = random.randint(0, 1000)
-    txt = number_to_french(n)
-    print(f"{n}: {txt}")
+# Example usage
+addition2number_vertical(5, 117)

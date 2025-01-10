@@ -74,7 +74,7 @@ class ExoSchedule:
                                     "image2": image2,
                                     # "image1": "images/A1.png",
                                     # "image2": "images/A4.png",
-                                    "mp3": [r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\vidin_ny_voankazo_b\A1ZZ.mp3"],
+                                    "mp3": [r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\vidin_ny_voankazo_b\A1.mp3"],
                                     "answer": answer,
                                     "text": "andrana"
                                 }
@@ -84,7 +84,7 @@ class ExoSchedule:
                                 exo_tmp = {
                                     "image1": "images/A1.png",
                                     "image2": "images/A4.png",
-                                    "mp3": [r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\vidin_ny_voankazo_b\A1ZZ.mp3"],
+                                    "mp3": [r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\vidin_ny_voankazo_b\A1.mp3"],
                                     "answer": re.compile("6"),
                                     "text": "andrana"
                                 }
