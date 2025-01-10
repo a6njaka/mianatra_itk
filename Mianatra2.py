@@ -250,7 +250,12 @@ class MyFrame(wx.Frame):
         list1 = self.exo_list
         list2 = self.exo_done
         ret = ""
-        self.progress_bar.SetValue(int(len(self.exo_done) / len(self.exo_list) * 100))
+
+        try:
+            self.progress_bar.SetValue(int(len(self.exo_done) / len(self.exo_list) * 100))
+        except ZeroDivisionError:
+            pass
+
         # print(f"     --VS-->>{self.exo_done} VS {self.exo_list}")
 
         # TODO: randomize the exo
@@ -276,6 +281,7 @@ class MyFrame(wx.Frame):
             self.display_exo_complete()
             ret = None
         self.current_exo_name = ret
+        self.SetStatusText(f"Level: {len(self.exo_done)}/{len(self.exo_list)}", 3)
 
     def verify_correctness_all_exo(self):
         print("---->>verify_correctness_all_exo")
@@ -457,8 +463,8 @@ class MyFrame(wx.Frame):
         elif self.current_exo_name is None and self.ok_button.GetLabel() != "BRAVO !":
             self.display_exo_complete()
         elif self.ok_button.GetLabel() == "OK":
-            self.verify_answer()
-            self.get_exo_index()
+            if self.verify_answer():
+                self.get_exo_index()
             if self.stage_current_index is not None:
                 self.display_exo()
             else:

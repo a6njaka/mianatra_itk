@@ -5,7 +5,7 @@
          "exo_group": [
             "addition_3ch_hor"
          ],
-         "exo_number": 1,
+         "exo_number": 2,
          "exo_weekdays": [
             "Monday",
             "Tuesday",
@@ -19,9 +19,9 @@
       {
          "Activate": true,
          "exo_group": [
-            "addition_1"
+            "Addition_vola_2"
          ],
-         "exo_number": 1,
+         "exo_number": 7,
          "exo_weekdays": [
             "Monday",
             "Tuesday",
