@@ -65,7 +65,6 @@ class ExoSchedule:
                         # if exo == "addition_3ch_hor" or exo == "addition_1":
                         print(exo)
                         if f"lib_{exo}" in sys.modules:
-                            # print("####1####")
                             library = sys.modules[f"lib_{exo}"]
                             for _ in range(int(data["max"])):
                                 image1, image2, answer = library.get_image(1)
@@ -81,7 +80,6 @@ class ExoSchedule:
                                 }
                                 self.all_exo[exo]["exo"].append(exo_tmp)
                         else:
-                            print("####2####")
                             for _ in range(int(data["max"])):
                                 exo_tmp = {
                                     "image1": "images/A1.png",
@@ -98,5 +96,5 @@ class ExoSchedule:
                 # print(json_config_path)
 
 
-p1 = ExoSchedule()
+# p1 = ExoSchedule()
 # p1.display_all_exo()

@@ -251,7 +251,7 @@ class MyFrame(wx.Frame):
         list2 = self.exo_done
         ret = ""
         self.progress_bar.SetValue(int(len(self.exo_done) / len(self.exo_list) * 100))
-        print(f"    --VS-->>{self.exo_done} VS {self.exo_list}")
+        # print(f"     --VS-->>{self.exo_done} VS {self.exo_list}")
 
         # TODO: randomize the exo
         r = False
@@ -284,7 +284,7 @@ class MyFrame(wx.Frame):
             try:
                 if not len(self.all_exo[exo]["exo"]) == 0:
                     new_all_exo[exo] = self.all_exo[exo]
-                    print(f"    -->Add '{exo}'")
+                    print(f"    -->Correct '{exo}'")
                 else:
                     print(f"    -->Removed '{exo}'")
             except KeyError:
@@ -469,7 +469,7 @@ class MyFrame(wx.Frame):
                     self.get_exo_index()
                     if self.stage_current_index is not None:
                         self.display_exo()
-        self.SetStatusText(f"Stage {len(self.stage_index_done) + 1}/{self.stage_min}", 2)
+        self.SetStatusText(f"Stage {len(self.stage_index_done) + 1}/{self.stage_min} (Max : {self.stage_max})", 2)
 
     def display_exo_complete(self):
         # TODO: Display Bravo image
@@ -484,7 +484,7 @@ class MyFrame(wx.Frame):
         try:
             files_exist = True
             all_mp3 = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['mp3']
-            if len(all_mp3) >0:
+            if len(all_mp3) > 0:
                 for mp3 in all_mp3:
                     if not os.path.isfile(mp3):
                         files_exist = False
@@ -514,29 +514,38 @@ class MyFrame(wx.Frame):
 
     @staticmethod
     def play_combined_mp3(mp3_files):
-        instance = vlc.Instance()
-        player = instance.media_player_new()
-        media_list = instance.media_list_new()
+        files_exist = True
+        if len(mp3_files) > 0:
+            for mp3 in mp3_files:
+                if not os.path.isfile(mp3):
+                    files_exist = False
+                    break
+        if files_exist and len(mp3_files) > 0:
+            instance = vlc.Instance()
+            player = instance.media_player_new()
+            media_list = instance.media_list_new()
 
-        for mp3_file in mp3_files:
-            media = instance.media_new(mp3_file)
-            media_list.add_media(media)
+            for mp3_file in mp3_files:
+                media = instance.media_new(mp3_file)
+                media_list.add_media(media)
 
-        list_player = instance.media_list_player_new()
-        list_player.set_media_player(player)
-        list_player.set_media_list(media_list)
+            list_player = instance.media_list_player_new()
+            list_player.set_media_player(player)
+            list_player.set_media_list(media_list)
 
-        list_player.play()
+            list_player.play()
 
-        # Wait for playback to finish
-        while list_player.get_state() != vlc.State.Ended:
-            time.sleep(0.1)
+            # Wait for playback to finish
+            while list_player.get_state() != vlc.State.Ended:
+                time.sleep(0.1)
 
-        # Close the player after playback
-        list_player.stop()
-        list_player.release()
-        player.release()
-        instance.release()
+            # Close the player after playback
+            list_player.stop()
+            list_player.release()
+            player.release()
+            instance.release()
+        else:
+            print("MP3 not correct!")
 
 
 if __name__ == "__main__":
