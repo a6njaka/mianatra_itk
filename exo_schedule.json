@@ -3,7 +3,7 @@
       {
          "Activate": true,
          "exo_group": [
-            "addition_3ch_hor"
+            "dict_mg_v4"
          ],
          "exo_number": 2,
          "exo_weekdays": [
@@ -21,7 +21,7 @@
          "exo_group": [
             "Addition_vola_2","dict_mg_v2","Addition_vola_1","adittion_b2","Addition_vola_2","vola_moins_isa1","num_lettre_v1","addition_1p2p3"
          ],
-         "exo_number": 7,
+         "exo_number": 0,
          "exo_weekdays": [
             "Monday",
             "Tuesday",

@@ -304,14 +304,10 @@ class MyFrame(wx.Frame):
         print("--->>verify_answer")
         print(f"    --1->>{self.current_exo_name}")
         print(f"    --2->>{self.stage_current_index}")
-        # for e in self.all_exo:
-        #     print(f"{e}: {self.all_exo[e]}")
         user_answer = self.valiny.GetValue()
         exo_answer = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["answer"]
         print(f"    '{user_answer}' VS '{exo_answer}'")
 
-        # if f"{user_answer}" == f"{exo_answer}":
-        # self.valiny.SetValue("1234567890")
         match = exo_answer.search(user_answer)
         if f"{user_answer}".strip() == "":
             self.player.play_media(r"mp3/wrong.mp3")
