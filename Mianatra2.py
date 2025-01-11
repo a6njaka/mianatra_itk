@@ -5,6 +5,7 @@ import random
 import vlc
 import re
 import time
+import asyncio
 
 
 class MediaPlayer:
@@ -44,7 +45,7 @@ class MyFrame(wx.Frame):
         self.choice_answer_available = False
 
         # Load background image
-        img_path = os.path.join("images", "A3.png")
+        img_path = os.path.join("images", "orange_ice_mint.jpg")
         self.background_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
 
         # Limit the width of the background image to 800 pixels while maintaining the aspect ratio
@@ -116,15 +117,15 @@ class MyFrame(wx.Frame):
 
         # Create a panel to hold the video
         self.video_panel = wx.Panel(self.home_panel, style=wx.SIMPLE_BORDER)
-        # self.video_panel.SetMaxSize((854, 200))
-        self.video_panel.SetBackgroundColour(wx.WHITE)  # Set background color to white
+        # self.video_panel.SetMaxSize((854, -1))
         main_sizer.Add(self.video_panel, 1, wx.EXPAND | wx.ALL, 10)
-        self.video_panel.Hide()
 
         # Create a horizontal sizer for the video panel
         # video_sizer = wx.BoxSizer(wx.HORIZONTAL)
         # video_sizer.Add(self.video_panel, 1, wx.ALIGN_CENTER)
         # main_sizer.Add(video_sizer, 1, wx.EXPAND | wx.ALL, 10)
+
+        self.video_panel.Hide()
 
         # Create textCtrl
         self.valiny = wx.TextCtrl(self.home_panel, -1, "", size=(854, -1), style=wx.TE_LEFT | wx.TE_PROCESS_ENTER)
@@ -140,6 +141,7 @@ class MyFrame(wx.Frame):
         main_sizer.Add(self.ok_button, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
         # self.player = MediaPlayer(self.home_panel)
+        # self.player = MediaPlayer(self.background_image)
         self.player = MediaPlayer(self.video_panel)
 
         self.home_panel.SetSizer(main_sizer)
@@ -319,11 +321,11 @@ class MyFrame(wx.Frame):
             print("    --->>MARINA")
             self.SetStatusText("MARINA !")
             self.valiny.SetValue("")
-            # self.player.play_media(r"mp3/right.mp3")
+            self.player.play_media(r"mp3/right.mp3")
             self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2'])
-            # self.valiny.Enable(False)
+            # self.valiny.Hide()
             self.home_panel.Layout()
-            # time.sleep(10)
+            time.sleep(2)
             # self.valiny.Show()
             # self.valiny.Enable(True)
 
@@ -332,7 +334,7 @@ class MyFrame(wx.Frame):
             print("    --->>DISO")
             self.SetStatusText("DISO !")
             self.player.play_media(r"mp3/wrong.mp3")
-            time.sleep(1)
+            time.sleep(2)
             if self.stage_min < self.stage_max:
                 self.stage_min += 1
             return False
@@ -402,8 +404,9 @@ class MyFrame(wx.Frame):
     def OnTool1(self, event):
         print("-->OnTool1 Clicked")
         # self.player.play_media(r"D:\SONG\00000\Tsy mankaiza.MP3")
-        self.player.play_media(r"D:\USB\1 minute funny videos.mp4")
+        self.player.play_media(r"D:\Clips\GASY TSARA MIDERA - FIDERANA MANDRAVA SAKANA.mp4")
         self.background_staticbitmap.Hide()
+        self.home_panel.Layout()
         self.home_panel.Layout()
 
     def OnTool2(self, event):

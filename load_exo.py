@@ -57,7 +57,7 @@ class ExoSchedule:
                     if match_b is not None:
                         result[-1]["image2"] = os.path.join(folder_path, file)
                         tmp = rf"{self.reformat_answer(match_b.group(2))}"
-                        result[-1]["answer"] = re.compile(re.escape(tmp))
+                        result[-1]["answer"] = re.compile(rf"{re.escape(tmp)}$")
                         break
                 for file in files:
                     match_c = re.search(rf"(A{i})(-.*)*\.mp3$", file)

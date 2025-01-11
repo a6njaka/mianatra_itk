@@ -59,7 +59,7 @@ def get_image(level=1):
 
     # TODO: Use regex for the answer
     answer = f"{answer}"
-    return image_data1, image_data2, re.compile(rf"\s*{re.escape(answer)}\s*")
+    return image_data1, image_data2, re.compile(rf"^\s*{re.escape(answer)}\s*$")
 
 
 get_image(1)
