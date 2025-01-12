@@ -58,4 +58,4 @@ def addition2number_vertical(a, b, operation="+"):
 
 
 # Example usage
-addition2number_vertical(12, 2, "x")
+addition2number_vertical(12, 2, "+")

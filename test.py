@@ -41,3 +41,5 @@ for col in column_width:
 # ------------------------- Save ----------------------
 book.save(log_excel_file)
 book.close()
+
+# pyinstaller -w -F Mianatra2.py

@@ -61,10 +61,10 @@ class ExoSchedule:
                         result[-1]["image2"] = os.path.join(folder_path, file)
                         tmp = rf"{self.reformat_answer(match_b.group(2))}"
                         if case_sensitive:
-                            result[-1]["answer"] = re.compile(rf"{re.escape(tmp)}$")
-                            print(f"    -1->>case_sensitive = {case_sensitive}")
+                            result[-1]["answer"] = re.compile(rf"^{re.escape(tmp)}$")
+                            # print(f"    -1->>case_sensitive = {case_sensitive}")
                         else:
-                            result[-1]["answer"] = re.compile(rf"{re.escape(tmp)}$", re.IGNORECASE)
+                            result[-1]["answer"] = re.compile(rf"^{re.escape(tmp)}$", re.IGNORECASE)
                             # print(f"    -2->>case_sensitive = {case_sensitive}")
                         break
                 for file in files:
@@ -122,13 +122,13 @@ class ExoSchedule:
                         if f"lib_{exo}" in sys.modules:
                             library = sys.modules[f"lib_{exo}"]
                             for _ in range(int(data["max"])):
-                                image1, image2, answer = library.get_image(1)
+                                image1, image2, answer, text = library.get_image(1)
                                 exo_tmp = {
                                     "image1": image1,
                                     "image2": image2,
                                     "mp3": [],
                                     "answer": answer,
-                                    "text": "andrana"
+                                    "text": text
                                 }
                                 self.all_exo[exo]["exo"].append(exo_tmp)
                         else:

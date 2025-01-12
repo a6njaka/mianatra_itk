@@ -206,7 +206,7 @@ class MyFrame(wx.Frame):
             book = Workbook()
             sheet = book.active
             sheet.append(("Daty", "Marina/Diso", "Fanazarana", "Index", "Fanazavana", "Valiny natao"))
-            column_width = {"A": 25, "B": 15, "C": 15, "D": 15, "E": 30, "F": 30}
+            column_width = {"A": 25, "B": 15, "C": 30, "D": 15, "E": 30, "F": 30}
             for col in column_width:
                 sheet.column_dimensions[col].width = column_width[col]
                 sheet[f"{col}1"].font = Font(bold=True)

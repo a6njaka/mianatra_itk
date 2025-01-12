@@ -3,9 +3,16 @@
       {
          "Activate": true,
          "exo_group": [
-            "dict_mg_v4"
+            "dict_mg_v4",
+            "dict_mg_v2",
+            "Addition_vola_1",
+            "adittion_b2",
+            "addition_3ch_hor",
+            "vola_moins_isa1",
+            "num_lettre_v1",
+            "addition_1p2p3"
          ],
-         "exo_number": 2,
+         "exo_number": 0,
          "exo_weekdays": [
             "Monday",
             "Tuesday",
@@ -19,9 +26,28 @@
       {
          "Activate": true,
          "exo_group": [
-            "Addition_vola_2","dict_mg_v2","Addition_vola_1","adittion_b2","Addition_vola_2","vola_moins_isa1","num_lettre_v1","addition_1p2p3"
+            "multiplication_par2",
+            "multiplication_par3",
+            "multiplication_par4",
+            "multiplication_par5"
          ],
          "exo_number": 0,
+         "exo_weekdays": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+         ]
+      },
+      {
+         "Activate": true,
+         "exo_group": [
+            "addition_3ch_hor"
+         ],
+         "exo_number": 1,
          "exo_weekdays": [
             "Monday",
             "Tuesday",
