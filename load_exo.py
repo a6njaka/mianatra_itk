@@ -65,7 +65,7 @@ class ExoSchedule:
                             print(f"    -1->>case_sensitive = {case_sensitive}")
                         else:
                             result[-1]["answer"] = re.compile(rf"{re.escape(tmp)}$", re.IGNORECASE)
-                            print(f"    -2->>case_sensitive = {case_sensitive}")
+                            # print(f"    -2->>case_sensitive = {case_sensitive}")
                         break
                 for file in files:
                     match_c = re.search(rf"(A{i})(-.*)*\.mp3$", file)

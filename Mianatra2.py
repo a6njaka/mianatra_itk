@@ -5,7 +5,7 @@ import random
 import vlc
 import re
 import time
-import asyncio
+from datetime import datetime
 
 
 class MediaPlayer:
@@ -43,6 +43,7 @@ class MyFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title=title, size=(800, 450), style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE)
 
         self.choice_answer_available = False
+        self.log_file = "log_exo_itokiana.txt"
 
         # Load background image
         img_path = os.path.join("images", "orange_ice_mint.jpg")
@@ -179,6 +180,13 @@ class MyFrame(wx.Frame):
         self.Show()
         self.ok_button.SetFocus()
 
+    def update_log_file(self, text):
+        if type(text) is list:
+            text = " | ".join(text)
+        daty = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        with open(self.log_file, "a") as file:
+            file.write(f"{daty} | {text}" + "\n")
+
     def add_progress_bar_to_status_bar(self):
         # Create a panel for embedding controls in the status bar
         self.progress_panel = wx.Panel(self.status_bar)
@@ -313,6 +321,7 @@ class MyFrame(wx.Frame):
             self.player.play_media(r"mp3/wrong.mp3")
             time.sleep(1)
         elif match:
+            self.valiny.SetValue("")
             self.stage_index_done.append(self.stage_current_index)
             print("    --->>MARINA")
             self.SetStatusText("MARINA !")
@@ -324,15 +333,18 @@ class MyFrame(wx.Frame):
             time.sleep(2)
             # self.valiny.Show()
             # self.valiny.Enable(True)
+            self.update_log_file(["Marina", f"{self.current_exo_name}", f"{self.stage_current_index}", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'], f"valiny: {user_answer}"])
 
             return True
         else:
             print("    --->>DISO")
             self.SetStatusText("DISO !")
+            self.valiny.SetValue("")
             self.player.play_media(r"mp3/wrong.mp3")
             time.sleep(2)
             if self.stage_min < self.stage_max:
                 self.stage_min += 1
+            self.update_log_file(["Diso", f"{self.current_exo_name}", f"{self.stage_current_index}", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'], f"valiny: {user_answer}"])
             return False
 
     def get_level_config(self):

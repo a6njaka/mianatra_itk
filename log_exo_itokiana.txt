@@ -1,0 +1,18 @@
+2025-01-12_06-56-52 | Marina
+2025-01-12_06-57-02 | Marina
+2025-01-12_06-59-59 | Diso | 
+2025-01-12_07-00-07 | Marina | 
+2025-01-12_07-00-16 | Marina | 
+2025-01-12_07-00-26 | Marina | 
+2025-01-12_07-33-24 | Diso | dict_mg_v4 | 0 | 
+2025-01-12_07-40-12 | Diso | dict_mg_v4 | 0 | 
+2025-01-12_07-40-38 | Marina | dict_mg_v4 | 0 | 
+2025-01-12_07-40-46 | Marina | dict_mg_v4 | 1 | 
+2025-01-12_07-40-54 | Marina | dict_mg_v4 | 2 | 
+2025-01-12_07-42-32 | Marina | dict_mg_v4 | 6 | 
+2025-01-12_07-43-30 | Marina | dict_mg_v4 | 33 | 
+2025-01-12_07-43-44 | Marina | dict_mg_v4 | 20 | 
+2025-01-12_07-44-55 | Diso | dict_mg_v4 | 10 |  | valiny: 192
+2025-01-12_07-45-02 | Marina | dict_mg_v4 | 10 |  | valiny: 196
+2025-01-12_07-45-08 | Marina | dict_mg_v4 | 32 |  | valiny: 134
+2025-01-12_07-45-24 | Marina | dict_mg_v4 | 29 |  | valiny: Marc RAVALOMANANA
