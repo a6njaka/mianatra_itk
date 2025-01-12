@@ -6,6 +6,10 @@ import vlc
 import re
 import time
 from datetime import datetime
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles.borders import Border, Side
+from openpyxl.styles import Font
+from openpyxl.styles import PatternFill
 
 
 class MediaPlayer:
@@ -43,7 +47,8 @@ class MyFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title=title, size=(800, 450), style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE)
 
         self.choice_answer_available = False
-        self.log_file = "log_exo_itokiana.txt"
+        self.log_txt_file = "log_exo_itokiana.txt"
+        self.log_excel_file = "log_exo_itokiana.xlsx"
 
         # Load background image
         img_path = os.path.join("images", "orange_ice_mint.jpg")
@@ -181,11 +186,37 @@ class MyFrame(wx.Frame):
         self.ok_button.SetFocus()
 
     def update_log_file(self, text):
+        text_list = [text]
         if type(text) is list:
-            text = " | ".join(text)
+            text_list = text
+            text = " | ".join(map(str, text))
         daty = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        with open(self.log_file, "a") as file:
-            file.write(f"{daty} | {text}" + "\n")
+        try:
+            with open(self.log_txt_file, "a") as file:
+                file.write(f"{daty} | {text}" + "\n")
+        except PermissionError:
+            pass
+
+        # Log for excel
+        print(f"-->Excel: {text_list}")
+        if os.path.isfile(self.log_excel_file):
+            book = load_workbook(self.log_excel_file)
+            sheet = book.active
+        else:
+            book = Workbook()
+            sheet = book.active
+            sheet.append(("Daty", "Marina/Diso", "Fanazarana", "Index", "Fanazavana", "Valiny natao"))
+            column_width = {"A": 25, "B": 15, "C": 15, "D": 15, "E": 30, "F": 30}
+            for col in column_width:
+                sheet.column_dimensions[col].width = column_width[col]
+                sheet[f"{col}1"].font = Font(bold=True)
+                sheet[f"{col}1"].fill = PatternFill(start_color="00A9E6", fill_type="solid")
+        sheet.append([daty] + text_list)
+        try:
+            book.save(self.log_excel_file)
+        except PermissionError:
+            pass
+        book.close()
 
     def add_progress_bar_to_status_bar(self):
         # Create a panel for embedding controls in the status bar
@@ -333,7 +364,7 @@ class MyFrame(wx.Frame):
             time.sleep(2)
             # self.valiny.Show()
             # self.valiny.Enable(True)
-            self.update_log_file(["Marina", f"{self.current_exo_name}", f"{self.stage_current_index}", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'], f"valiny: {user_answer}"])
+            self.update_log_file(["Marina", self.current_exo_name, self.stage_current_index, self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'], user_answer])
 
             return True
         else:
@@ -344,7 +375,7 @@ class MyFrame(wx.Frame):
             time.sleep(2)
             if self.stage_min < self.stage_max:
                 self.stage_min += 1
-            self.update_log_file(["Diso", f"{self.current_exo_name}", f"{self.stage_current_index}", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'], f"valiny: {user_answer}"])
+            self.update_log_file(["Diso", self.current_exo_name, self.stage_current_index, self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'], user_answer])
             return False
 
     def get_level_config(self):

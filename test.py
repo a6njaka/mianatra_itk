@@ -1,42 +1,43 @@
-import os
-import time
-from datetime import datetime
-from PIL import ImageGrab
+
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles.borders import Border, Side
+from openpyxl.styles import Font
+from openpyxl.styles import PatternFill
 
 
-def get_current_timestamp():
-    """Get the current timestamp in YYYYMMDDHHMMSS format."""
-    return datetime.now().strftime("%Y%m%d%H%M%S")
+log_excel_file = "log_exo_itokiana.xlsx"
+# book = load_workbook(log_excel_file)
+book = Workbook()
 
+sheet = book.active
 
-def append_timestamp_to_file(filepath, timestamp):
-    """Append a timestamp to a text file."""
-    with open(filepath, "a") as file:
-        file.write(timestamp + "\n")
+# ------------------Insert data -------------------------
+sheet.append(("DOB", "LAST NAME", "FIRST NAME"))
+sheet['A2'] = "06/01/1980"
+sheet['B2'] = "ANDRIAMAHENINA"
+sheet.cell(row=2, column=3).value = "Njaka Namelantsoa"
 
+sheet.append(("04/07/1983", "TAHINAMARINELA", "Lanjasoa Manampihanitra"))
+sheet.append(("24/04/2009", "ANDRIAMAHENINA", "Anjarasoa Itokiana"))
+sheet.append(("12/10/2012", "ANDRIAMAHENINA", "Miotisoa Ifaliana"))
+sheet.append(("24/12/2016", "ANDRIAMAHENINA", "Iarovana Nomenasoa"))
+sheet.title = "Family"
+sheet2 = book.create_sheet("Data")
+sheet2.append(("06/01/1980", "ANDRIAMAHENINA", "Njaka Namelantsoa"))
 
-def ensure_directories_exist(*directories):
-    """Ensure that all specified directories exist."""
-    for directory in directories:
-        os.makedirs(directory, exist_ok=True)
+# -------------------- Layout -------------------------
+thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+column_width = {"A": 15, "B": 25, "C": 30}
+for row in range(sheet.max_row):
+    for col in range(len(column_width)):
+        sheet.cell(row + 1, col + 1).border = thin_border
 
+for col in column_width:
+    sheet.column_dimensions[col].width = column_width[col]
+    sheet[f"{col}1"].font = Font(bold=True)
+    sheet[f"{col}1"].fill = PatternFill(start_color="00A9E6", fill_type="solid")
+    sheet[f"{col}1"].border = thin_border
 
-def main():
-    config_file_dir = "C:\\hp"
-    config_file = os.path.join(config_file_dir, "hpconfig.cfg")
-
-    while True:
-        # Get the current timestamp
-        timestamp = get_current_timestamp()
-
-        # Generate the screenshot file path
-
-        # Append the timestamp to the config file
-        append_timestamp_to_file(config_file, timestamp)
-
-        # Wait for 5 minutes (300 seconds)
-        time.sleep(300)
-
-
-if __name__ == "__main__":
-    main()
+# ------------------------- Save ----------------------
+book.save(log_excel_file)
+book.close()
