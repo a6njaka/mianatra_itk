@@ -3,7 +3,7 @@ import random
 import re
 
 
-def get_image(level=1):
+def get_image_data(level=1):
     a = random.randint(0, 10 ** level - 1)
     b = random.randint(0, 10 ** level - 1)
     c = random.randint(0, 10 ** level - 1)
@@ -51,15 +51,9 @@ def get_image(level=1):
     pil_image1 = image1.convert('RGB')
     pil_image2 = image2.convert('RGB')
 
-    pil_image1.save("image1.png")
-    pil_image2.save("image2.png")
-
     image_data1 = pil_image1.tobytes()
     image_data2 = pil_image2.tobytes()
 
     # TODO: Use regex for the answer
     answer = f"{answer}"
     return image_data1, image_data2, re.compile(rf"^\s*{re.escape(answer)}\s*$"), f"{a}+{b}+{c}={a+b+c}"
-
-
-get_image(1)

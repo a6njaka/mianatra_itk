@@ -1,6 +1,7 @@
 import json
 import random
 import lib_addition_3ch_hor
+import lib_addition_2ch_ver
 from datetime import date
 import os
 import re
@@ -118,11 +119,10 @@ class ExoSchedule:
                         self.all_exo[exo]["comment"] = data["comment"]
 
                         # if exo == "addition_3ch_hor" or exo == "addition_1":
-                        print(exo)
                         if f"lib_{exo}" in sys.modules:
                             library = sys.modules[f"lib_{exo}"]
                             for _ in range(int(data["max"])):
-                                image1, image2, answer, text = library.get_image(1)
+                                image1, image2, answer, text = library.get_image_data(data["level"])
                                 exo_tmp = {
                                     "image1": image1,
                                     "image2": image2,
@@ -131,7 +131,7 @@ class ExoSchedule:
                                     "text": text
                                 }
                                 self.all_exo[exo]["exo"].append(exo_tmp)
-                        else:
+                        elif data["type"] == "entry":
                             for exo_tmp in self.organize_files(exo_path, data):
                                 self.all_exo[exo]["exo"].append(exo_tmp)
                     except KeyError:
@@ -140,3 +140,12 @@ class ExoSchedule:
 
 # p1 = ExoSchedule()
 # p1.display_all_exo()
+# TODO:
+# - Fix issue Number exo vs Min allowed
+# - Improve entry exo
+# - Crete exo from lib
+# - Implement chose exo
+# - Settings for schedule from UI
+# - Settings for exo from UI
+# - Invent management
+

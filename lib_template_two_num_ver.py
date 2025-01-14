@@ -1,11 +1,14 @@
 from PIL import Image, ImageDraw, ImageFont
+import re
 
 
-def addition2number_vertical(a, b, operation="+"):
+def operation2number_vertical(a, b, operation="+"):
     # Create a blank white image
     width, height = 854, 480
-    image = Image.new("RGB", (width, height), "white")
-    draw = ImageDraw.Draw(image)
+    image1 = Image.new("RGB", (width, height), color=(230, 230, 230))
+    image2 = Image.new("RGB", (width, height), color=(230, 230, 230))
+    draw1 = ImageDraw.Draw(image1)
+    draw2 = ImageDraw.Draw(image2)
 
     # Load font with size 70
     try:
@@ -21,13 +24,13 @@ def addition2number_vertical(a, b, operation="+"):
         result = str(a + b)
     elif operation == "-":
         result = str(a - b)
-    elif operation == "x":
+    elif operation.lower() == "x":
         result = str(a * b)
 
     # Calculate text dimensions
-    text_width_a, text_height_a = draw.textbbox((0, 0), a_str, font=font)[2:]
-    text_width_b, text_height_b = draw.textbbox((0, 0), b_str, font=font)[2:]
-    text_width_sum, text_height_sum = draw.textbbox((0, 0), result, font=font)[2:]
+    text_width_a, text_height_a = draw1.textbbox((0, 0), a_str, font=font)[2:]
+    text_width_b, text_height_b = draw1.textbbox((0, 0), b_str, font=font)[2:]
+    text_width_sum, text_height_sum = draw1.textbbox((0, 0), result, font=font)[2:]
 
     # Define positions (aligned to the right)
     x_right = 500  # Right margin
@@ -46,16 +49,27 @@ def addition2number_vertical(a, b, operation="+"):
     y_sum = line_y + 10
 
     # Draw the text and line
-    draw.text((x_a, y_a), a_str, fill="black", font=font)  # Draw a
-    draw.text((x_b, y_b), b_str, fill="black", font=font)  # Draw b
-    draw.text((x_right - max(text_width_a, text_width_b) - 50, (y_a + y_b) / 2), operation, fill="black", font=font)  # Draw b
-    draw.line([(x_right - max(text_width_a, text_width_b) - 21, line_y), (x_right, line_y)], fill="black", width=5)  # Draw line
-    draw.text((x_sum, y_sum), result, fill="red", font=font)  # Draw sum in red
+    draw1.text((x_a, y_a), a_str, fill="black", font=font)  # Draw a
+    draw2.text((x_a, y_a), a_str, fill="black", font=font)  # Draw a
 
-    # Save the image
-    image.save("operation.png")
-    print(f"Image saved")
+    draw1.text((x_b, y_b), b_str, fill="black", font=font)  # Draw b
+    draw2.text((x_b, y_b), b_str, fill="black", font=font)  # Draw b
 
+    draw1.text((x_right - max(text_width_a, text_width_b) - 50, (y_a + y_b) / 2), operation, fill="black", font=font)  # Draw b
+    draw2.text((x_right - max(text_width_a, text_width_b) - 50, (y_a + y_b) / 2), operation, fill="black", font=font)  # Draw b
 
-# Example usage
-addition2number_vertical(12, 2, "+")
+    draw1.line([(x_right - max(text_width_a, text_width_b) - 21, line_y), (x_right, line_y)], fill="black", width=5)  # Draw line
+    draw2.line([(x_right - max(text_width_a, text_width_b) - 21, line_y), (x_right, line_y)], fill="black", width=5)  # Draw line
+
+    draw1.text((x_sum, y_sum), "?" * len(f"{result}"), fill="red", font=font)  # Draw sum in red
+    draw2.text((x_sum, y_sum), result, fill="red", font=font)  # Draw sum in red
+
+    # Ensure RGB mode for wxPython and convert to bytes
+    pil_image1 = image1.convert('RGB')
+    pil_image2 = image2.convert('RGB')
+
+    image_data1 = pil_image1.tobytes()
+    image_data2 = pil_image2.tobytes()
+
+    answer = f"{result}"
+    return image_data1, image_data2, re.compile(rf"^\s*{re.escape(answer)}\s*$"), f"{a}{operation}{b}={result}"

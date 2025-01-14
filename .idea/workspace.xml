@@ -33,6 +33,7 @@
     "Python.drag_drop_image.executor": "Run",
     "Python.exo_cpp_to_python.executor": "Run",
     "Python.generate-images.executor": "Run",
+    "Python.lib_addition_2ch_ver.executor": "Run",
     "Python.lib_addition_3ch_hor.executor": "Run",
     "Python.lib_template_two_num_ver.executor": "Run",
     "Python.load_exo.executor": "Run",

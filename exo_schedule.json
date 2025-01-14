@@ -26,12 +26,9 @@
       {
          "Activate": true,
          "exo_group": [
-            "multiplication_par2",
-            "multiplication_par3",
-            "multiplication_par4",
-            "multiplication_par5"
+            "addition_2ch_ver"
          ],
-         "exo_number": 0,
+         "exo_number": 1,
          "exo_weekdays": [
             "Monday",
             "Tuesday",
@@ -47,7 +44,7 @@
          "exo_group": [
             "addition_3ch_hor"
          ],
-         "exo_number": 1,
+         "exo_number": 0,
          "exo_weekdays": [
             "Monday",
             "Tuesday",
