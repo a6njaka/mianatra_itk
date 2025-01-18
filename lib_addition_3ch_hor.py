@@ -3,7 +3,7 @@ import random
 import re
 
 
-def get_image_data(level=1):
+def get_image_data(exo_path="", level=1):
     a = random.randint(0, 10 ** level - 1)
     b = random.randint(0, 10 ** level - 1)
     c = random.randint(0, 10 ** level - 1)

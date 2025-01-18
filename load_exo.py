@@ -2,6 +2,7 @@ import json
 import random
 import lib_addition_3ch_hor
 import lib_addition_2ch_ver
+import lib_mividy_voankazo
 from datetime import date
 import os
 import re
@@ -122,7 +123,7 @@ class ExoSchedule:
                         if f"lib_{exo}" in sys.modules:
                             library = sys.modules[f"lib_{exo}"]
                             for _ in range(int(data["max"])):
-                                image1, image2, answer, text = library.get_image_data(data["level"])
+                                image1, image2, answer, text = library.get_image_data(exo_path, data["level"])
                                 exo_tmp = {
                                     "image1": image1,
                                     "image2": image2,

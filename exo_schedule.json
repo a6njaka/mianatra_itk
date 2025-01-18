@@ -12,7 +12,7 @@
             "num_lettre_v1",
             "addition_1p2p3"
          ],
-         "exo_number": 8,
+         "exo_number": 0,
          "exo_weekdays": [
             "Monday",
             "Tuesday",
@@ -26,7 +26,7 @@
       {
          "Activate": true,
          "exo_group": [
-            "addition_2ch_ver"
+            "mividy_voankazo"
          ],
          "exo_number": 1,
          "exo_weekdays": [
@@ -44,7 +44,7 @@
          "exo_group": [
             "addition_3ch_hor"
          ],
-         "exo_number": 3,
+         "exo_number": 0,
          "exo_weekdays": [
             "Monday",
             "Tuesday",
