@@ -146,6 +146,10 @@ class ExoSchedule:
 # - Crete exo from lib
 # - Implement chose exo
 # - Settings for schedule from UI
-# - Settings for exo from UI
+# - Settings for exo from UI DIALOG
 # - Invent management
+# - Dashboard
+
+# EXO
+#
 

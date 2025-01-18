@@ -40,6 +40,7 @@
     "Python.mianatra2-add-gen-hor-v2.executor": "Run",
     "Python.number_to_french.executor": "Run",
     "Python.protect.executor": "Run",
+    "Python.rename_cfg_file.executor": "Run",
     "Python.test.executor": "Run",
     "Python.test2.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
