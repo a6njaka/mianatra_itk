@@ -46,6 +46,9 @@ class MyFrame(wx.Frame):
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title, size=(800, 450), style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE)
 
+        # Change the current working directory
+        os.chdir(r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2")
+
         self.choice_answer_available = False
         self.log_txt_file = "log_exo_itokiana.txt"
         self.log_excel_file = "log_exo_itokiana.xlsx"
@@ -183,6 +186,7 @@ class MyFrame(wx.Frame):
         self.stage_index_done = []
 
         self.Show()
+        self.Maximize()
         self.ok_button.SetFocus()
 
     def update_log_file(self, text):

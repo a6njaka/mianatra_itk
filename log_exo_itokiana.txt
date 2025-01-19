@@ -164,3 +164,438 @@
 2025-01-12_16-05-18 | Marina | addition_3ch_hor | 2 | 4+2+7=13 | 13
 2025-01-12_16-05-34 | Marina | addition_3ch_hor | 3 | 6+4+9=19 | 19
 2025-01-12_16-06-06 | Marina | addition_3ch_hor | 4 | 1+3+7=11 | 11
+2025-01-14_21-11-19 | Marina | addition_2ch_ver | 0 | 0+5=5 | 5
+2025-01-14_21-11-25 | Marina | addition_2ch_ver | 1 | 4+8=12 | 12
+2025-01-14_21-17-16 | Marina | addition_2ch_ver | 0 | 0+0=0 | 0
+2025-01-14_21-17-20 | Marina | addition_2ch_ver | 1 | 0+0=0 | 0
+2025-01-14_21-18-47 | Marina | addition_2ch_ver | 0 | 62+8=70 | 70
+2025-01-14_21-20-14 | Marina | addition_2ch_ver | 1 | 27+29=56 | 56
+2025-01-14_21-20-18 | Diso | addition_2ch_ver | 2 | 12+19=31 | ER
+2025-01-17_12-58-38 | Marina | dict_mg_v2 | 10 |  | tsaramaso
+2025-01-17_12-59-10 | Marina | dict_mg_v2 | 2 |  | vilany
+2025-01-17_12-59-37 | Marina | dict_mg_v2 | 12 |  | anana
+2025-01-17_12-59-57 | Marina | dict_mg_v2 | 20 |  | rano
+2025-01-17_13-00-03 | Marina | dict_mg_v2 | 8 |  | atody
+2025-01-17_13-00-11 | Marina | vola_moins_isa1 | 14 |  | 1900
+2025-01-17_13-00-19 | Marina | vola_moins_isa1 | 25 |  | 4800
+2025-01-17_13-00-25 | Marina | vola_moins_isa1 | 8 |  | 600
+2025-01-17_13-00-56 | Marina | vola_moins_isa1 | 17 |  | 1600
+2025-01-17_13-01-38 | Marina | vola_moins_isa1 | 30 |  | 4300
+2025-01-17_13-01-45 | Marina | Addition_vola_1 | 2 |  | 600
+2025-01-17_13-01-57 | Marina | Addition_vola_1 | 32 |  | 5500
+2025-01-17_13-02-03 | Marina | Addition_vola_1 | 0 |  | 200
+2025-01-17_13-02-11 | Marina | Addition_vola_1 | 29 |  | 7000
+2025-01-17_13-02-25 | Marina | Addition_vola_1 | 11 |  | 5200
+2025-01-17_13-02-40 | Marina | addition_1p2p3 | 263 |  | 19
+2025-01-17_13-02-47 | Marina | addition_1p2p3 | 79 |  | 18
+2025-01-17_13-02-54 | Marina | addition_1p2p3 | 246 |  | 20
+2025-01-17_13-03-05 | Marina | addition_1p2p3 | 260 |  | 16
+2025-01-17_13-03-14 | Marina | addition_1p2p3 | 73 |  | 12
+2025-01-17_13-03-42 | Marina | adittion_b2 | 242 |  | 921
+2025-01-17_13-03-52 | Marina | adittion_b2 | 45 |  | 175
+2025-01-17_13-04-03 | Marina | adittion_b2 | 48 |  | 714
+2025-01-17_13-04-18 | Marina | adittion_b2 | 198 |  | 426
+2025-01-17_13-04-32 | Marina | adittion_b2 | 167 |  | 209
+2025-01-17_13-04-46 | Marina | adittion_b2 | 187 |  | 424
+2025-01-17_13-05-02 | Marina | adittion_b2 | 11 |  | 274
+2025-01-17_13-05-23 | Marina | adittion_b2 | 235 |  | 997
+2025-01-17_13-05-47 | Marina | adittion_b2 | 248 |  | 474
+2025-01-17_13-05-54 | Marina | adittion_b2 | 289 |  | 884
+2025-01-17_13-06-00 | Marina | num_lettre_v1 | 0 |  | un
+2025-01-17_13-06-05 | Marina | num_lettre_v1 | 1 |  | deux
+2025-01-17_13-06-10 | Marina | num_lettre_v1 | 2 |  | trois
+2025-01-17_13-06-18 | Marina | num_lettre_v1 | 3 |  | quatre
+2025-01-17_13-06-24 | Marina | num_lettre_v1 | 4 |  | cinq
+2025-01-17_13-06-38 | Marina | dict_mg_v4 | 30 |  | Mahamasina
+2025-01-17_13-06-48 | Marina | dict_mg_v4 | 35 |  | Shell
+2025-01-17_13-07-13 | Marina | dict_mg_v4 | 3 |  | Rova
+2025-01-17_13-07-23 | Marina | dict_mg_v4 | 22 |  | TELMA
+2025-01-17_13-07-37 | Marina | dict_mg_v4 | 15 |  | Ampefiloha
+2025-01-17_13-07-44 | Marina | dict_mg_v4 | 7 |  | Anosy
+2025-01-17_13-07-58 | Marina | dict_mg_v4 | 3 |  | Rova
+2025-01-17_13-08-09 | Marina | dict_mg_v4 | 21 |  | Antananarivo
+2025-01-17_13-08-19 | Marina | dict_mg_v4 | 19 |  | Soarano
+2025-01-17_13-08-28 | Marina | dict_mg_v4 | 1 |  | Antsirabe
+2025-01-17_13-08-36 | Marina | addition_3ch_hor | 0 | 0+0+0=0 | 0
+2025-01-17_13-08-51 | Marina | addition_3ch_hor | 1 | 0+0+0=0 | 0
+2025-01-17_13-09-01 | Marina | addition_3ch_hor | 2 | 0+0+0=0 | 0
+2025-01-17_13-09-07 | Marina | addition_3ch_hor | 3 | 0+0+0=0 | 0
+2025-01-17_13-09-12 | Marina | addition_3ch_hor | 4 | 0+0+0=0 | 0
+2025-01-17_13-09-21 | Marina | addition_2ch_ver | 0 | 9+27=36 | 36
+2025-01-17_13-09-33 | Marina | addition_2ch_ver | 1 | 55+65=120 | 120
+2025-01-17_13-09-40 | Diso | addition_2ch_ver | 2 | 15+65=80 | 70
+2025-01-17_13-09-54 | Marina | addition_2ch_ver | 2 | 15+65=80 | 80
+2025-01-17_13-10-01 | Marina | addition_2ch_ver | 3 | 5+40=45 | 45
+2025-01-17_13-10-12 | Marina | addition_2ch_ver | 4 | 24+19=43 | 43
+2025-01-17_13-10-18 | Marina | addition_2ch_ver | 5 | 31+50=81 | 81
+2025-01-17_13-39-00 | Marina | addition_3ch_hor | 0 | 0+0+0=0 | 0
+2025-01-17_13-39-03 | Marina | addition_3ch_hor | 1 | 0+0+0=0 | 0
+2025-01-17_13-39-06 | Marina | addition_3ch_hor | 2 | 0+0+0=0 | 0
+2025-01-17_13-39-08 | Marina | addition_3ch_hor | 3 | 0+0+0=0 | 0
+2025-01-17_13-39-11 | Marina | addition_3ch_hor | 4 | 0+0+0=0 | 0
+2025-01-17_13-39-42 | Marina | addition_3ch_hor | 0 | 6+5+1=12 | 12
+2025-01-17_13-39-54 | Marina | addition_3ch_hor | 1 | 1+6+8=15 | 15
+2025-01-17_13-39-59 | Marina | addition_3ch_hor | 2 | 5+5+5=15 | 15
+2025-01-17_13-40-04 | Marina | addition_3ch_hor | 3 | 3+2+6=11 | 11
+2025-01-17_13-40-11 | Marina | addition_3ch_hor | 4 | 1+1+9=11 | 11
+2025-01-17_15-31-29 | Marina | addition_3ch_hor | 0 | 2+0+9=11 | 11
+2025-01-17_15-31-35 | Marina | addition_3ch_hor | 1 | 2+5+5=12 | 12
+2025-01-17_15-31-45 | Marina | addition_3ch_hor | 2 | 2+4+7=13 | 13
+2025-01-17_15-32-20 | Marina | addition_3ch_hor | 3 | 9+5+2=16 | 16
+2025-01-17_15-32-34 | Marina | addition_3ch_hor | 4 | 8+0+2=10 | 10
+2025-01-17_15-33-48 | Marina | Addition_vola_1 | 17 |  | 5500
+2025-01-17_15-33-57 | Marina | Addition_vola_1 | 28 |  | 4000
+2025-01-17_15-34-02 | Marina | Addition_vola_1 | 25 |  | 2200
+2025-01-17_15-34-07 | Marina | Addition_vola_1 | 0 |  | 200
+2025-01-17_15-34-14 | Marina | Addition_vola_1 | 11 |  | 5200
+2025-01-17_15-34-35 | Marina | dict_mg_v4 | 21 |  | Antananarivo
+2025-01-17_15-35-18 | Marina | dict_mg_v4 | 20 |  | Madagasikara
+2025-01-17_15-35-32 | Marina | dict_mg_v4 | 16 |  | Fasan'ny karana
+2025-01-17_15-35-50 | Marina | dict_mg_v4 | 28 |  | Andry RAJOELINA
+2025-01-17_15-36-00 | Marina | dict_mg_v4 | 6 |  | Ambohijatovo
+2025-01-17_15-36-06 | Marina | dict_mg_v4 | 7 |  | Anosy
+2025-01-17_15-36-16 | Marina | dict_mg_v4 | 17 |  | 194
+2025-01-17_15-36-23 | Marina | dict_mg_v4 | 3 |  | Rova
+2025-01-17_15-36-30 | Marina | dict_mg_v4 | 24 |  | Orange
+2025-01-17_15-36-42 | Marina | dict_mg_v4 | 3 |  | Rova
+2025-01-17_15-36-51 | Marina | addition_3ch_hor | 0 | 7+4+8=19 | 19
+2025-01-17_15-36-56 | Marina | addition_3ch_hor | 1 | 8+1+3=12 | 12
+2025-01-17_15-37-01 | Marina | addition_3ch_hor | 2 | 6+0+0=6 | 6
+2025-01-17_15-37-13 | Marina | addition_3ch_hor | 3 | 9+7+6=22 | 22
+2025-01-17_15-37-24 | Marina | addition_3ch_hor | 4 | 8+4+5=17 | 17
+2025-01-17_15-37-31 | Marina | dict_mg_v2 | 4 |  | seza
+2025-01-17_15-37-39 | Marina | dict_mg_v2 | 9 |  | menaka
+2025-01-17_15-37-47 | Marina | dict_mg_v2 | 16 |  | trondro
+2025-01-17_15-37-53 | Marina | dict_mg_v2 | 1 |  | vilia
+2025-01-17_15-38-01 | Marina | dict_mg_v2 | 10 |  | tsaramaso
+2025-01-17_15-38-07 | Marina | num_lettre_v1 | 0 |  | un
+2025-01-17_15-38-11 | Marina | num_lettre_v1 | 1 |  | deux
+2025-01-17_15-38-17 | Marina | num_lettre_v1 | 2 |  | trois
+2025-01-17_15-38-22 | Marina | num_lettre_v1 | 3 |  | quatre
+2025-01-17_15-38-27 | Marina | num_lettre_v1 | 4 |  | cinq
+2025-01-17_15-38-47 | Marina | adittion_b2 | 300 |  | 854
+2025-01-17_15-38-57 | Marina | adittion_b2 | 56 |  | 606
+2025-01-17_15-39-07 | Marina | adittion_b2 | 196 |  | 777
+2025-01-17_15-39-23 | Marina | adittion_b2 | 150 |  | 274
+2025-01-17_15-39-40 | Marina | adittion_b2 | 262 |  | 737
+2025-01-17_15-39-59 | Marina | adittion_b2 | 119 |  | 760
+2025-01-17_15-40-14 | Diso | adittion_b2 | 70 |  | 991
+2025-01-17_15-40-49 | Marina | adittion_b2 | 70 |  | 891
+2025-01-17_15-41-05 | Marina | adittion_b2 | 64 |  | 690
+2025-01-17_15-41-23 | Marina | adittion_b2 | 185 |  | 307
+2025-01-17_15-42-11 | Marina | adittion_b2 | 265 |  | 563
+2025-01-17_15-42-23 | Marina | vola_moins_isa1 | 21 |  | 1200
+2025-01-17_15-42-31 | Marina | vola_moins_isa1 | 1 |  | 400
+2025-01-17_15-42-37 | Marina | vola_moins_isa1 | 1 |  | 400
+2025-01-17_15-42-42 | Marina | vola_moins_isa1 | 33 |  | 4000
+2025-01-17_15-42-52 | Marina | vola_moins_isa1 | 13 |  | 100
+2025-01-17_15-43-04 | Marina | addition_1p2p3 | 128 |  | 22
+2025-01-17_15-43-23 | Marina | addition_1p2p3 | 95 |  | 16
+2025-01-17_15-43-31 | Marina | addition_1p2p3 | 83 |  | 13
+2025-01-17_15-43-42 | Marina | addition_1p2p3 | 291 |  | 14
+2025-01-17_15-43-58 | Marina | addition_1p2p3 | 10 |  | 9
+2025-01-17_15-44-22 | Marina | addition_2ch_ver | 0 | 16+88=104 | 104
+2025-01-17_15-44-31 | Marina | addition_2ch_ver | 1 | 7+66=73 | 73
+2025-01-17_15-44-38 | Marina | addition_2ch_ver | 2 | 42+27=69 | 69
+2025-01-17_15-44-48 | Marina | addition_2ch_ver | 3 | 72+76=148 | 148
+2025-01-17_15-45-03 | Marina | addition_2ch_ver | 4 | 75+18=93 | 93
+2025-01-17_18-47-21 | Marina | dict_mg_v2 | 16 |  | trondro
+2025-01-17_18-47-30 | Marina | dict_mg_v2 | 13 |  | kitoza
+2025-01-17_18-47-37 | Marina | dict_mg_v2 | 20 |  | rano
+2025-01-17_18-47-49 | Marina | dict_mg_v2 | 7 |  | akondro
+2025-01-17_18-48-01 | Marina | dict_mg_v2 | 3 |  | latabatra
+2025-01-17_18-48-13 | Marina | vola_moins_isa1 | 4 |  | 100
+2025-01-17_18-48-29 | Marina | vola_moins_isa1 | 24 |  | 4900
+2025-01-17_18-48-48 | Marina | vola_moins_isa1 | 14 |  | 1900
+2025-01-17_18-49-02 | Marina | vola_moins_isa1 | 12 |  | 200
+2025-01-17_18-49-16 | Marina | vola_moins_isa1 | 0 |  | 100
+2025-01-17_18-49-29 | Marina | dict_mg_v4 | 12 |  | Ankatso
+2025-01-17_18-49-36 | Marina | dict_mg_v4 | 17 |  | 194
+2025-01-17_18-49-53 | Marina | dict_mg_v4 | 15 |  | Ampefiloha
+2025-01-17_18-50-10 | Marina | dict_mg_v4 | 27 |  | Jovenna
+2025-01-17_18-50-38 | Marina | dict_mg_v4 | 25 |  | Galana
+2025-01-17_18-50-53 | Marina | dict_mg_v4 | 20 |  | Madagasikara
+2025-01-17_18-51-03 | Marina | dict_mg_v4 | 27 |  | Jovenna
+2025-01-17_18-51-27 | Marina | dict_mg_v4 | 17 |  | 194
+2025-01-17_18-51-39 | Marina | dict_mg_v4 | 30 |  | Mahamasina
+2025-01-17_18-51-51 | Marina | dict_mg_v4 | 14 |  | SHOPRITE
+2025-01-17_18-52-35 | Diso | adittion_b2 | 53 |  | 485
+2025-01-17_18-53-23 | Marina | adittion_b2 | 53 |  | 385
+2025-01-17_18-54-23 | Diso | adittion_b2 | 217 |  | 427
+2025-01-17_18-54-54 | Marina | adittion_b2 | 217 |  | 527
+2025-01-17_18-55-13 | Marina | adittion_b2 | 212 |  | 981
+2025-01-17_18-55-25 | Marina | adittion_b2 | 105 |  | 268
+2025-01-17_18-55-53 | Marina | adittion_b2 | 72 |  | 603
+2025-01-17_18-56-26 | Marina | adittion_b2 | 38 |  | 199
+2025-01-17_18-57-21 | Marina | adittion_b2 | 139 |  | 592
+2025-01-17_18-57-32 | Marina | adittion_b2 | 115 |  | 797
+2025-01-17_18-57-54 | Marina | adittion_b2 | 236 |  | 910
+2025-01-17_18-58-28 | Marina | adittion_b2 | 163 |  | 615
+2025-01-17_18-58-38 | Marina | Addition_vola_1 | 12 |  | 600
+2025-01-17_18-58-43 | Marina | Addition_vola_1 | 9 |  | 1200
+2025-01-17_18-58-49 | Marina | Addition_vola_1 | 24 |  | 2100
+2025-01-17_18-58-55 | Marina | Addition_vola_1 | 23 |  | 6000
+2025-01-17_18-59-01 | Marina | Addition_vola_1 | 2 |  | 600
+2025-01-17_18-59-17 | Marina | num_lettre_v1 | 0 |  | un
+2025-01-17_18-59-23 | Marina | num_lettre_v1 | 1 |  | deux
+2025-01-17_18-59-29 | Marina | num_lettre_v1 | 2 |  | trois
+2025-01-17_18-59-34 | Marina | num_lettre_v1 | 3 |  | quatre
+2025-01-17_18-59-39 | Marina | num_lettre_v1 | 4 |  | cinq
+2025-01-17_18-59-49 | Marina | addition_1p2p3 | 329 |  | 25
+2025-01-17_18-59-58 | Marina | addition_1p2p3 | 263 |  | 19
+2025-01-17_19-00-06 | Marina | addition_1p2p3 | 132 |  | 17
+2025-01-17_19-00-14 | Marina | addition_1p2p3 | 133 |  | 18
+2025-01-17_19-00-25 | Marina | addition_1p2p3 | 146 |  | 16
+2025-01-17_19-00-32 | Marina | addition_3ch_hor | 0 | 6+0+0=6 | 6
+2025-01-17_19-00-38 | Marina | addition_3ch_hor | 1 | 2+3+9=14 | 14
+2025-01-17_19-00-46 | Marina | addition_3ch_hor | 2 | 8+4+6=18 | 18
+2025-01-17_19-01-16 | Marina | addition_3ch_hor | 3 | 9+1+8=18 | 18
+2025-01-17_19-01-26 | Marina | addition_3ch_hor | 4 | 2+3+6=11 | 11
+2025-01-17_19-01-40 | Marina | addition_2ch_ver | 0 | 93+83=176 | 176
+2025-01-17_19-01-51 | Marina | addition_2ch_ver | 1 | 48+38=86 | 86
+2025-01-17_19-01-57 | Marina | addition_2ch_ver | 2 | 12+44=56 | 56
+2025-01-17_19-02-08 | Marina | addition_2ch_ver | 3 | 47+14=61 | 61
+2025-01-17_19-02-18 | Marina | addition_2ch_ver | 4 | 35+35=70 | 70
+2025-01-17_19-52-51 | Marina | addition_1p2p3 | 159 |  | 20
+2025-01-17_19-53-00 | Marina | addition_1p2p3 | 139 |  | 24
+2025-01-17_19-53-12 | Marina | addition_1p2p3 | 50 |  | 13
+2025-01-17_19-53-32 | Diso | addition_1p2p3 | 52 |  | 16
+2025-01-17_19-53-47 | Marina | addition_1p2p3 | 52 |  | 15
+2025-01-17_19-54-10 | Marina | addition_1p2p3 | 320 |  | 16
+2025-01-17_19-54-57 | Marina | addition_1p2p3 | 66 |  | 20
+2025-01-17_19-55-05 | Marina | dict_mg_v2 | 20 |  | rano
+2025-01-17_19-55-15 | Marina | dict_mg_v2 | 4 |  | seza
+2025-01-17_19-55-23 | Marina | dict_mg_v2 | 7 |  | akondro
+2025-01-17_19-55-30 | Marina | dict_mg_v2 | 6 |  | laoka
+2025-01-17_19-55-45 | Marina | dict_mg_v2 | 2 |  | vilany
+2025-01-17_19-56-01 | Marina | vola_moins_isa1 | 4 |  | 100
+2025-01-17_19-56-11 | Marina | vola_moins_isa1 | 20 |  | 1300
+2025-01-17_19-56-20 | Marina | vola_moins_isa1 | 22 |  | 1100
+2025-01-17_19-56-31 | Marina | vola_moins_isa1 | 18 |  | 1500
+2025-01-17_19-56-55 | Marina | vola_moins_isa1 | 25 |  | 4800
+2025-01-17_19-57-02 | Marina | num_lettre_v1 | 0 |  | un
+2025-01-17_19-57-07 | Marina | num_lettre_v1 | 1 |  | deux
+2025-01-17_19-57-13 | Marina | num_lettre_v1 | 2 |  | trois
+2025-01-17_19-57-20 | Marina | num_lettre_v1 | 3 |  | quatre
+2025-01-17_19-57-34 | Marina | num_lettre_v1 | 4 |  | cinq
+2025-01-17_19-58-00 | Marina | adittion_b2 | 181 |  | 537
+2025-01-17_19-58-24 | Marina | adittion_b2 | 252 |  | 891
+2025-01-17_19-58-45 | Diso | adittion_b2 | 241 |  | 543
+2025-01-17_19-59-35 | Diso | adittion_b2 | 241 |  | 543
+2025-01-17_20-00-00 | Marina | adittion_b2 | 241 |  | 643
+2025-01-17_20-00-09 | Marina | adittion_b2 | 141 |  | 904
+2025-01-17_20-00-29 | Marina | adittion_b2 | 274 |  | 651
+2025-01-17_20-01-16 | Marina | adittion_b2 | 125 |  | 723
+2025-01-17_20-01-29 | Marina | adittion_b2 | 12 |  | 993
+2025-01-17_20-01-51 | Marina | adittion_b2 | 216 |  | 994
+2025-01-17_20-02-08 | Marina | adittion_b2 | 219 |  | 987
+2025-01-17_20-02-42 | Marina | adittion_b2 | 66 |  | 660
+2025-01-17_20-02-51 | Marina | Addition_vola_1 | 14 |  | 1000
+2025-01-17_20-02-57 | Marina | Addition_vola_1 | 34 |  | 7000
+2025-01-17_20-03-03 | Marina | Addition_vola_1 | 1 |  | 300
+2025-01-17_20-03-12 | Marina | Addition_vola_1 | 20 |  | 1500
+2025-01-17_20-03-20 | Marina | Addition_vola_1 | 32 |  | 5500
+2025-01-17_20-03-32 | Marina | dict_mg_v4 | 14 |  | SHOPRITE
+2025-01-17_20-03-43 | Marina | dict_mg_v4 | 9 |  | 182
+2025-01-17_20-03-50 | Marina | dict_mg_v4 | 12 |  | Ankatso
+2025-01-17_20-04-00 | Marina | dict_mg_v4 | 30 |  | Mahamasina
+2025-01-17_20-04-13 | Marina | dict_mg_v4 | 15 |  | Ampefiloha
+2025-01-17_20-04-21 | Marina | dict_mg_v4 | 7 |  | Anosy
+2025-01-17_20-04-31 | Marina | dict_mg_v4 | 14 |  | SHOPRITE
+2025-01-17_20-04-47 | Marina | dict_mg_v4 | 25 |  | Galana
+2025-01-17_20-05-02 | Marina | dict_mg_v4 | 20 |  | Madagasikara
+2025-01-17_20-05-13 | Marina | dict_mg_v4 | 8 |  | 180
+2025-01-17_20-05-24 | Marina | addition_3ch_hor | 0 | 2+4+7=13 | 13
+2025-01-17_20-05-35 | Marina | addition_3ch_hor | 1 | 0+6+8=14 | 14
+2025-01-17_20-05-42 | Marina | addition_3ch_hor | 2 | 8+2+8=18 | 18
+2025-01-17_20-05-57 | Marina | addition_3ch_hor | 3 | 7+0+5=12 | 12
+2025-01-17_20-06-05 | Marina | addition_3ch_hor | 4 | 7+5+4=16 | 16
+2025-01-17_20-06-14 | Marina | addition_2ch_ver | 0 | 43+24=67 | 67
+2025-01-17_20-06-29 | Marina | addition_2ch_ver | 1 | 75+75=150 | 150
+2025-01-17_20-06-36 | Marina | addition_2ch_ver | 2 | 79+70=149 | 149
+2025-01-17_20-07-00 | Marina | addition_2ch_ver | 3 | 24+98=122 | 122
+2025-01-17_20-07-09 | Marina | addition_2ch_ver | 4 | 7+40=47 | 47
+2025-01-18_10-31-06 | Marina | dict_mg_v4 | 0 |  | Ambositra
+2025-01-18_10-31-20 | Marina | dict_mg_v4 | 4 |  | Tsimbazaza
+2025-01-18_10-31-36 | Marina | dict_mg_v4 | 4 |  | Tsimbazaza
+2025-01-18_10-31-56 | Marina | dict_mg_v4 | 28 |  | Andry RAJOELINA
+2025-01-18_10-32-03 | Marina | dict_mg_v4 | 24 |  | Orange
+2025-01-18_10-32-16 | Marina | dict_mg_v4 | 9 |  | 182
+2025-01-18_10-32-41 | Marina | dict_mg_v4 | 23 |  | Airtel
+2025-01-18_10-32-47 | Marina | dict_mg_v4 | 7 |  | Anosy
+2025-01-18_10-32-58 | Marina | dict_mg_v4 | 27 |  | Jovenna
+2025-01-18_10-33-10 | Marina | dict_mg_v4 | 9 |  | 182
+2025-01-18_10-33-20 | Marina | num_lettre_v1 | 0 |  | un
+2025-01-18_10-33-28 | Marina | num_lettre_v1 | 1 |  | deux
+2025-01-18_10-33-36 | Marina | num_lettre_v1 | 2 |  | trois
+2025-01-18_10-33-44 | Marina | num_lettre_v1 | 3 |  | quatre
+2025-01-18_10-33-50 | Marina | num_lettre_v1 | 4 |  | cinq
+2025-01-18_10-34-02 | Marina | addition_1p2p3 | 160 |  | 12
+2025-01-18_10-34-12 | Marina | addition_1p2p3 | 35 |  | 16
+2025-01-18_10-34-22 | Marina | addition_1p2p3 | 174 |  | 17
+2025-01-18_10-34-30 | Marina | addition_1p2p3 | 241 |  | 15
+2025-01-18_10-34-39 | Marina | addition_1p2p3 | 309 |  | 23
+2025-01-18_10-34-47 | Marina | Addition_vola_1 | 20 |  | 1500
+2025-01-18_10-34-53 | Marina | Addition_vola_1 | 1 |  | 300
+2025-01-18_10-34-59 | Marina | Addition_vola_1 | 4 |  | 2100
+2025-01-18_10-35-05 | Marina | Addition_vola_1 | 26 |  | 2500
+2025-01-18_10-35-11 | Marina | Addition_vola_1 | 18 |  | 1100
+2025-01-18_10-35-26 | Marina | vola_moins_isa1 | 29 |  | 4400
+2025-01-18_10-35-34 | Marina | vola_moins_isa1 | 16 |  | 1700
+2025-01-18_10-35-45 | Marina | vola_moins_isa1 | 3 |  | 200
+2025-01-18_10-35-52 | Marina | vola_moins_isa1 | 23 |  | 1000
+2025-01-18_10-36-00 | Marina | vola_moins_isa1 | 29 |  | 4400
+2025-01-18_10-36-10 | Marina | dict_mg_v2 | 18 |  | siramamy
+2025-01-18_10-36-17 | Marina | dict_mg_v2 | 19 |  | paiso
+2025-01-18_10-36-24 | Marina | dict_mg_v2 | 9 |  | menaka
+2025-01-18_10-36-33 | Marina | dict_mg_v2 | 16 |  | trondro
+2025-01-18_10-36-40 | Marina | dict_mg_v2 | 0 |  | sotro
+2025-01-18_10-36-50 | Marina | addition_3ch_hor | 0 | 0+8+0=8 | 8
+2025-01-18_10-36-56 | Marina | addition_3ch_hor | 1 | 1+8+6=15 | 15
+2025-01-18_10-37-07 | Marina | addition_3ch_hor | 2 | 7+6+9=22 | 22
+2025-01-18_10-37-12 | Marina | addition_3ch_hor | 3 | 1+3+8=12 | 12
+2025-01-18_10-37-19 | Marina | addition_3ch_hor | 4 | 7+8+0=15 | 15
+2025-01-18_10-37-35 | Marina | adittion_b2 | 240 |  | 550
+2025-01-18_10-37-46 | Marina | adittion_b2 | 119 |  | 760
+2025-01-18_10-37-56 | Marina | adittion_b2 | 180 |  | 276
+2025-01-18_10-38-04 | Marina | adittion_b2 | 145 |  | 768
+2025-01-18_10-38-17 | Marina | adittion_b2 | 195 |  | 527
+2025-01-18_10-38-25 | Marina | adittion_b2 | 128 |  | 345
+2025-01-18_10-38-35 | Marina | adittion_b2 | 40 |  | 338
+2025-01-18_10-38-45 | Marina | adittion_b2 | 103 |  | 149
+2025-01-18_10-38-54 | Marina | adittion_b2 | 127 |  | 267
+2025-01-18_10-39-18 | Marina | adittion_b2 | 186 |  | 902
+2025-01-18_10-39-34 | Marina | addition_2ch_ver | 0 | 14+17=31 | 31
+2025-01-18_10-39-43 | Marina | addition_2ch_ver | 1 | 79+81=160 | 160
+2025-01-18_10-39-50 | Marina | addition_2ch_ver | 2 | 85+33=118 | 118
+2025-01-18_10-40-00 | Marina | addition_2ch_ver | 3 | 20+16=36 | 36
+2025-01-18_10-40-11 | Marina | addition_2ch_ver | 4 | 97+8=105 | 105
+2025-01-18_12-25-52 | Marina | dict_mg_v4 | 35 |  | Shell
+2025-01-18_12-26-01 | Marina | dict_mg_v4 | 26 |  | TOTAL
+2025-01-18_12-26-11 | Marina | dict_mg_v4 | 1 |  | Antsirabe
+2025-01-18_12-26-18 | Marina | dict_mg_v4 | 8 |  | 180
+2025-01-18_12-26-24 | Marina | dict_mg_v4 | 7 |  | Anosy
+2025-01-18_12-26-35 | Marina | dict_mg_v4 | 6 |  | Ambohijatovo
+2025-01-18_12-26-45 | Marina | dict_mg_v4 | 6 |  | Ambohijatovo
+2025-01-18_12-26-54 | Marina | dict_mg_v4 | 23 |  | Airtel
+2025-01-18_12-27-04 | Marina | dict_mg_v4 | 13 |  | Ambohipo
+2025-01-18_12-27-20 | Marina | dict_mg_v4 | 29 |  | Marc RAVALOMANANA
+2025-01-18_12-27-27 | Marina | num_lettre_v1 | 0 |  | un
+2025-01-18_12-27-34 | Marina | num_lettre_v1 | 1 |  | deux
+2025-01-18_12-27-39 | Marina | num_lettre_v1 | 2 |  | trois
+2025-01-18_12-27-45 | Marina | num_lettre_v1 | 3 |  | quatre
+2025-01-18_12-27-52 | Marina | num_lettre_v1 | 4 |  | cinq
+2025-01-18_12-27-59 | Marina | Addition_vola_1 | 29 |  | 7000
+2025-01-18_12-28-07 | Marina | Addition_vola_1 | 23 |  | 6000
+2025-01-18_12-28-13 | Marina | Addition_vola_1 | 16 |  | 2500
+2025-01-18_12-28-20 | Marina | Addition_vola_1 | 17 |  | 5500
+2025-01-18_12-28-27 | Marina | Addition_vola_1 | 30 |  | 5100
+2025-01-18_12-28-33 | Marina | addition_1p2p3 | 16 |  | 15
+2025-01-18_12-28-40 | Marina | addition_1p2p3 | 295 |  | 18
+2025-01-18_12-28-46 | Marina | addition_1p2p3 | 33 |  | 14
+2025-01-18_12-28-52 | Marina | addition_1p2p3 | 158 |  | 19
+2025-01-18_12-28-59 | Marina | addition_1p2p3 | 267 |  | 23
+2025-01-18_12-29-06 | Marina | addition_3ch_hor | 0 | 0+0+4=4 | 4
+2025-01-18_12-29-17 | Marina | addition_3ch_hor | 1 | 1+2+4=7 | 7
+2025-01-18_12-29-32 | Marina | addition_3ch_hor | 2 | 4+3+6=13 | 13
+2025-01-18_12-29-38 | Diso | addition_3ch_hor | 3 | 1+3+6=10 | 15
+2025-01-18_12-29-47 | Marina | addition_3ch_hor | 3 | 1+3+6=10 | 10
+2025-01-18_12-29-55 | Marina | addition_3ch_hor | 4 | 3+1+8=12 | 12
+2025-01-18_12-30-04 | Marina | vola_moins_isa1 | 18 |  | 1500
+2025-01-18_12-30-10 | Marina | vola_moins_isa1 | 32 |  | 4100
+2025-01-18_12-30-18 | Marina | vola_moins_isa1 | 6 |  | 800
+2025-01-18_12-30-28 | Marina | vola_moins_isa1 | 11 |  | 300
+2025-01-18_12-30-36 | Marina | vola_moins_isa1 | 21 |  | 1200
+2025-01-18_12-30-43 | Marina | dict_mg_v2 | 14 |  | lapoaly
+2025-01-18_12-30-51 | Marina | dict_mg_v2 | 10 |  | tsaramaso
+2025-01-18_12-30-59 | Marina | dict_mg_v2 | 10 |  | tsaramaso
+2025-01-18_12-31-07 | Marina | dict_mg_v2 | 1 |  | vilia
+2025-01-18_12-31-14 | Marina | dict_mg_v2 | 3 |  | latabatra
+2025-01-18_12-31-25 | Marina | adittion_b2 | 156 |  | 708
+2025-01-18_12-31-34 | Marina | adittion_b2 | 198 |  | 426
+2025-01-18_12-32-08 | Diso | adittion_b2 | 248 |  | 374
+2025-01-18_12-32-24 | Marina | adittion_b2 | 248 |  | 474
+2025-01-18_12-32-37 | Marina | adittion_b2 | 135 |  | 140
+2025-01-18_12-33-01 | Marina | adittion_b2 | 222 |  | 671
+2025-01-18_12-33-16 | Marina | adittion_b2 | 118 |  | 740
+2025-01-18_12-33-29 | Marina | adittion_b2 | 265 |  | 563
+2025-01-18_12-33-38 | Marina | adittion_b2 | 97 |  | 559
+2025-01-18_12-33-48 | Marina | adittion_b2 | 229 |  | 670
+2025-01-18_12-34-06 | Marina | adittion_b2 | 226 |  | 963
+2025-01-18_12-34-14 | Marina | addition_2ch_ver | 0 | 22+75=97 | 97
+2025-01-18_12-34-26 | Marina | addition_2ch_ver | 1 | 77+49=126 | 126
+2025-01-18_12-34-33 | Marina | addition_2ch_ver | 2 | 85+51=136 | 136
+2025-01-18_12-34-45 | Marina | addition_2ch_ver | 3 | 65+87=152 | 152
+2025-01-18_12-34-53 | Marina | addition_2ch_ver | 4 | 17+51=68 | 68
+2025-01-18_19-21-11 | Marina | Addition_vola_1 | 16 |  | 2500
+2025-01-18_19-21-17 | Marina | Addition_vola_1 | 28 |  | 4000
+2025-01-18_19-21-23 | Marina | Addition_vola_1 | 28 |  | 4000
+2025-01-18_19-21-51 | Marina | Addition_vola_1 | 2 |  | 600
+2025-01-18_19-21-56 | Marina | Addition_vola_1 | 7 |  | 400
+2025-01-18_19-22-01 | Marina | num_lettre_v1 | 0 |  | un
+2025-01-18_19-22-07 | Marina | num_lettre_v1 | 1 |  | deux
+2025-01-18_19-22-12 | Marina | num_lettre_v1 | 2 |  | trois
+2025-01-18_19-22-27 | Marina | num_lettre_v1 | 3 |  | quatre
+2025-01-18_19-22-33 | Marina | num_lettre_v1 | 4 |  | cinq
+2025-01-18_19-22-39 | Marina | vola_moins_isa1 | 4 |  | 100
+2025-01-18_19-22-50 | Marina | vola_moins_isa1 | 24 |  | 4900
+2025-01-18_19-22-59 | Marina | vola_moins_isa1 | 8 |  | 600
+2025-01-18_19-23-18 | Marina | vola_moins_isa1 | 15 |  | 1800
+2025-01-18_19-23-31 | Marina | vola_moins_isa1 | 22 |  | 1100
+2025-01-18_19-23-53 | Marina | addition_1p2p3 | 292 |  | 15
+2025-01-18_19-24-01 | Marina | addition_1p2p3 | 85 |  | 15
+2025-01-18_19-24-11 | Diso | addition_1p2p3 | 329 |  | 26
+2025-01-18_19-24-19 | Marina | addition_1p2p3 | 329 |  | 25
+2025-01-18_19-24-40 | Marina | addition_1p2p3 | 302 |  | 16
+2025-01-18_19-25-02 | Marina | addition_1p2p3 | 228 |  | 20
+2025-01-18_19-25-17 | Marina | addition_1p2p3 | 292 |  | 15
+2025-01-18_19-25-35 | Marina | dict_mg_v4 | 15 |  | Ampefiloha
+2025-01-18_19-25-43 | Marina | dict_mg_v4 | 12 |  | Ankatso
+2025-01-18_19-25-51 | Marina | dict_mg_v4 | 27 |  | Jovenna
+2025-01-18_19-26-06 | Marina | dict_mg_v4 | 29 |  | Marc RAVALOMANANA
+2025-01-18_19-26-22 | Marina | dict_mg_v4 | 28 |  | Andry RAJOELINA
+2025-01-18_19-26-31 | Marina | dict_mg_v4 | 25 |  | Galana
+2025-01-18_19-26-39 | Marina | dict_mg_v4 | 22 |  | TELMA
+2025-01-18_19-26-56 | Marina | dict_mg_v4 | 15 |  | Ampefiloha
+2025-01-18_19-27-10 | Marina | dict_mg_v4 | 14 |  | SHOPRITE
+2025-01-18_19-27-17 | Marina | dict_mg_v4 | 10 |  | 196
+2025-01-18_19-27-25 | Marina | addition_3ch_hor | 0 | 2+8+8=18 | 18
+2025-01-18_19-27-34 | Marina | addition_3ch_hor | 1 | 6+3+7=16 | 16
+2025-01-18_19-27-42 | Marina | addition_3ch_hor | 2 | 7+6+5=18 | 18
+2025-01-18_19-27-48 | Marina | addition_3ch_hor | 3 | 4+1+4=9 | 9
+2025-01-18_19-27-54 | Marina | addition_3ch_hor | 4 | 3+5+0=8 | 8
+2025-01-18_19-28-54 | Marina | adittion_b2 | 173 |  | 808
+2025-01-18_19-29-04 | Marina | adittion_b2 | 38 |  | 199
+2025-01-18_19-29-16 | Marina | adittion_b2 | 91 |  | 367
+2025-01-18_19-29-37 | Marina | adittion_b2 | 123 |  | 787
+2025-01-18_19-29-59 | Marina | adittion_b2 | 182 |  | 245
+2025-01-18_19-30-21 | Marina | adittion_b2 | 96 |  | 1025
+2025-01-18_19-31-03 | Marina | adittion_b2 | 296 |  | 824
+2025-01-18_19-31-12 | Marina | adittion_b2 | 12 |  | 993
+2025-01-18_19-31-24 | Marina | adittion_b2 | 17 |  | 464
+2025-01-18_19-31-33 | Marina | adittion_b2 | 85 |  | 500
+2025-01-18_19-31-42 | Marina | dict_mg_v2 | 8 |  | atody
+2025-01-18_19-31-51 | Marina | dict_mg_v2 | 14 |  | lapoaly
+2025-01-18_19-31-58 | Marina | dict_mg_v2 | 14 |  | lapoaly
+2025-01-18_19-32-05 | Marina | dict_mg_v2 | 16 |  | trondro
+2025-01-18_19-32-11 | Marina | dict_mg_v2 | 13 |  | kitoza
+2025-01-18_19-32-21 | Marina | addition_2ch_ver | 0 | 95+45=140 | 140
+2025-01-18_19-32-29 | Marina | addition_2ch_ver | 1 | 50+1=51 | 51
+2025-01-18_19-32-35 | Marina | addition_2ch_ver | 2 | 22+42=64 | 64
+2025-01-18_19-32-42 | Marina | addition_2ch_ver | 3 | 22+76=98 | 98
+2025-01-18_19-32-51 | Marina | addition_2ch_ver | 4 | 53+26=79 | 79
+2025-01-18_22-03-35 | Marina | mividy_voankazo | 0 | =0 | 0
+2025-01-18_22-03-41 | Marina | mividy_voankazo | 1 | =0 | 0
+2025-01-18_22-05-30 | Marina | mividy_voankazo | 0 | 800800800800400=3600 | 3600
+2025-01-18_22-08-05 | Marina | mividy_voankazo | 0 | 10001000100010001000=5000 | 5000
+2025-01-18_22-08-17 | Marina | mividy_voankazo | 1 | 100010001000=3000 | 3000   AR
+2025-01-18_22-08-28 | Marina | mividy_voankazo | 2 | 800800800800800=4000 | 4000
+2025-01-18_22-08-44 | Marina | mividy_voankazo | 3 | 500500500500500=2500 | 2500
+2025-01-18_22-08-58 | Diso | mividy_voankazo | 4 | 800800800800=3200 | 24000 ARIARY
+2025-01-18_22-09-13 | Diso | mividy_voankazo | 4 | 800800800800=3200 | 32000 Ariary
+2025-01-18_22-09-39 | Marina | mividy_voankazo | 4 | 800800800800=3200 | 3200
+2025-01-18_22-11-26 | Marina | mividy_voankazo | 0 | 500+500+500+500+500=2500 | 2500 Ariary
+2025-01-18_22-11-37 | Marina | mividy_voankazo | 1 | 500+500+500+500+500=2500 | 2500 Ar
+2025-01-18_22-12-22 | Marina | mividy_voankazo | 2 | 1000+1000+1000+1000+1000+1000=6000 | 6000
+2025-01-18_22-12-33 | Diso | mividy_voankazo | 3 | 800+800+800=2400 | 3200
+2025-01-18_22-12-42 | Marina | mividy_voankazo | 3 | 800+800+800=2400 | 2400

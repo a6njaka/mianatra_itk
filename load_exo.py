@@ -124,14 +124,15 @@ class ExoSchedule:
                             library = sys.modules[f"lib_{exo}"]
                             for _ in range(int(data["max"])):
                                 image1, image2, answer, text = library.get_image_data(exo_path, data["level"])
-                                exo_tmp = {
-                                    "image1": image1,
-                                    "image2": image2,
-                                    "mp3": [],
-                                    "answer": answer,
-                                    "text": text
-                                }
-                                self.all_exo[exo]["exo"].append(exo_tmp)
+                                if image1 is not None:
+                                    exo_tmp = {
+                                        "image1": image1,
+                                        "image2": image2,
+                                        "mp3": [],
+                                        "answer": answer,
+                                        "text": text
+                                    }
+                                    self.all_exo[exo]["exo"].append(exo_tmp)
                         elif data["type"] == "entry":
                             for exo_tmp in self.organize_files(exo_path, data):
                                 self.all_exo[exo]["exo"].append(exo_tmp)
