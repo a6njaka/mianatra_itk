@@ -183,12 +183,13 @@ class MyFrame(wx.Frame):
         self.stage_level = 0
         self.stage_type = "entry"
         self.stage_case_sensitive = False
+        self.stage_library = None
         self.stage_comment = "Comment"
 
         self.stage_current_index = None
         self.stage_index_done = []
 
-        self.unmute_and_set_volume_to_50_percent()
+        # self.unmute_and_set_volume_to_50_percent()
         self.Show()
         self.Maximize()
         self.ok_button.SetFocus()
@@ -196,8 +197,7 @@ class MyFrame(wx.Frame):
     @staticmethod
     def unmute_and_set_volume_to_50_percent():
         devices = AudioUtilities.GetSpeakers()
-        interface = devices.Activate(
-            IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+        interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
         volume = cast(interface, POINTER(IAudioEndpointVolume))
         volume.SetMute(0, None)
         volume.SetMasterVolumeLevelScalar(0.5, None)
@@ -367,7 +367,7 @@ class MyFrame(wx.Frame):
 
         match = exo_answer.search(user_answer)
         if f"{user_answer}".strip() == "":
-            self.player.play_media(r"mp3/wrong.mp3")
+            # self.player.play_media(r"mp3/wrong.mp3")
             time.sleep(1)
         elif match:
             self.valiny.SetValue("")
@@ -405,6 +405,7 @@ class MyFrame(wx.Frame):
             self.stage_level = self.all_exo[self.current_exo_name]["level"]
             self.stage_type = self.all_exo[self.current_exo_name]["type"]
             self.stage_case_sensitive = self.all_exo[self.current_exo_name]["case sensitive"]
+            self.stage_library = self.all_exo[self.current_exo_name]["library"]
             self.stage_comment = self.all_exo[self.current_exo_name]["comment"]
 
             print(f"     ->stage_min: {self.stage_min}")
@@ -413,6 +414,7 @@ class MyFrame(wx.Frame):
             print(f"     ->stage_level: {self.stage_level}")
             print(f"     ->stage_type: {self.stage_type}")
             print(f"     ->stage_case_sensitive: {self.stage_case_sensitive}")
+            print(f"     ->library: {self.stage_library}")
             print(f"     ->stage_comment: {self.stage_comment}")
 
     def create_static_bitmaps(self):

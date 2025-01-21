@@ -118,10 +118,22 @@ class ExoSchedule:
                         self.all_exo[exo]["type"] = data["type"]
                         self.all_exo[exo]["case sensitive"] = data["case sensitive"]
                         self.all_exo[exo]["comment"] = data["comment"]
+                        if "library" in data:
+                            self.all_exo[exo]["library"] = data["library"]
+                            print("---->>TYPE:01")
+                        elif f"lib_{exo}" in sys.modules:
+                            self.all_exo[exo]["library"] = f"lib_{exo}"
+                            print("---->>TYPE:02")
+                        else:
+                            self.all_exo[exo]["library"] = ""
+                            print("---->>TYPE:02")
 
                         # if exo == "addition_3ch_hor" or exo == "addition_1":
-                        if f"lib_{exo}" in sys.modules:
-                            library = sys.modules[f"lib_{exo}"]
+                        lib = self.all_exo[exo]["library"]
+                        print(f"-->>Verification: lib = '{lib}'")
+                        if lib != "" and lib in sys.modules:
+                            print("---->>TYPE_EXO:01")
+                            library = sys.modules[lib]
                             for _ in range(int(data["max"])):
                                 image1, image2, answer, text = library.get_image_data(exo_path, data["level"])
                                 if image1 is not None:
@@ -136,6 +148,7 @@ class ExoSchedule:
                             xx = len(self.all_exo[exo]["exo"])
                             self.all_exo[exo]["min"] = min(self.all_exo[exo].get("min", float('inf')), xx)
                         elif data["type"] == "entry":
+                            print("---->>TYPE_EXO:02")
                             for exo_tmp in self.organize_files(exo_path, data):
                                 self.all_exo[exo]["exo"].append(exo_tmp)
                             xx = len(self.all_exo[exo]["exo"])
