@@ -10,6 +10,9 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.styles.borders import Border, Side
 from openpyxl.styles import Font
 from openpyxl.styles import PatternFill
+from ctypes import POINTER, cast
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
 
 class MediaPlayer:
@@ -185,9 +188,20 @@ class MyFrame(wx.Frame):
         self.stage_current_index = None
         self.stage_index_done = []
 
+        self.unmute_and_set_volume_to_50_percent()
         self.Show()
         self.Maximize()
         self.ok_button.SetFocus()
+
+    @staticmethod
+    def unmute_and_set_volume_to_50_percent():
+        devices = AudioUtilities.GetSpeakers()
+        interface = devices.Activate(
+            IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+        volume = cast(interface, POINTER(IAudioEndpointVolume))
+        volume.SetMute(0, None)
+        volume.SetMasterVolumeLevelScalar(0.5, None)
+        print("System unmuted and volume set to 50%.")
 
     def update_log_file(self, text):
         text_list = [text]
@@ -280,7 +294,7 @@ class MyFrame(wx.Frame):
         print("     not done: ", nd)
         if 0 < len(nd) and len(self.stage_index_done) < self.stage_min:
             if r:
-                ret = random.choice(list1)
+                ret = random.choice(nd)
             else:
                 ret = nd[0]
         else:

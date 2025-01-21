@@ -44,8 +44,8 @@ def get_image_data(folder_path, level=1):
             index2 = random.randint(0, n - 1)
             while index1 == index2:
                 index2 = random.randint(0, n - 1)
-            a = random.randint(1, 4)
-            b = random.randint(1, 6 - a)
+            a = random.randint(1, 2)
+            b = random.randint(1, 4 - a)
             for _ in range(a):
                 exo_image_list.append(all_image[index1])
             for _ in range(b):
@@ -54,14 +54,14 @@ def get_image_data(folder_path, level=1):
             print("*" * 100)
             index1 = random.randint(0, n - 1)
             index2 = random.randint(0, n - 1)
+            index3 = random.randint(0, n - 1)
             while index1 == index2:
                 index2 = random.randint(0, n - 1)
-            index3 = random.randint(0, n - 1)
             while index3 == index1 and index3 == index2:
-                index2 = random.randint(0, n - 1)
+                index3 = random.randint(0, n - 1)
             a = random.randint(1, 2)
-            b = random.randint(1, 4 - a)
-            c = random.randint(1, 6 - a - b)
+            b = random.randint(1, 2)
+            c = random.randint(1, 2)
             for _ in range(a):
                 exo_image_list.append(all_image[index1])
             for _ in range(b):

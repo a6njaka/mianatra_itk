@@ -48,13 +48,13 @@ class ExoSchedule:
         while get_next:
             get_next = False
             for file in files:
-                match_a = re.search(rf"(A{i})(-.*)*\.(png|jpg)$", file)
+                match_a = re.search(rf"(A{i})(-(.*))*\.(png|jpg)$", file)
                 if match_a is not None:
                     get_next = True
                     result.append(copy.deepcopy(template))
                     result[-1]["image1"] = os.path.join(folder_path, file)
                     if match_a.group(2) is not None:
-                        result[-1]["text"] = match_a.group(2)
+                        result[-1]["text"] = match_a.group(3)
                     break
             if get_next:
                 for file in files:
@@ -133,9 +133,13 @@ class ExoSchedule:
                                         "text": text
                                     }
                                     self.all_exo[exo]["exo"].append(exo_tmp)
+                            xx = len(self.all_exo[exo]["exo"])
+                            self.all_exo[exo]["min"] = min(self.all_exo[exo].get("min", float('inf')), xx)
                         elif data["type"] == "entry":
                             for exo_tmp in self.organize_files(exo_path, data):
                                 self.all_exo[exo]["exo"].append(exo_tmp)
+                            xx = len(self.all_exo[exo]["exo"])
+                            self.all_exo[exo]["min"] = min(self.all_exo[exo].get("min", float('inf')), xx)
                     except KeyError:
                         self.all_exo[exo] = {}
                         print("Error 12")

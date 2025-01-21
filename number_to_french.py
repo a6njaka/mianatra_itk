@@ -73,7 +73,8 @@ print(number_to_french(12000))  # douze mille
 
 print("-" * 100)
 
-for i in range(0, 11):
-    n = random.randint(0, 1000)
+for i in range(0, 100):
+    # n = random.randint(0, 1000)
+    n = i
     txt = number_to_french(n)
     print(f"{n}: {txt}")
