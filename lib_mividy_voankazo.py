@@ -5,7 +5,9 @@ import re
 import copy
 
 
-def get_image_data(folder_path, level=1):
+def get_image_data(data):
+    level = data["level"]
+    folder_path = data["folder_path"]
     folder_path = os.path.join(folder_path, "source_images")
     all_image = []
     if os.path.isdir(folder_path):

@@ -7,7 +7,6 @@ import re
 import time
 from datetime import datetime
 from openpyxl import Workbook, load_workbook
-from openpyxl.styles.borders import Border, Side
 from openpyxl.styles import Font
 from openpyxl.styles import PatternFill
 from ctypes import POINTER, cast
@@ -115,30 +114,17 @@ class MyFrame(wx.Frame):
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Add a StaticBitmap for the background
-        # self.background_staticbitmap = wx.StaticBitmap(self.home_panel, -1, self.background_bitmap, style=wx.SIMPLE_BORDER)
         self.background_staticbitmap = wx.StaticBitmap(self.home_panel, -1, self.background_bitmap)
         main_sizer.Add(self.background_staticbitmap, 1, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 10)  # Set proportion to 1 to make it expand
 
-        # Create a horizontal sizer for the StaticBitmaps
         self.bitmap_sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # self.create_static_bitmaps()
-
-        # Add bitmap_sizer at the bottom with a 10-pixel space from StatusBar
         main_sizer.Add(self.bitmap_sizer, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
-        # Create a panel to hold the video
         self.video_panel = wx.Panel(self.home_panel, style=wx.SIMPLE_BORDER)
         # self.video_panel.SetMaxSize((854, -1))
         main_sizer.Add(self.video_panel, 1, wx.EXPAND | wx.ALL, 10)
 
-        # Create a horizontal sizer for the video panel
-        # video_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        # video_sizer.Add(self.video_panel, 1, wx.ALIGN_CENTER)
-        # main_sizer.Add(video_sizer, 1, wx.EXPAND | wx.ALL, 10)
-
         self.video_panel.Hide()
-
         # Create textCtrl
         self.valiny = wx.TextCtrl(self.home_panel, -1, "", size=(854, -1), style=wx.TE_LEFT | wx.TE_PROCESS_ENTER)
         self.valiny.SetFont(wx.Font(21, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
@@ -152,12 +138,12 @@ class MyFrame(wx.Frame):
         self.ok_button.SetFont(font)
         main_sizer.Add(self.ok_button, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
-        # self.player = MediaPlayer(self.home_panel)
-        # self.player = MediaPlayer(self.background_image)
         self.player = MediaPlayer(self.video_panel)
 
         self.home_panel.SetSizer(main_sizer)
         self.valiny.Hide()
+        # self.create_static_bitmaps()
+
         self.home_panel.Layout()
 
         self.Bind(wx.EVT_TOOL, self.OnTool1, tool1)
@@ -189,7 +175,6 @@ class MyFrame(wx.Frame):
         self.stage_current_index = None
         self.stage_index_done = []
 
-        # self.unmute_and_set_volume_to_50_percent()
         self.Show()
         self.Maximize()
         self.ok_button.SetFocus()
@@ -324,15 +309,14 @@ class MyFrame(wx.Frame):
             if r:
                 print(f"     -->exo Name: {nd[0]}")
                 tmp_exo_name = nd[random.choice(list1)]
-                self.SetStatusText(f"Exercise: {tmp_exo_name}", 1)
                 ret = tmp_exo_name
                 self.exo_done.append(ret)
             else:
                 print(f"     -->exo Name: {nd[0]}")
                 tmp_exo_name = nd[0]
-                self.SetStatusText(f"Exercise: {tmp_exo_name}", 1)
                 ret = nd[0]
                 self.exo_done.append(ret)
+            self.SetStatusText(f"Exercise: {tmp_exo_name} (Level={self.stage_level}, Case={self.stage_case_sensitive})", 1)
         else:
             self.all_exo_completed = True
             print("Completed2")
@@ -351,9 +335,10 @@ class MyFrame(wx.Frame):
                     new_all_exo[exo] = self.all_exo[exo]
                     print(f"    -->Correct '{exo}'")
                 else:
-                    print(f"    -->Removed '{exo}'")
-            except KeyError:
-                print(f"    -->Removed '{exo}'")
+                    print(f"    -->Removed '{exo}'  -->{new_all_exo[exo]}")
+
+            except KeyError as e:
+                print(f"    -->Removed '{exo}' --> {e}")
         self.all_exo = new_all_exo
         self.exo_list = list(self.all_exo)
 

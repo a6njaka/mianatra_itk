@@ -3,6 +3,8 @@ import random
 import lib_addition_3ch_hor
 import lib_addition_2ch_ver
 import lib_mividy_voankazo
+import lib_comparing_numbers_reading
+import lib_read_number_fr
 from datetime import date
 import os
 import re
@@ -109,6 +111,7 @@ class ExoSchedule:
             if os.path.isfile(json_config_path):
                 with open(json_config_path) as json_file:
                     data = json.load(json_file)
+                    data["folder_path"] = exo_path
                     try:
                         self.all_exo[exo]["exo"] = []
                         self.all_exo[exo]["min"] = int(data["min"])
@@ -132,7 +135,7 @@ class ExoSchedule:
                             library = sys.modules[lib]
                             for _ in range(int(data["max"])):
                                 try:
-                                    image1, image2, answer, text = library.get_image_data(exo_path, data["level"])
+                                    image1, image2, answer, text = library.get_image_data(data)
                                     if image1 is not None:
                                         exo_tmp = {
                                             "image1": image1,
