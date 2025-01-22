@@ -64,11 +64,13 @@ def get_image_data(data):
     draw1.text((txt1_x_start, 160), f"{a}", fill=(0, 0, 200), font=font_expression)
     draw1.text((txt1_x_start + text_a_width, 160), f"{text1}", fill=(0, 200, 0), font=font_expression)
     draw1.text((txt1_x_start + text_a_width + text1_width, 160), f"{b}", fill=(0, 0, 200), font=font_expression)
-    draw1.text((txt2_x_start, 250), text2, fill=(0, 0, 0), font=font_reading)
 
     image2 = copy.deepcopy(image1)
     draw2 = ImageDraw.Draw(image2)
-    draw2.text((txt2_x_start, 250), text2, fill=(129, 23, 141), font=font_reading)
+    draw1.text((180, 350), "."*60, fill=(255, 0, 0), font=font_reading)
+    draw2.text((txt2_x_start, 350), text2, fill=(129, 23, 141), font=font_reading)
+
+    image1.save(r"C:\Users\NJAKA\Desktop\01.png")
 
     pil_image1 = image1.convert('RGB')
     pil_image2 = image2.convert('RGB')
@@ -86,4 +88,5 @@ def get_image_data(data):
     return image_data1, image_data2, answer, text
 
 
-# get_image_data(1)
+data = {"level": 1, "case sensitive": False}
+get_image_data(data)
