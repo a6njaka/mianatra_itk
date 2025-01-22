@@ -50,6 +50,7 @@ class MyFrame(wx.Frame):
 
         # Change the current working directory
         os.chdir(r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2")
+        # os.chdir(r"C:\Users\NJAKA\Mianatra2")
 
         self.choice_answer_available = False
         self.log_txt_file = "log_exo_itokiana.txt"
