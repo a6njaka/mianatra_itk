@@ -42,9 +42,6 @@ class ExoSchedule:
         files = os.listdir(folder_path)
         result = []
         template = {"image1": "", "image2": "", "mp3": [], "answer": re.compile(""), "text": ""}
-        # exo_question_mp3 = os.path.join(folder_path, "exo_question.mp3")
-        # if os.path.isfile(exo_question_mp3):
-        #     template["mp3"].append(exo_question_mp3)
         case_sensitive = False
         if data["case sensitive"]:
             case_sensitive = True
@@ -136,22 +133,25 @@ class ExoSchedule:
                         else:
                             self.all_exo[exo]["library"] = ""
 
-                        # if exo == "addition_3ch_hor" or exo == "addition_1":
                         lib = self.all_exo[exo]["library"]
-                        print(f"-->>Verification: lib = '{lib}'")
+                        # print(f"-->>Verification: lib = '{lib}'")
                         if lib != "" and lib in sys.modules:
                             library = sys.modules[lib]
                             for _ in range(int(data["max"])):
                                 try:
+                                    # TODO: avoid duplicated exo
                                     image1, image2, answer, text = library.get_image_data(data)
                                     if image1 is not None:
                                         exo_tmp = {
                                             "image1": image1,
                                             "image2": image2,
-                                            "mp3": [os.path.join(exo_path, "exo_question.mp3")],
+                                            "mp3": [],
                                             "answer": answer,
                                             "text": text
                                         }
+                                        exo_question_mp3 = os.path.join(exo_path, "exo_question.mp3")
+                                        if os.path.isfile(exo_question_mp3):
+                                            exo_tmp["mp3"].append(exo_question_mp3)
                                         self.all_exo[exo]["exo"].append(exo_tmp)
                                 except Exception as e:
                                     print(f"Exception: {e}")
