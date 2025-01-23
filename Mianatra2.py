@@ -52,6 +52,8 @@ class MyFrame(wx.Frame):
         os.chdir(r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2")
         # os.chdir(r"C:\Users\NJAKA\Mianatra2")
 
+        self.bitmap_buttons = []
+
         self.choice_answer_available = False
         self.log_txt_file = "log_exo_itokiana.txt"
         self.log_excel_file = "log_exo_itokiana.xlsx"
@@ -70,6 +72,7 @@ class MyFrame(wx.Frame):
 
         # Create home panel
         self.home_panel = wx.Panel(self, -1)
+        self.dc = wx.ClientDC(self.home_panel)
 
         # Create a menu bar
         menu_bar = wx.MenuBar()
@@ -95,8 +98,8 @@ class MyFrame(wx.Frame):
         toolbar = self.CreateToolBar()
 
         # Add some tools to the toolbar
-        tool1 = toolbar.AddTool(wx.ID_ANY, "Tool 1", wx.Bitmap("images/tool1.png"), "Tool 1 tooltip")
-        tool2 = toolbar.AddTool(wx.ID_ANY, "Tool 2", wx.Bitmap("images/tool2.png"), "Tool 2 tooltip")
+        tool1 = toolbar.AddTool(wx.ID_ANY, "Tool 1", wx.Bitmap(wx.Image(25, 25)), "Tool 1 tooltip")
+        tool2 = toolbar.AddTool(wx.ID_ANY, "Tool 2", wx.Bitmap(wx.Image(25, 25)), "Tool 2 tooltip")
 
         # Realize the toolbar
         toolbar.Realize()
@@ -143,7 +146,7 @@ class MyFrame(wx.Frame):
 
         self.home_panel.SetSizer(main_sizer)
         self.valiny.Hide()
-        # self.create_static_bitmaps()
+        self.create_bitmap_buttons()
 
         self.home_panel.Layout()
 
@@ -157,6 +160,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnSettings, file_menu.FindItemByPosition(1))
         self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
+        self.home_panel.Bind(wx.EVT_MOTION, self.on_home_panel_motion)
 
         self.all_exo = {}
         self.current_exo_name = ""
@@ -403,34 +407,64 @@ class MyFrame(wx.Frame):
             print(f"     ->library: {self.stage_library}")
             print(f"     ->stage_comment: {self.stage_comment}")
 
-    def create_static_bitmaps(self):
-        """Creates StaticBitmaps with red borders and adds them to the bitmap_sizer."""
-        img_paths = ["C1.png", "C2.png", "C3.png", "C4.png", "C5.png"]
-        self.static_bitmaps = []
-
-        for index, img_path in enumerate(img_paths):
-            full_path = os.path.join("images", img_path)
-            img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
+    def create_bitmap_buttons(self):
+        for index in range(10):
+            img = wx.Image(100, 100)
             bitmap = wx.Bitmap(img)
-            static_bitmap = wx.StaticBitmap(self.home_panel, -1, bitmap)
-            static_bitmap.SetMinSize(bitmap.GetSize())
-            static_bitmap.Bind(wx.EVT_LEFT_DOWN, self.on_bitmap_click)
-            static_bitmap.SetBackgroundColour("red")
-            static_bitmap.SetCursor(wx.Cursor(wx.CURSOR_HAND))
-            static_bitmap.index = index
-            self.static_bitmaps.append(static_bitmap)
-            self.bitmap_sizer.Add(static_bitmap, 0, wx.ALIGN_CENTER | wx.ALL, 10)
+            bitmap_button = wx.BitmapButton(self.home_panel, -1, bitmap)
+            bitmap_button.SetMinSize(bitmap.GetSize())
+            bitmap_button.Bind(wx.EVT_BUTTON, self.on_bitmap_click)
+            bitmap_button.Bind(wx.EVT_MOTION, self.on_bitmap_motion)
+            bitmap_button.SetCursor(wx.Cursor(wx.CURSOR_HAND))
+            bitmap_button.index = index
+            self.bitmap_buttons.append(bitmap_button)
+            self.bitmap_sizer.Add(bitmap_button, 0, wx.ALIGN_CENTER | wx.ALL, 5)
         self.choice_answer_available = True
+        self.hide_bitmap_buttons()
 
-    def hide_static_bitmaps(self):
+    def on_home_panel_motion(self, event):
+        self.dc.Clear()
+
+    def on_bitmap_motion(self, event):
+        """Draws a rectangle around the hovered bitmap button."""
+        bitmap_button = event.GetEventObject()
+        self.dc.SetPen(wx.Pen("red", 2))
+        self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
+        x, y = bitmap_button.GetPosition()
+        width, height = bitmap_button.GetSize()
+        self.dc.DrawRectangle(x - 1, y - 1, width + 3, height + 3)
+
+    def change_bitmap_buttons(self, new_img_paths, max_height=150):
+        self.hide_bitmap_buttons()
+
+        for index, img_path in enumerate(new_img_paths):
+            full_path = os.path.join("images", img_path)
+            try:
+                img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
+
+                # Calculate scaled dimensions while maintaining aspect ratio
+                width, height = img.GetSize()
+                if height > max_height:
+                    scale_factor = max_height / height
+                    new_width = int(width * scale_factor)
+                    img = img.Scale(new_width, max_height)
+
+                bitmap = wx.Bitmap(img)
+                self.bitmap_buttons[index].SetBitmapLabel(bitmap)
+                self.bitmap_buttons[index].SetMinSize(bitmap.GetSize())
+                self.bitmap_buttons[index].Show()
+            except FileNotFoundError:
+                print(f"Image not found: {full_path}")
+
+    def hide_bitmap_buttons(self):
         """Hides all StaticBitmaps."""
-        for static_bitmap in self.static_bitmaps:
+        for static_bitmap in self.bitmap_buttons:
             static_bitmap.Hide()
         self.choice_answer_available = False
 
-    def show_static_bitmaps(self):
+    def show_bitmap_buttons(self):
         """Shows all StaticBitmaps."""
-        for static_bitmap in self.static_bitmaps:
+        for static_bitmap in self.bitmap_buttons:
             static_bitmap.Show()
         self.choice_answer_available = True
 
@@ -456,8 +490,19 @@ class MyFrame(wx.Frame):
 
     def OnTool2(self, event):
         print("-->OnTool2 Clicked")
-        self.player.play_media(r"D:\SONG\00000\Tsy mankaiza.MP3")
-        self.video_panel.Hide()
+        # self.player.play_media(r"D:\SONG\00000\Tsy mankaiza.MP3")
+        # self.video_panel.Hide()
+        img_paths = [
+            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\annana-1000.png",
+            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\mangue-700.jpg",
+            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\Orange-600.jpg",
+            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\pastèque-2000.png",
+            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\poire-400.jpg",
+            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\pomme-500.jpg",
+        ]
+        self.change_bitmap_buttons(img_paths)
+        self.ok_button.Hide()
+        self.home_panel.Layout()
 
     def load_image(self, img_path):
         if os.path.isfile(img_path):
