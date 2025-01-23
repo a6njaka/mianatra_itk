@@ -535,6 +535,7 @@ class MyFrame(wx.Frame):
         self.home_panel.Layout()
 
     def on_background_click(self, event):
+        all_mp3 = []
         try:
             files_exist = True
             all_mp3 = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['mp3']
@@ -546,7 +547,7 @@ class MyFrame(wx.Frame):
                 if files_exist:
                     self.play_combined_mp3(all_mp3)
         except:
-            print("MP3 not correct!")
+            print(f"MP3 not correct! ---> {all_mp3}")
 
         # wx.MessageBox("Image Clicked", "Info", wx.OK | wx.ICON_INFORMATION)
 
@@ -600,6 +601,7 @@ class MyFrame(wx.Frame):
             instance.release()
         else:
             print("MP3 not correct!")
+            print(f"MP3 not correct! --2-> {mp3_files}")
 
 
 if __name__ == "__main__":
