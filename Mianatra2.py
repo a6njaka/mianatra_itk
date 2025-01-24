@@ -89,7 +89,6 @@ class MyFrame(wx.Frame):
         help_menu.Append(wx.ID_ABOUT, "About", "About this application")
         menu_bar.Append(help_menu, "&Help")
 
-        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
 
         # Set the menu bar
         self.SetMenuBar(menu_bar)
@@ -180,6 +179,7 @@ class MyFrame(wx.Frame):
         self.stage_current_index = None
         self.stage_index_done = []
 
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
         self.Show()
         self.Maximize()
         self.ok_button.SetFocus()
@@ -321,7 +321,10 @@ class MyFrame(wx.Frame):
                 tmp_exo_name = nd[0]
                 ret = nd[0]
                 self.exo_done.append(ret)
-            self.SetStatusText(f"Exercise: {tmp_exo_name} (Level={self.stage_level}, Case={self.stage_case_sensitive})", 1)
+            case_sensitive = ""
+            if self.stage_case_sensitive:
+                case_sensitive = ", Case_sst"
+            self.SetStatusText(f"Exercise: {tmp_exo_name} (Level={self.stage_level}{case_sensitive})", 1)
         else:
             self.all_exo_completed = True
             print("Completed2")
@@ -335,15 +338,16 @@ class MyFrame(wx.Frame):
         print("---->>verify_correctness_all_exo")
         new_all_exo = {}
         for exo in self.exo_list:
+            # print(self.all_exo[exo])
             try:
                 if not len(self.all_exo[exo]["exo"]) == 0:
                     new_all_exo[exo] = self.all_exo[exo]
                     print(f"    -->Correct '{exo}'")
                 else:
-                    print(f"    -->Removed '{exo}'  -->{new_all_exo[exo]}")
+                    print(f"    -1->Removed '{exo}'")
 
             except KeyError as e:
-                print(f"    -->Removed '{exo}' --> {e}")
+                print(f"    -2->Removed '{exo}' --> {e}")
         self.all_exo = new_all_exo
         self.exo_list = list(self.all_exo)
 
