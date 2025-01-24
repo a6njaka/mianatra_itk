@@ -80,35 +80,37 @@ class ExoSchedule:
                         result[-1]["mp3"].append(os.path.join(folder_path, file))
                         break
             i += 1
+        return result
+
+    @staticmethod
+    def get_choices(folder_path, data):
         choices_folder = os.path.join(folder_path, "choices")
-        if os.path.isdir(choices_folder) and len(result) > 0:
+        result = []
+        if os.path.isdir(choices_folder):
             files = os.listdir(choices_folder)
             print(f"   ---->>choices_found")
-
             # Max choices is 10
             for i in range(10):
                 is_found = False
                 for file in files:
-                    # print(f"   -f->{file}")
                     match_c = re.search(rf"(C{i + 1})(-(.*))*\.(png|jpg)$", file, re.IGNORECASE)
                     if match_c is not None:
                         # Verification
-                        # if len(result[-1]["choices"]) > 0:
-                        #     print(f'   --v1-->{result[-1]["choices"][-1]}')
-
-                        result[-1]["choices"].append({"image": "", "input": "", "mp3": ""})
-                        result[-1]["choices"][-1]["image"] = os.path.join(choices_folder, file)
+                        pass
+                        result.append({"image": "", "input": "", "mp3": ""})
+                        result[-1]["image"] = os.path.join(choices_folder, file)
                         if match_c.group(2):
-                            result[-1]["choices"][-1]["input"] = os.path.join(choices_folder, match_c.group(2))
+                            result[-1]["input"] = os.path.join(choices_folder, match_c.group(2))
                         for file2 in files:
                             match_c_mp3 = re.search(rf"^(C{i}.mp3)$", file2, re.IGNORECASE)
                             if match_c_mp3 is not None:
-                                result[-1]["choices"][-1]["mp3"] = os.path.join(choices_folder, file2)
+                                result[-1]["mp3"] = os.path.join(choices_folder, file2)
                         is_found = True
                         break
                 if not is_found:
                     break
-
+        # for r in result:
+        #     print(r)
         return result
 
     @staticmethod
@@ -153,6 +155,7 @@ class ExoSchedule:
                         self.all_exo[exo]["type"] = data["type"]
                         self.all_exo[exo]["case sensitive"] = data["case sensitive"]
                         self.all_exo[exo]["comment"] = data["comment"]
+                        self.all_exo[exo]["choices"] = []
                         if "library" in data:
                             self.all_exo[exo]["library"] = data["library"]
                         elif f"lib_{exo}" in sys.modules:
@@ -185,14 +188,18 @@ class ExoSchedule:
                                     print(f"Exception: {e}")
                             xx = len(self.all_exo[exo]["exo"])
                             self.all_exo[exo]["min"] = min(self.all_exo[exo].get("min", float('inf')), xx)
-                        elif data["type"] == "entry":
+                        # elif data["type"] == "entry":
+                        else:
                             for exo_tmp in self.organize_files(exo_path, data):
                                 self.all_exo[exo]["exo"].append(exo_tmp)
+                            self.all_exo[exo]["choices"] = self.get_choices(exo_path, data)
+                            print(f' --q-->{self.all_exo[exo]["choices"]}')
                             xx = len(self.all_exo[exo]["exo"])
                             self.all_exo[exo]["min"] = min(self.all_exo[exo].get("min", float('inf')), xx)
-                    except KeyError:
+                    # except KeyError:
+                    except Exception as e:
                         self.all_exo[exo] = {}
-                        print("Error 12")
+                        print(f"Error 12: {e}")
 
 # p1 = ExoSchedule()
 # p1.display_all_exo()

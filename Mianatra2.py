@@ -263,6 +263,7 @@ class MyFrame(wx.Frame):
         # self.player.player.stop()
         print("    -->>", "image1 : ", type(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1']))
         print("    -->>", "image2 : ", type(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2']))
+        print("    -->>", "choices : ", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['choices'])
         mp3 = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['mp3']
         print("    -->>", "mp3 : ", mp3)
         print("    -->>", "answer : ", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['answer'])
