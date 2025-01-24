@@ -41,7 +41,7 @@ class ExoSchedule:
         # print("---->>organize_files")
         files = os.listdir(folder_path)
         result = []
-        template = {"image1": "", "image2": "", "mp3": [], "answer": re.compile(""), "text": ""}
+        template = {"image1": "", "image2": "", "choices": [], "mp3": [], "answer": re.compile(""), "text": ""}
         case_sensitive = False
         if data["case sensitive"]:
             case_sensitive = True
@@ -67,10 +67,8 @@ class ExoSchedule:
                         tmp = rf"{self.reformat_answer(match_b.group(2))}"
                         if case_sensitive:
                             result[-1]["answer"] = re.compile(rf"^{re.escape(tmp)}$")
-                            # print(f"    -1->>case_sensitive = {case_sensitive}")
                         else:
                             result[-1]["answer"] = re.compile(rf"^{re.escape(tmp)}$", re.IGNORECASE)
-                            # print(f"    -2->>case_sensitive = {case_sensitive}")
                         break
                 for file in files:
                     match_c = re.search(rf"(A{i})(-.*)*\.mp3$", file)
@@ -82,6 +80,35 @@ class ExoSchedule:
                         result[-1]["mp3"].append(os.path.join(folder_path, file))
                         break
             i += 1
+        choices_folder = os.path.join(folder_path, "choices")
+        if os.path.isdir(choices_folder) and len(result) > 0:
+            files = os.listdir(choices_folder)
+            print(f"   ---->>choices_found")
+
+            # Max choices is 10
+            for i in range(10):
+                is_found = False
+                for file in files:
+                    # print(f"   -f->{file}")
+                    match_c = re.search(rf"(C{i + 1})(-(.*))*\.(png|jpg)$", file, re.IGNORECASE)
+                    if match_c is not None:
+                        # Verification
+                        # if len(result[-1]["choices"]) > 0:
+                        #     print(f'   --v1-->{result[-1]["choices"][-1]}')
+
+                        result[-1]["choices"].append({"image": "", "input": "", "mp3": ""})
+                        result[-1]["choices"][-1]["image"] = os.path.join(choices_folder, file)
+                        if match_c.group(2):
+                            result[-1]["choices"][-1]["input"] = os.path.join(choices_folder, match_c.group(2))
+                        for file2 in files:
+                            match_c_mp3 = re.search(rf"^(C{i}.mp3)$", file2, re.IGNORECASE)
+                            if match_c_mp3 is not None:
+                                result[-1]["choices"][-1]["mp3"] = os.path.join(choices_folder, file2)
+                        is_found = True
+                        break
+                if not is_found:
+                    break
+
         return result
 
     @staticmethod
@@ -145,6 +172,7 @@ class ExoSchedule:
                                         exo_tmp = {
                                             "image1": image1,
                                             "image2": image2,
+                                            "choices": [],
                                             "mp3": [],
                                             "answer": answer,
                                             "text": text
@@ -179,4 +207,3 @@ class ExoSchedule:
 
 # EXO
 #
-
