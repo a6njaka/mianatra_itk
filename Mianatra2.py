@@ -89,7 +89,6 @@ class MyFrame(wx.Frame):
         help_menu.Append(wx.ID_ABOUT, "About", "About this application")
         menu_bar.Append(help_menu, "&Help")
 
-
         # Set the menu bar
         self.SetMenuBar(menu_bar)
 
@@ -252,18 +251,40 @@ class MyFrame(wx.Frame):
         self.update_progress_bar_position()
         event.Skip()  # Ensure the default resize behavior happens
 
+    @staticmethod
+    def get_images_choices(choices_exo):
+        result = []
+        for choice in choices_exo:
+            result.append(choice['image'])
+        return result
+
     def display_exo(self):
         print("---->>display_exo")
-        self.valiny.Show()
-        self.valiny.SetValue("")
-        self.valiny.SetFocus()
-        self.home_panel.Layout()
-        self.video_panel.Hide()
+
+        # print("*" * 50)
+        # print("   ---->>Verification Start")
+        # for ttt in self.all_exo[self.current_exo_name]:
+        #     print(f"     ->{ttt}: {self.all_exo[self.current_exo_name][ttt]}")
+        # print("   ---->>Verification End")
+
+        if self.stage_type == "choices":
+            self.valiny.Hide()
+            self.ok_button.Hide()
+            self.change_bitmap_buttons(self.get_images_choices(self.all_exo[self.current_exo_name]['choices']))
+        elif self.stage_type == "entry":
+            self.valiny.Show()
+            self.valiny.SetValue("")
+            self.valiny.SetFocus()
+            self.ok_button.Show()
+
         self.background_staticbitmap.Show()
+        self.video_panel.Hide()
+        self.home_panel.Layout()
+
         # self.player.player.stop()
         print("    -->>", "image1 : ", type(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1']))
         print("    -->>", "image2 : ", type(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2']))
-        print("    -->>", "choices : ", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['choices'])
+        print("    -->>", "choices : ", self.all_exo[self.current_exo_name]['choices'])
         mp3 = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['mp3']
         print("    -->>", "mp3 : ", mp3)
         print("    -->>", "answer : ", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['answer'])
@@ -339,7 +360,12 @@ class MyFrame(wx.Frame):
         print("---->>verify_correctness_all_exo")
         new_all_exo = {}
         for exo in self.exo_list:
-            # print(self.all_exo[exo])
+            # Verification
+            # print("*"*50)
+            # print("   ---->>Verification Start")
+            # for ttt in self.all_exo[exo]:
+            #     print(f"{ttt}: {self.all_exo[exo][ttt]}")
+            # print("   ---->>Verification End")
             try:
                 if not len(self.all_exo[exo]["exo"]) == 0:
                     new_all_exo[exo] = self.all_exo[exo]
@@ -352,11 +378,12 @@ class MyFrame(wx.Frame):
         self.all_exo = new_all_exo
         self.exo_list = list(self.all_exo)
 
-    def verify_answer(self):
+    def verify_answer(self, user_answer=""):
         print("--->>verify_answer")
         print(f"    --1->>{self.current_exo_name}")
         print(f"    --2->>{self.stage_current_index}")
-        user_answer = self.valiny.GetValue()
+        if user_answer == "":
+            user_answer = self.valiny.GetValue()
         exo_answer = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["answer"]
         print(f"    '{user_answer}' VS '{exo_answer}'")
 
@@ -429,6 +456,7 @@ class MyFrame(wx.Frame):
 
     def on_home_panel_motion(self, event):
         self.dc.Clear()
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
 
     def on_bitmap_motion(self, event):
         """Draws a rectangle around the hovered bitmap button."""
@@ -582,6 +610,8 @@ class MyFrame(wx.Frame):
         self.player.play_media(r"mp3/bravo.mp3")
         self.load_image(img_path)
         self.valiny.Hide()
+        self.ok_button.Show()
+        self.hide_bitmap_buttons()
         self.home_panel.Layout()
 
     def on_background_click(self, event):
@@ -606,14 +636,26 @@ class MyFrame(wx.Frame):
         # self.valiny.SetValue("Mety Tsara")  # Display the message when Enter is pressed
 
     def on_bitmap_click(self, event):
-        # Get the clicked static bitmap
         clicked_bitmap = event.GetEventObject()
-        # Get the index of the clicked image
         index = clicked_bitmap.index
-        # Display message box with the customized message
-        wx.MessageBox(f"Vous avez choisi l'image {index + 1}!", "Info", wx.OK | wx.ICON_INFORMATION)
-        # Change the border color to red
-        clicked_bitmap.SetBackgroundColour("red")
+
+        # wx.MessageBox(f"Vous avez choisi l'image {index + 1}!", "Info", wx.OK | wx.ICON_INFORMATION)
+
+        user_choice = f"C{index + 1}"
+        if self.verify_answer(user_choice):
+            self.get_exo_index()
+        if self.stage_current_index is not None:
+            self.display_exo()
+        else:
+            self.stage_index_done = []
+            self.get_exo_name()
+            self.get_level_config()
+            if self.current_exo_name is not None:
+                self.get_exo_index()
+                if self.stage_current_index is not None:
+                    self.display_exo()
+        self.SetStatusText(f"Stage {len(self.stage_index_done) + 1}/{self.stage_min} (Max : {self.stage_max})", 2)
+
         clicked_bitmap.Refresh()
         self.home_panel.Layout()
 
