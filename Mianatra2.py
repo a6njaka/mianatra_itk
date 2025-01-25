@@ -272,6 +272,7 @@ class MyFrame(wx.Frame):
             self.ok_button.Hide()
             self.change_bitmap_buttons(self.get_images_choices(self.all_exo[self.current_exo_name]['choices']))
         elif self.stage_type == "entry":
+            self.hide_bitmap_buttons()
             self.valiny.Show()
             self.valiny.SetValue("")
             self.valiny.SetFocus()
