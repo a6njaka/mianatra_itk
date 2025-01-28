@@ -76,7 +76,7 @@ def operation2number_vertical(a, b, operation="+"):
     # pil_image1.save(r"C:\Users\NJAKA\Desktop\template.jpg")
 
     answer = f"{result}"
-    return image_data1, image_data2, re.compile(rf"^\s*{re.escape(answer)}\s*$"), f"{a}{operation}{b}={result}"
+    return image_data1, image_data2, re.compile(rf"^\s*0*{re.escape(answer)}\s*$"), f"{a}{operation}{b}={result}"
 
 
 # operation2number_vertical(123, 44, operation="*")

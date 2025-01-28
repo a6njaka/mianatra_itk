@@ -456,8 +456,8 @@ class MyFrame(wx.Frame):
         self.hide_bitmap_buttons()
 
     def on_home_panel_motion(self, event):
-        self.dc.Clear()
         self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
+        self.dc.Clear()
 
     def on_bitmap_motion(self, event):
         """Draws a rectangle around the hovered bitmap button."""

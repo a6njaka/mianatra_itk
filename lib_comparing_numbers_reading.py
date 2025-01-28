@@ -70,7 +70,7 @@ def get_image_data(data):
     draw1.text((180, 350), "."*60, fill=(255, 0, 0), font=font_reading)
     draw2.text((txt2_x_start, 350), text2, fill=(129, 23, 141), font=font_reading)
 
-    image1.save(r"C:\Users\NJAKA\Desktop\01.png")
+    # image1.save(r"C:\Users\NJAKA\Desktop\01.png")
 
     pil_image1 = image1.convert('RGB')
     pil_image2 = image2.convert('RGB')

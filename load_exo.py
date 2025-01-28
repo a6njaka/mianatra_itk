@@ -6,6 +6,16 @@ import lib_mividy_voankazo
 import lib_comparing_numbers_reading
 import lib_read_number_fr
 import lib_line_length
+import lib_soustraction_2ch_ver
+import lib_multiplication_par_2_ver
+import lib_multiplication_par_3_ver
+import lib_multiplication_par_4_ver
+import lib_multiplication_par_5_ver
+import lib_multiplication_par_6_ver
+import lib_multiplication_par_7_ver
+import lib_multiplication_par_8_ver
+import lib_multiplication_par_9_ver
+import lib_smallest_number_under_100
 from datetime import date
 import os
 import re
