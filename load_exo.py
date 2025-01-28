@@ -16,6 +16,7 @@ import lib_multiplication_par_7_ver
 import lib_multiplication_par_8_ver
 import lib_multiplication_par_9_ver
 import lib_smallest_number_under_100
+import lib_smallest_number_under_10
 from datetime import date
 import os
 import re
