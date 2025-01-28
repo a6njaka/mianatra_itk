@@ -516,11 +516,10 @@ class MyFrame(wx.Frame):
 
     def OnTool1(self, event):
         print("-->OnTool1 Clicked")
-        # self.player.play_media(r"D:\SONG\00000\Tsy mankaiza.MP3")
-        self.player.play_media(r"D:\Clips\GASY TSARA MIDERA - FIDERANA MANDRAVA SAKANA.mp4")
-        self.background_staticbitmap.Hide()
-        self.home_panel.Layout()
-        self.home_panel.Layout()
+        txt_msg = ""
+        for txt in self.exo_list:
+            txt_msg += f"-{txt}\n"
+        wx.MessageBox(txt_msg.strip())
 
     def OnTool2(self, event):
         print("-->OnTool2 Clicked")
