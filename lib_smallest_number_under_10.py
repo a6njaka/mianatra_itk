@@ -13,9 +13,9 @@ def get_image_data(data):
     random_number_list = []
     i = 0
     while i < level:
-        n = random.randint(1, 9)
+        n = random.randint(10, 20)
         while n in random_number_list:
-            n = random.randint(1, 9)
+            n = random.randint(10, 20)
         random_number_list.append(n)
         i += 1
 
