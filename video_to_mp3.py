@@ -59,18 +59,22 @@ class VideoToMP3Converter(wx.Frame):
         self.file_list.SetDropTarget(drop_target)
 
         # Buttons to manage file list
-        btn_add = wx.Button(panel, label='Add File')
+        btn_add = wx.Button(panel, label=' Add File')
+        btn_add.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_BUTTON))
         btn_add.Bind(wx.EVT_BUTTON, self.add_file_dialog)
 
-        btn_remove = wx.Button(panel, label='Remove')
+        btn_remove = wx.Button(panel, label=' Remove')
+        btn_remove.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_BUTTON))
         btn_remove.Bind(wx.EVT_BUTTON, self.remove_file)
 
-        btn_add_folder = wx.Button(panel, label='Add Folder')
+        btn_add_folder = wx.Button(panel, label=' Add Folder')
+        btn_add_folder.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_BUTTON))
         btn_add_folder.Bind(wx.EVT_BUTTON, self.add_folder)
 
         # Output folder selection
         self.output_dir = wx.TextCtrl(panel, style=wx.TE_READONLY)
-        btn_output = wx.Button(panel, label='Select Output Folder')
+        btn_output = wx.Button(panel, label=' Select Output Folder', size=(180, 40))
+        btn_output.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER, wx.ART_BUTTON))
         btn_output.Bind(wx.EVT_BUTTON, self.select_output_folder)
 
         # Bitrate selection
@@ -79,7 +83,7 @@ class VideoToMP3Converter(wx.Frame):
         self.bitrate_choice.SetSelection(0)  # Default to 192k
 
         # Convert button (always enabled)
-        self.btn_convert = wx.Button(panel, label='Convert Videos to MP3')
+        self.btn_convert = wx.Button(panel, label='Convert Videos to MP3', size=(180, 40))
         self.btn_convert.Bind(wx.EVT_BUTTON, self.start_conversion)
 
         # Progress bar
@@ -97,12 +101,12 @@ class VideoToMP3Converter(wx.Frame):
 
         vbox.Add(wx.StaticText(panel, label='Output Folder:'), flag=wx.ALL, border=5)
         vbox.Add(self.output_dir, flag=wx.EXPAND | wx.ALL, border=5)
-        vbox.Add(btn_output, flag=wx.EXPAND | wx.ALL, border=5)
+        vbox.Add(btn_output, flag=wx.ALIGN_CENTER | wx.BOTTOM, border=5)
 
         vbox.Add(wx.StaticText(panel, label='Select Bitrate:'), flag=wx.ALL, border=5)
         vbox.Add(self.bitrate_choice, flag=wx.EXPAND | wx.ALL, border=5)
 
-        vbox.Add(self.btn_convert, flag=wx.EXPAND | wx.ALL, border=10)
+        vbox.Add(self.btn_convert, flag=wx.ALIGN_CENTER | wx.BOTTOM, border=25)
         vbox.Add(self.progress_bar, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, border=10)
 
         panel.SetSizer(vbox)
@@ -163,7 +167,7 @@ class VideoToMP3Converter(wx.Frame):
         for index, file in enumerate(video_files):
             output_path = os.path.join(output_folder, os.path.splitext(os.path.basename(file))[0] + '.mp3')
             command = ['ffmpeg', '-i', file, '-vn', '-ar', '44100', '-ac', '2', '-ab', selected_bitrate, '-f', 'mp3', output_path]
-            process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, creationflags=subprocess.CREATE_NO_WINDOW)
             process.wait()
 
             progress = int(((index + 1) / total_files) * 100)
