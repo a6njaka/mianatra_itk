@@ -73,7 +73,7 @@ class VideoToMP3Converter(wx.Frame):
 
         # Output folder selection
         self.output_dir = wx.TextCtrl(panel, style=wx.TE_READONLY)
-        btn_output = wx.Button(panel, label=' Select Output Folder', size=(180, 40))
+        btn_output = wx.Button(panel, label=' Select Output Folder', size=(180, 30))
         btn_output.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER, wx.ART_BUTTON))
         btn_output.Bind(wx.EVT_BUTTON, self.select_output_folder)
 
@@ -83,7 +83,7 @@ class VideoToMP3Converter(wx.Frame):
         self.bitrate_choice.SetSelection(0)  # Default to 192k
 
         # Convert button (always enabled)
-        self.btn_convert = wx.Button(panel, label='Convert Videos to MP3', size=(180, 40))
+        self.btn_convert = wx.Button(panel, label='Convert Videos to MP3', size=(180, 30))
         self.btn_convert.Bind(wx.EVT_BUTTON, self.start_conversion)
 
         # Progress bar
