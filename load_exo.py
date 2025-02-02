@@ -17,6 +17,7 @@ import lib_multiplication_par_8_ver
 import lib_multiplication_par_9_ver
 import lib_smallest_number_under_100
 import lib_smallest_number_under_10
+import lib_compare_number
 from datetime import date
 import os
 import re
@@ -181,12 +182,14 @@ class ExoSchedule:
                             for _ in range(int(data["max"])):
                                 try:
                                     # TODO: avoid duplicated exo
-                                    image1, image2, answer, text = library.get_image_data(data)
+                                    image1, image2, choices, answer, text = library.get_image_data(data)
+
+                                    # print(f"-1->choices: {choices}")
                                     if image1 is not None:
                                         exo_tmp = {
                                             "image1": image1,
                                             "image2": image2,
-                                            "choices": [],
+                                            "choices": choices,
                                             "mp3": [],
                                             "answer": answer,
                                             "text": text
