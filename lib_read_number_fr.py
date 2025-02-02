@@ -60,7 +60,7 @@ def get_image_data(data):
         answer = re.compile(rf"^\s*{re.escape(answer)}\s*$")
     text = f"{n}"
     # print(f"{text}: {answer}")
-    return image_data1, image_data2, answer, text
+    return image_data1, image_data2, [], answer, text
 
 
 # data = {"level": 3, "case sensitive": False}

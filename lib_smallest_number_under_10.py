@@ -13,9 +13,9 @@ def get_image_data(data):
     random_number_list = []
     i = 0
     while i < level:
-        n = random.randint(10, 20)
+        n = random.randint(3, 10)
         while n in random_number_list:
-            n = random.randint(10, 20)
+            n = random.randint(3, 10)
         random_number_list.append(n)
         i += 1
 
@@ -92,7 +92,7 @@ def get_image_data(data):
     answer = re.compile(rf"^\s*{re.escape(min_value_str)}\s*$")
     text = "-".join(map(str, random_number_list))
 
-    return image_data1, image_data2, answer, text
+    return image_data1, image_data2, [], answer, text
 
 
 # data = {"level": 3}

@@ -55,7 +55,7 @@ def get_image_data(data):
     length_in_cm = f"{length_in_cm}"
     answer = re.compile(rf"^\s*{re.escape(length_in_cm)}\s*(cm|centimètres)$")
 
-    return image_data1, image_data2, answer, f"{length_in_cm} cm"
+    return image_data1, image_data2, [], answer, f"{length_in_cm} cm"
 
 
 # data = {"level": 3, "case sensitive": False}

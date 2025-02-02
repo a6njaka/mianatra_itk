@@ -5,7 +5,7 @@ exo_dir = r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images"
 # exo_dir = r"C:\Users\NJAKA\Desktop\itokiana_png"
 
 
-exo_name = f"nombre_plus_petit_max10"
+exo_name = f"signe_de_comparaison"
 exo_path = os.path.join(exo_dir, exo_name)
 config_json_path = os.path.join(exo_path, 'config.json')
 
@@ -19,8 +19,8 @@ config = {
     "rand": True,
     "type": "entry",
     "case sensitive": True,
-    "library": f"lib_smallest_number_under_10",
-    "comment": f"Nombre le plus petit inférieur à 10"
+    "library": f"lib_compare_number",
+    "comment": f"Utilisation de signe de comparaison"
 }
 with open(config_json_path, 'w') as outfile:
     json.dump(config, outfile, indent=3)

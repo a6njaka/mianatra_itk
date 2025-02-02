@@ -92,7 +92,7 @@ def get_image_data(data):
     answer = re.compile(rf"^\s*{re.escape(min_value_str)}\s*$")
     text = "-".join(map(str, random_number_list))
 
-    return image_data1, image_data2, answer, text
+    return image_data1, image_data2, [], answer, text
 
 
 # data = {"level": 3}
