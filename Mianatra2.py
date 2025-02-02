@@ -261,16 +261,16 @@ class MyFrame(wx.Frame):
     def display_exo(self):
         print("---->>display_exo")
 
-        # print("*" * 50)
-        # print("   ---->>Verification Start")
-        # for ttt in self.all_exo[self.current_exo_name]:
-        #     print(f"     ->{ttt}: {self.all_exo[self.current_exo_name][ttt]}")
-        # print("   ---->>Verification End")
+        print("*" * 50)
+        print("   ---->>Verification Start")
+        for ttt in self.all_exo[self.current_exo_name]:
+            print(f"     ->{ttt}: {self.all_exo[self.current_exo_name][ttt]}")
+        print("   ---->>Verification End")
 
         if self.stage_type == "choices":
             self.valiny.Hide()
             self.ok_button.Hide()
-            self.change_bitmap_buttons(self.get_images_choices(self.all_exo[self.current_exo_name]['choices']))
+            self.change_bitmap_buttons(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['choices'])
         elif self.stage_type == "entry":
             self.hide_bitmap_buttons()
             self.valiny.Show()
@@ -365,7 +365,7 @@ class MyFrame(wx.Frame):
             # print("*"*50)
             # print("   ---->>Verification Start")
             # for ttt in self.all_exo[exo]:
-            #     print(f"{ttt}: {self.all_exo[exo][ttt]}")
+            #     print(f"   ->{ttt}: {self.all_exo[exo][ttt]}")
             # print("   ---->>Verification End")
             try:
                 if not len(self.all_exo[exo]["exo"]) == 0:
@@ -373,6 +373,7 @@ class MyFrame(wx.Frame):
                     print(f"    -->Correct '{exo}'")
                 else:
                     print(f"    -1->Removed '{exo}'")
+                    print(f"    -1->Removed '{self.all_exo[exo]['exo']}'")
 
             except KeyError as e:
                 print(f"    -2->Removed '{exo}' --> {e}")
