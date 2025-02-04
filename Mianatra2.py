@@ -270,7 +270,16 @@ class MyFrame(wx.Frame):
         if self.stage_type == "choices":
             self.valiny.Hide()
             self.ok_button.Hide()
-            self.change_bitmap_buttons(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['choices'])
+            choices_config = self.get_images_choices(self.all_exo[self.current_exo_name]['choices'])
+            choices_exo = self.get_images_choices(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['choices'])
+            if len(choices_config) > 0:
+                self.change_bitmap_buttons(choices_config)
+            elif len(choices_exo) > 0:
+                self.change_bitmap_buttons(choices_exo)
+            else:
+                print(f"-->VER01")
+                print(f"-1->{choices_config}")
+                print(f"-2->{choices_exo}")
         elif self.stage_type == "entry":
             self.hide_bitmap_buttons()
             self.valiny.Show()
