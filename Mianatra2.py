@@ -12,6 +12,8 @@ from openpyxl.styles import PatternFill
 from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+import io
+from PIL import Image
 
 
 class MediaPlayer:
@@ -261,11 +263,11 @@ class MyFrame(wx.Frame):
     def display_exo(self):
         print("---->>display_exo")
 
-        print("*" * 50)
-        print("   ---->>Verification Start")
-        for ttt in self.all_exo[self.current_exo_name]:
-            print(f"     ->{ttt}: {self.all_exo[self.current_exo_name][ttt]}")
-        print("   ---->>Verification End")
+        # print("*" * 50)
+        # print("   ---->>Verification Start")
+        # for ttt in self.all_exo[self.current_exo_name]:
+        #     print(f"     ->{ttt}: {self.all_exo[self.current_exo_name][ttt]}")
+        # print("   ---->>Verification End")
 
         if self.stage_type == "choices":
             self.valiny.Hide()
@@ -478,13 +480,21 @@ class MyFrame(wx.Frame):
         width, height = bitmap_button.GetSize()
         self.dc.DrawRectangle(x - 1, y - 1, width + 3, height + 3)
 
-    def change_bitmap_buttons(self, new_img_paths, max_height=150):
+    def change_bitmap_buttons(self, new_img, max_height=150):
         self.hide_bitmap_buttons()
 
-        for index, img_path in enumerate(new_img_paths):
-            full_path = os.path.join("images", img_path)
+        for index, img_data in enumerate(new_img):
             try:
-                img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
+                if isinstance(img_data, bytes):
+                    width, height = 100, 100  # Default size, should be passed correctly
+                    pil_img = Image.frombytes('RGB', (width, height), img_data)
+                    stream = io.BytesIO()
+                    pil_img.save(stream, format='PNG')
+                    stream.seek(0)
+                    img = wx.Image(stream, wx.BITMAP_TYPE_PNG)
+                else:
+                    full_path = os.path.join("images", img_data)
+                    img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
 
                 # Calculate scaled dimensions while maintaining aspect ratio
                 width, height = img.GetSize()
@@ -497,8 +507,8 @@ class MyFrame(wx.Frame):
                 self.bitmap_buttons[index].SetBitmapLabel(bitmap)
                 self.bitmap_buttons[index].SetMinSize(bitmap.GetSize())
                 self.bitmap_buttons[index].Show()
-            except FileNotFoundError:
-                print(f"Image not found: {full_path}")
+            except Exception as e:
+                print(f"Error loading image: {e}")
 
     def hide_bitmap_buttons(self):
         """Hides all StaticBitmaps."""
