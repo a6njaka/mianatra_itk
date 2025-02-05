@@ -486,15 +486,19 @@ class MyFrame(wx.Frame):
         for index, img_data in enumerate(new_img):
             try:
                 if isinstance(img_data, bytes):
-                    width, height = 100, 100  # Default size, should be passed correctly
+                    width, height = 120, 80  # Default size, should be passed correctly
                     pil_img = Image.frombytes('RGB', (width, height), img_data)
+                elif isinstance(img_data, Image.Image):
+                    pil_img = img_data
+                else:
+                    full_path = os.path.join("images", img_data)
+                    img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
+
+                if isinstance(img_data, (bytes, Image.Image)):
                     stream = io.BytesIO()
                     pil_img.save(stream, format='PNG')
                     stream.seek(0)
                     img = wx.Image(stream, wx.BITMAP_TYPE_PNG)
-                else:
-                    full_path = os.path.join("images", img_data)
-                    img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
 
                 # Calculate scaled dimensions while maintaining aspect ratio
                 width, height = img.GetSize()
