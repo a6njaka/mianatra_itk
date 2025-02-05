@@ -271,7 +271,7 @@ class MyFrame(wx.Frame):
             self.valiny.Hide()
             self.ok_button.Hide()
             choices_config = self.get_images_choices(self.all_exo[self.current_exo_name]['choices'])
-            choices_exo = self.get_images_choices(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['choices'])
+            choices_exo = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['choices']
             if len(choices_config) > 0:
                 self.change_bitmap_buttons(choices_config)
             elif len(choices_exo) > 0:
