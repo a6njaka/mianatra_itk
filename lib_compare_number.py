@@ -51,15 +51,16 @@ def get_image_data(data):
 
     answer = re.compile(rf"^\s*C2\s*$")
     text = "Andrana"
-    choices = [r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\car_logo2\choices\C1.png", r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\car_logo2\choices\C2.png"]
 
-    # return image_data1, image_data2, choices, answer, text
-    return r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\yes_no_2\A1.png", r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\yes_no_2\A2.png", choices, answer, text
+    choices = [image_text_center1("<"), image_text_center1("="), image_text_center1(">")]
+
+    return image_text_center2("ANDRIAMAHENINA Njaka"), image_data2, choices, answer, text
+    # return r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\yes_no_2\A1.png", r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\yes_no_2\A2.png", choices, answer, text
 
 
 def image_text_center1(text, size=(120, 80), font_size=80):
     width, height = size
-    image1 = Image.new('RGB', (width, height), color='white')
+    image1 = Image.new('RGB', (width, height), color=(184, 239, 201))
     draw1 = ImageDraw.Draw(image1)
 
     try:
@@ -67,18 +68,17 @@ def image_text_center1(text, size=(120, 80), font_size=80):
     except IOError:
         font = ImageFont.load_default()
 
-    draw1.text((35, -5), text, font=font, fill='black')
+    draw1.text((35, -5), text, font=font, fill=(166, 15, 223))
     pil_image1 = image1.convert('RGB')
 
-    pil_image1.save(r"C:\Users\NJAKA\Desktop\01.png")
+    # pil_image1.save(r"C:\Users\NJAKA\Desktop\01.png")
 
-    image_data1 = pil_image1.tobytes()
-    return image_data1
+    return pil_image1
 
 
 def image_text_center2(text, size=(854, 480), font_size=50):
     width, height = size
-    image = Image.new('RGB', (width, height), color='white')
+    image = Image.new('RGB', (width, height), color=(255, 255, 255))
     draw = ImageDraw.Draw(image)
 
     try:
@@ -93,16 +93,17 @@ def image_text_center2(text, size=(854, 480), font_size=50):
     start_x = (width - text_width) / 2
     start_y = (height - text_height) / 2
 
-    draw.text((start_x, start_y), text, font=font, fill='black')
+    draw.text((start_x, start_y), text, font=font, fill=(0, 0, 0))
 
     pil_image = image.convert('RGB')
-    pil_image.save(r"C:\Users\NJAKA\Desktop\01.png")
+    # pil_image.save(r"C:\Users\NJAKA\Desktop\01.png")
 
     image_data = pil_image.tobytes()
     return image_data
 
 
-image_text_center2("ANDRIAMAHENINA Njaka")
+# image_text_center1("<")
+# image_text_center2("ANDRIAMAHENINA Njaka")
 
 # data = {"level": 3}
 # get_image_data(data)
