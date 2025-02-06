@@ -17,17 +17,20 @@ from PIL import Image
 
 
 class MediaPlayer:
-    def __init__(self, panel):
+    def __init__(self, panel, parent_frame):
         self.Instance = vlc.Instance()
         self.player = self.Instance.media_player_new()
         self.is_playing = False
         self.panel = panel
+        self.file_path = ""
+        self.parent_frame = parent_frame
         self.media_player_events = self.player.event_manager()
         self.media_player_events.event_attach(
             vlc.EventType.MediaPlayerEndReached, self.on_media_end
         )
 
     def play_media(self, file_path):
+        self.file_path = file_path
         if self.is_playing:
             self.player.stop()
             self.is_playing = False
@@ -40,7 +43,7 @@ class MediaPlayer:
         self.player.set_hwnd(handle)
 
         # Set video dimensions
-        self.player.video_set_aspect_ratio("854:x")
+        # self.player.video_set_aspect_ratio("854:x")
 
         self.player.play()
         self.is_playing = True
@@ -49,12 +52,17 @@ class MediaPlayer:
             self.panel.Hide()
         else:
             self.panel.Show()
+        self.parent_frame.playing_video = True
 
     def on_media_end(self, event):
         if self.is_playing:  # Check if still playing to avoid multiple calls
             self.is_playing = False
             self.panel.Hide()  # Hide the panel when video ends
             print("Video playback finished. Panel hidden.")
+            if re.search("course.*\\.(mp4|avi)$", self.file_path, re.I):
+                self.parent_frame.after_video_ends()
+                self.parent_frame.playing_video = False
+
 
 class MyFrame(wx.Frame):
     def __init__(self, parent, title):
@@ -65,6 +73,7 @@ class MyFrame(wx.Frame):
         # os.chdir(r"C:\Users\NJAKA\Mianatra2")
 
         self.bitmap_buttons = []
+        self.playing_video = False
 
         self.choice_answer_available = False
         self.log_txt_file = "log_exo_itokiana.txt"
@@ -135,8 +144,8 @@ class MyFrame(wx.Frame):
         main_sizer.Add(self.bitmap_sizer, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
         self.video_panel = wx.Panel(self.home_panel, style=wx.SIMPLE_BORDER)
-        # self.video_panel.SetMaxSize((854, -1))
-        main_sizer.Add(self.video_panel, 1, wx.EXPAND | wx.ALL, 10)
+        # self.video_panel.SetMaxSize((854, 480))
+        main_sizer.Add(self.video_panel, 1, wx.EXPAND | wx.ALL, 0)
 
         self.video_panel.Hide()
         # Create textCtrl
@@ -152,7 +161,8 @@ class MyFrame(wx.Frame):
         self.ok_button.SetFont(font)
         main_sizer.Add(self.ok_button, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
-        self.player = MediaPlayer(self.video_panel)
+        self.player = MediaPlayer(self.video_panel, self)
+        self.video_panel.SetBackgroundColour(wx.Colour(200, 0, 0))
 
         self.home_panel.SetSizer(main_sizer)
         self.valiny.Hide()
@@ -195,14 +205,13 @@ class MyFrame(wx.Frame):
         self.Maximize()
         self.ok_button.SetFocus()
 
-    @staticmethod
-    def unmute_and_set_volume_to_50_percent():
-        devices = AudioUtilities.GetSpeakers()
-        interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-        volume = cast(interface, POINTER(IAudioEndpointVolume))
-        volume.SetMute(0, None)
-        volume.SetMasterVolumeLevelScalar(0.5, None)
-        print("System unmuted and volume set to 50%.")
+    def after_video_ends(self):  # Method to be called after video ends
+        print("->Next Step in MyFrame")
+        self.playing_video = False
+        if self.current_exo_name is not None:
+            self.get_exo_index()
+            if self.stage_current_index is not None:
+                self.display_exo()
 
     def update_log_file(self, text):
         text_list = [text]
@@ -478,6 +487,27 @@ class MyFrame(wx.Frame):
             print(f"     ->library: {self.stage_library}")
             print(f"     ->stage_comment: {self.stage_comment}")
 
+            directory = os.path.join('images', self.current_exo_name)
+            course_video = ""
+            files = [f for f in os.listdir(directory)]
+            for file in files:
+                if re.search("course.*\\.(mp4|avi)$", file, re.I):
+                    course_video = os.path.join(directory, file)
+                    break
+
+            if os.path.isfile(course_video):
+                self.background_staticbitmap.Hide()
+                self.playing_video = True
+                self.ok_button.Hide()
+                self.video_panel.Show()
+                self.player.play_media(course_video)
+                self.home_panel.Layout()
+            else:
+                if self.current_exo_name is not None:
+                    self.get_exo_index()
+                    if self.stage_current_index is not None:
+                        self.display_exo()
+
     def create_bitmap_buttons(self):
         for index in range(10):
             img = wx.Image(100, 100)
@@ -507,8 +537,10 @@ class MyFrame(wx.Frame):
         self.dc.DrawRectangle(x - 1, y - 1, width + 3, height + 3)
 
     def change_bitmap_buttons(self, new_img, max_height=150):
+        print("---->>change_bitmap_buttons")
         self.hide_bitmap_buttons()
-
+        for img in new_img:
+            print(f"   -img->>{type(img)}")
         for index, img_data in enumerate(new_img):
             try:
                 if isinstance(img_data, bytes):
@@ -573,6 +605,7 @@ class MyFrame(wx.Frame):
 
     def OnTool2(self, event):
         print("-->OnTool2 Clicked")
+        self.background_staticbitmap.Hide()
         self.player.play_media(r"D:\Videos\Facebook.mp4")
         # self.video_panel.Hide()
         # img_paths = [
@@ -630,11 +663,10 @@ class MyFrame(wx.Frame):
             self.stage_index_done = []
             self.get_exo_name()
             self.get_level_config()
-            self.home_panel.Layout()
-            if self.current_exo_name is not None:
-                self.get_exo_index()
-                if self.stage_current_index is not None:
-                    self.display_exo()
+            # if self.current_exo_name is not None:
+            #     self.get_exo_index()
+            #     if self.stage_current_index is not None:
+            #         self.display_exo()
 
         elif self.current_exo_name is None and self.ok_button.GetLabel() != "BRAVO !":
             self.display_exo_complete()
@@ -647,10 +679,10 @@ class MyFrame(wx.Frame):
                 self.stage_index_done = []
                 self.get_exo_name()
                 self.get_level_config()
-                if self.current_exo_name is not None:
-                    self.get_exo_index()
-                    if self.stage_current_index is not None:
-                        self.display_exo()
+                # if self.current_exo_name is not None:
+                #     self.get_exo_index()
+                #     if self.stage_current_index is not None:
+                #         self.display_exo()
         self.SetStatusText(f"Stage {len(self.stage_index_done) + 1}/{self.stage_min} (Max : {self.stage_max})", 2)
 
     def display_exo_complete(self):
@@ -700,10 +732,10 @@ class MyFrame(wx.Frame):
             self.stage_index_done = []
             self.get_exo_name()
             self.get_level_config()
-            if self.current_exo_name is not None:
-                self.get_exo_index()
-                if self.stage_current_index is not None:
-                    self.display_exo()
+            # if self.current_exo_name is not None:
+            #     self.get_exo_index()
+            #     if self.stage_current_index is not None:
+            #         self.display_exo()
         self.SetStatusText(f"Stage {len(self.stage_index_done) + 1}/{self.stage_min} (Max : {self.stage_max})", 2)
 
         clicked_bitmap.Refresh()
@@ -741,9 +773,9 @@ class MyFrame(wx.Frame):
             list_player.release()
             player.release()
             instance.release()
-        else:
-            print("MP3 not correct!")
-            print(f"MP3 not correct! --2-> {mp3_files}")
+        # else:
+        #     print("MP3 not correct!")
+        #     print(f"MP3 not correct! --2-> {mp3_files}")
 
 
 if __name__ == "__main__":
