@@ -22,6 +22,10 @@ class MediaPlayer:
         self.player = self.Instance.media_player_new()
         self.is_playing = False
         self.panel = panel
+        self.media_player_events = self.player.event_manager()
+        self.media_player_events.event_attach(
+            vlc.EventType.MediaPlayerEndReached, self.on_media_end
+        )
 
     def play_media(self, file_path):
         if self.is_playing:
@@ -40,11 +44,17 @@ class MediaPlayer:
 
         self.player.play()
         self.is_playing = True
+
         if re.search("mp3$", file_path) is not None:
             self.panel.Hide()
         else:
             self.panel.Show()
 
+    def on_media_end(self, event):
+        if self.is_playing:  # Check if still playing to avoid multiple calls
+            self.is_playing = False
+            self.panel.Hide()  # Hide the panel when video ends
+            print("Video playback finished. Panel hidden.")
 
 class MyFrame(wx.Frame):
     def __init__(self, parent, title):
@@ -563,17 +573,17 @@ class MyFrame(wx.Frame):
 
     def OnTool2(self, event):
         print("-->OnTool2 Clicked")
-        # self.player.play_media(r"D:\SONG\00000\Tsy mankaiza.MP3")
+        self.player.play_media(r"D:\Videos\Facebook.mp4")
         # self.video_panel.Hide()
-        img_paths = [
-            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\annana-1000.png",
-            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\mangue-700.jpg",
-            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\Orange-600.jpg",
-            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\pastèque-2000.png",
-            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\poire-400.jpg",
-            r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\pomme-500.jpg",
-        ]
-        self.change_bitmap_buttons(img_paths)
+        # img_paths = [
+        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\annana-1000.png",
+        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\mangue-700.jpg",
+        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\Orange-600.jpg",
+        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\pastèque-2000.png",
+        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\poire-400.jpg",
+        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\pomme-500.jpg",
+        # ]
+        # self.change_bitmap_buttons(img_paths)
         self.ok_button.Hide()
         self.home_panel.Layout()
 
