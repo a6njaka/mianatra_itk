@@ -117,11 +117,12 @@ class MyFrame(wx.Frame):
         toolbar = self.CreateToolBar()
 
         # Add some tools to the toolbar
-        tool1 = toolbar.AddTool(wx.ID_ANY, "Tool 1", wx.Bitmap(wx.Image(25, 25)), "Tool 1 tooltip")
-        tool2 = toolbar.AddTool(wx.ID_ANY, "Tool 2", wx.Bitmap(wx.Image(25, 25)), "Tool 2 tooltip")
+        tool1 = toolbar.AddTool(wx.ID_ANY, "Tool 1", wx.ArtProvider.GetBitmap(wx.ART_WX_LOGO, wx.ART_BUTTON), "Tool 1 tooltip")
+        tool2 = toolbar.AddTool(wx.ID_ANY, "Tool 2", wx.ArtProvider.GetBitmap(wx.ART_FOLDER, wx.ART_BUTTON), "Tool 2 tooltip")
 
         # Realize the toolbar
         toolbar.Realize()
+        toolbar.SetBackgroundColour(wx.Colour(184, 197, 239))
         self.SetToolBar(toolbar)
 
         # Create a status bar
@@ -201,6 +202,7 @@ class MyFrame(wx.Frame):
         self.stage_index_done = []
 
         # self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
+        # self.SetBackgroundColour(wx.Colour(200, 200, 200))
         self.Show()
         self.Maximize()
         self.ok_button.SetFocus()
