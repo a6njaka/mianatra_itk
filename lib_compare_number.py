@@ -20,7 +20,7 @@ def get_image_data(data):
     draw2 = ImageDraw.Draw(image2)
 
     try:
-        font = ImageFont.truetype("arial.ttf", 50)
+        font = ImageFont.truetype("arial.ttf", 60)
     except IOError:
         font = ImageFont.load_default()
 
@@ -70,11 +70,10 @@ def get_image_data(data):
     image_data1 = pil_image1.tobytes()
     image_data2 = pil_image2.tobytes()
 
-    text = f"{a} vs {b}"
+    text = f"{a} vs {b}|{a}<{b}\t{a}={b}\t{a}>{b}"
     choices = [image_text_center1("<"), image_text_center1("="), image_text_center1(">")]
 
     return image_data1, image_data2, choices, answer, text
-    # return r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\yes_no_2\A1.png", r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\yes_no_2\A2.png", choices, answer, text
 
 
 def image_text_center1(text, size=(120, 80), font_size=80):
@@ -89,8 +88,6 @@ def image_text_center1(text, size=(120, 80), font_size=80):
 
     draw1.text((35, -5), text, font=font, fill=(166, 15, 223))
     pil_image1 = image1.convert('RGB')
-
-    # pil_image1.save(r"C:\Users\NJAKA\Desktop\01.png")
 
     return pil_image1
 
@@ -115,13 +112,7 @@ def image_text_center2(text, size=(854, 480), font_size=50):
     draw.text((start_x, start_y), text, font=font, fill=(0, 0, 0))
 
     pil_image = image.convert('RGB')
-    # pil_image.save(r"C:\Users\NJAKA\Desktop\01.png")
 
     image_data = pil_image.tobytes()
     return image_data
 
-# image_text_center1("<")
-# image_text_center2("ANDRIAMAHENINA Njaka")
-
-# data = {"level": 3}
-# get_image_data(data)
