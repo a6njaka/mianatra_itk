@@ -180,7 +180,7 @@ class MyFrame(wx.Frame):
         self.stage_current_index = None
         self.stage_index_done = []
 
-        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
+        # self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
         self.Show()
         self.Maximize()
         self.ok_button.SetFocus()
@@ -391,6 +391,18 @@ class MyFrame(wx.Frame):
         self.all_exo = new_all_exo
         self.exo_list = list(self.all_exo)
 
+    @staticmethod
+    def split_subject_answer(subject, answer):
+        tmp = f"{subject}".split("|")
+        if len(tmp) == 2:
+            tmp_answer = f"{tmp[1]}".split("\t")
+            tmp_answer_dic = {}
+            for i in range(len(tmp_answer)):
+                tmp_answer_dic[f"C{i + 1}"] = tmp_answer[i]
+            if answer in tmp_answer_dic:
+                return tmp[0], tmp_answer_dic[answer]
+        return subject, answer
+
     def verify_answer(self, user_answer=""):
         print("--->>verify_answer")
         print(f"    --1->>{self.current_exo_name}")
@@ -417,7 +429,9 @@ class MyFrame(wx.Frame):
             time.sleep(2)
             # self.valiny.Show()
             # self.valiny.Enable(True)
-            self.update_log_file(["Marina", self.current_exo_name, self.stage_current_index, self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'], user_answer])
+            subject = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text']
+            subject, user_answer = self.split_subject_answer(subject, user_answer)
+            self.update_log_file(["Marina", self.current_exo_name, self.stage_current_index, subject, user_answer])
 
             return True
         else:
@@ -428,7 +442,9 @@ class MyFrame(wx.Frame):
             time.sleep(2)
             if self.stage_min < self.stage_max:
                 self.stage_min += 1
-            self.update_log_file(["Diso", self.current_exo_name, self.stage_current_index, self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'], user_answer])
+            subject = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text']
+            subject, user_answer = self.split_subject_answer(subject, user_answer)
+            self.update_log_file(["Diso", self.current_exo_name, self.stage_current_index, subject, user_answer])
             return False
 
     def get_level_config(self):
@@ -468,8 +484,8 @@ class MyFrame(wx.Frame):
         self.hide_bitmap_buttons()
 
     def on_home_panel_motion(self, event):
-        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
         self.dc.Clear()
+        # self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
 
     def on_bitmap_motion(self, event):
         """Draws a rectangle around the hovered bitmap button."""
