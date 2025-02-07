@@ -14,8 +14,8 @@ def get_image_data(data):
     b = random.randint(0, 10 ** level)
 
     width, height = 854, 480
-    image1 = Image.new('RGB', (width, height), color='white')
-    image2 = Image.new('RGB', (width, height), color='white')
+    image1 = Image.new('RGB', (width, height), color=(200, 200, 200))
+    image2 = Image.new('RGB', (width, height), color=(200, 200, 200))
     draw1 = ImageDraw.Draw(image1)
     draw2 = ImageDraw.Draw(image2)
 
