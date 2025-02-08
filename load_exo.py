@@ -18,6 +18,7 @@ import lib_multiplication_par_9_ver
 import lib_smallest_number_under_100
 import lib_smallest_number_under_10
 import lib_compare_number
+import lib_analog_clock
 from datetime import date
 import os
 import re
