@@ -500,6 +500,7 @@ class MyFrame(wx.Frame):
             if os.path.isfile(course_video):
                 self.background_staticbitmap.Hide()
                 self.playing_video = True
+                self.valiny.Hide()
                 self.ok_button.Hide()
                 self.video_panel.Show()
                 self.player.play_media(course_video)
