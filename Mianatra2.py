@@ -533,7 +533,7 @@ class MyFrame(wx.Frame):
     def on_bitmap_motion(self, event):
         """Draws a rectangle around the hovered bitmap button."""
         bitmap_button = event.GetEventObject()
-        self.dc.SetPen(wx.Pen("red", 2))
+        # self.dc.SetPen(wx.Pen("red", 2))
         self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
         x, y = bitmap_button.GetPosition()
         width, height = bitmap_button.GetSize()
@@ -624,7 +624,7 @@ class MyFrame(wx.Frame):
         self.home_panel.Layout()
 
     def load_image(self, img_path):
-        if os.path.isfile(img_path):
+        if isinstance(img_path, str) and os.path.isfile(img_path):
             new_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
             if new_image.GetWidth() > 854:
                 new_width = 854
@@ -635,7 +635,8 @@ class MyFrame(wx.Frame):
             self.home_panel.Refresh()
 
         # Bytes_Type
-        if type(img_path) is bytes:
+        elif isinstance(img_path, bytes):
+            # if type(img_path) is bytes:
             # image_data = lib_addition_3ch_hor.get_image(0)
             image_data = img_path
             wx_image = wx.Image(854, 480)
@@ -643,6 +644,20 @@ class MyFrame(wx.Frame):
             wx_bitmap = wx.Bitmap(wx_image)
             self.background_staticbitmap.SetBitmap(wx_bitmap)
             self.home_panel.Refresh()
+        elif isinstance(img_path, Image.Image):
+            img_path = img_path.convert("RGB")
+            width, height = img_path.size
+            data = img_path.tobytes()
+            new_image = wx.Image(width, height)
+            new_image.SetData(data)
+            if new_image.GetWidth() > 854:
+                new_width = 854
+                new_height = int(854 * new_image.GetHeight() / new_image.GetWidth())
+                new_image = new_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
+            new_bitmap = wx.Bitmap(new_image)
+            self.background_staticbitmap.SetBitmap(new_bitmap)
+            self.home_panel.Refresh()
+
 
         # self.SetStatusText("Background image changed.")
         self.home_panel.Layout()
