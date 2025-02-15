@@ -19,6 +19,7 @@ import lib_smallest_number_under_100
 import lib_smallest_number_under_10
 import lib_compare_number
 import lib_analog_clock
+import lib_angle
 from datetime import date
 import os
 import re
@@ -28,8 +29,7 @@ import copy
 
 class ExoSchedule:
     def __init__(self):
-        # self.exo_dir = r"C:\Users\NJAKA\Desktop\exo_itk"
-        self.exo_dir = r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images"
+        self.exo_dir = "images"
         self.exo_schedule = "exo_schedule.json"
         self.all_exo = {}
         self.load_all_exo()
