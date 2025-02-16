@@ -29,6 +29,6 @@ def rename_file(input_folder, output_folder):
 
 
 # Example usage:
-input_dir = r"I:\conf"
+input_dir = r"G:\conf"
 output_dir = r"D:\itokiana_png"
 rename_file(input_dir, output_dir)
