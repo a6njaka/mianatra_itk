@@ -5,7 +5,7 @@ exo_dir = r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images"
 # exo_dir = r"C:\Users\NJAKA\Desktop\itokiana_png"
 
 
-exo_name = f"montre_a_aiguilles"
+exo_name = f"angle"
 exo_path = os.path.join(exo_dir, exo_name)
 config_json_path = os.path.join(exo_path, 'config.json')
 
@@ -18,9 +18,9 @@ config = {
     "level": 3,
     "rand": True,
     "type": "entry",
-    "case sensitive": True,
-    "library": f"lib_analog_clock",
-    "comment": f"Exercice montre à aiguilles"
+    "case sensitive": False,
+    "library": f"lib_angle",
+    "comment": f"Mesurer un angle"
 }
 with open(config_json_path, 'w') as outfile:
     json.dump(config, outfile, indent=3)
