@@ -69,10 +69,7 @@ def get_image_data(data):
     draw1.text((angle_text_x, angle_text_y), "?", fill="red", font=font)
     draw2.text((angle_text_x, angle_text_y), text, fill="red", font=font)
 
-    image_data1 = image1
-    image_data2 = image2
-
     angle_str = f"{angle}"
     answer = re.compile(rf"^\s*{re.escape(angle_str)}\s*(°|degrés?|degres?)$")
 
-    return image_data1, image_data2, [], answer, f"{angle_str} °"
+    return image1, image2, [], answer, f"{angle_str} °"
