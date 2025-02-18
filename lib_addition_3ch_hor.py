@@ -55,8 +55,8 @@ def get_image_data(exo_path="", level=1):
     pil_image1 = image1.convert('RGB')
     pil_image2 = image2.convert('RGB')
 
-    image_data1 = pil_image1.tobytes()
-    image_data2 = pil_image2.tobytes()
+    image_data1 = pil_image1
+    image_data2 = pil_image2
 
     # TODO: Use regex for the answer
     answer = f"{answer}"
