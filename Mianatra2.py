@@ -395,9 +395,12 @@ class MyFrame(wx.Frame):
         for exo in self.exo_list:
             # Verification
             # print("*"*50)
-            # print("   ---->>Verification Start")
+            # print(f"   ---->>Verification Start: {exo}")
+            # # print(f"   ---->>Nb exo: {len(self.all_exo[exo]['exo'])}")
             # for ttt in self.all_exo[exo]:
-            #     print(f"   ->{ttt}: {self.all_exo[exo][ttt]}")
+            #     print(f"   ->{ttt}: {type(self.all_exo[exo][ttt])}")
+            #     if ttt == "exo":
+            #         print(f"        ---->>Nb exo: {len(self.all_exo[exo]['exo'])}")
             # print("   ---->>Verification End")
             try:
                 if not len(self.all_exo[exo]["exo"]) == 0:
