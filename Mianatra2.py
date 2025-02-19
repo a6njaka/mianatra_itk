@@ -653,10 +653,10 @@ class MyFrame(wx.Frame):
             data = img_path.tobytes()
             new_image = wx.Image(width, height)
             new_image.SetData(data)
-            if new_image.GetWidth() > 854:
-                new_width = 854
-                new_height = int(854 * new_image.GetHeight() / new_image.GetWidth())
-                new_image = new_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
+            # if new_image.GetWidth() > 854:
+            #     new_width = 854
+            #     new_height = int(854 * new_image.GetHeight() / new_image.GetWidth())
+            #     new_image = new_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
             new_bitmap = wx.Bitmap(new_image)
             self.background_staticbitmap.SetBitmap(new_bitmap)
             self.home_panel.Refresh()
