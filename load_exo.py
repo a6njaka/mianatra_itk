@@ -29,7 +29,7 @@ import copy
 
 class ExoSchedule:
     def __init__(self):
-        self.exo_dir = "images"
+        self.exo_dir = r"images"
         self.exo_schedule = "exo_schedule.json"
         self.all_exo = {}
         self.load_all_exo()
@@ -215,6 +215,9 @@ class ExoSchedule:
                     except Exception as e:
                         self.all_exo[exo] = {}
                         print(f"Error 12: {e}")
+            else:
+                print(f"JSON file not found: {json_config_path}")
+
 
 # p1 = ExoSchedule()
 # p1.display_all_exo()
