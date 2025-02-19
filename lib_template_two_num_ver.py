@@ -70,13 +70,8 @@ def operation2number_vertical(a, b, operation="+"):
     pil_image1 = image1.convert('RGB')
     pil_image2 = image2.convert('RGB')
 
-    image_data1 = pil_image1.tobytes()
-    image_data2 = pil_image2.tobytes()
-
-    # pil_image1.save(r"C:\Users\NJAKA\Desktop\template.jpg")
-
     answer = f"{result}"
-    return image_data1, image_data2, [], re.compile(rf"^\s*0*{re.escape(answer)}\s*$"), f"{a}{operation}{b}={result}"
+    return pil_image1, pil_image2, [], re.compile(rf"^\s*0*{re.escape(answer)}\s*$"), f"{a}{operation}{b}={result}"
 
 
 # operation2number_vertical(123, 44, operation="*")
