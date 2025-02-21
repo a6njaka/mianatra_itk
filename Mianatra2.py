@@ -101,7 +101,7 @@ class MyFrame(wx.Frame):
         # Create a file menu
         file_menu = wx.Menu()
         restart_item = file_menu.Append(wx.ID_ANY, "Restart\tCtrl+R", "Open settings")
-        file_menu.Append(wx.ID_ANY, "Settings\tCtrl+S", "Open settings")
+        file_menu.Append(wx.ID_ANY, "Settings\tCtrl+Shift+S", "Open settings")
         file_menu.Append(wx.ID_EXIT, "Exit\tAlt+F4", "Exit the application")
         menu_bar.Append(file_menu, "&File")
 
@@ -591,9 +591,9 @@ class MyFrame(wx.Frame):
         self.choice_answer_available = True
 
     def OnSettings(self, event):
-        frame = wx.Frame(self, title="Minatra Settings")
-        # dlg = Setting_DLG(self, title='Settings', style=wx.CLOSE_BOX | wx.CAPTION)
-        dlg = Setting_DLG(frame)
+        # frame = wx.Frame(self, title="Minatra Settings")
+        dlg = Setting_DLG(self, title='Minatra Settings', style=wx.CLOSE_BOX | wx.CAPTION)
+        # dlg = Setting_DLG(frame)
         dlg.CenterOnParent()
         dlg.ShowModal()
 
@@ -803,8 +803,9 @@ class MyFrame(wx.Frame):
         #     print(f"MP3 not correct! --2-> {mp3_files}")
 
 class Setting_DLG(wx.Dialog):
-    def __init__(self, parent, id=wx.ID_ANY, title="Minatra Settings"):
-        super().__init__(parent, id, title, size=(623, 440))
+    def __init__(self, *args, **kw):
+        super(Setting_DLG, self).__init__(*args, **kw)
+        self.SetSize((623, 440))
 
         # Create controls
         self.Choice_group = wx.Choice(self, wx.ID_ANY, pos=(32, 32), size=(256, 21))
