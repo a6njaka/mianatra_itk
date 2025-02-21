@@ -806,9 +806,16 @@ class Setting_DLG(wx.Dialog):
     def __init__(self, *args, **kw):
         super(Setting_DLG, self).__init__(*args, **kw)
         self.SetSize((623, 440))
+        self.list_all_exo = []
+
+        wx.StaticText(self, wx.ID_ANY, "Exo folder:", wx.Point(32, 35), wx.Size(60, 15))
+        self.TextCtrl_1 = wx.TextCtrl(self, 124, f"{os.getcwd()}", wx.Point(100, 32), wx.Size(350, 21), wx.TE_READONLY, wx.DefaultValidator, "ID_TEXTCTRL1")
+        button1 = wx.Button(self, wx.ID_ANY, "Browse ...", wx.Point(480, 30), wx.Size(90, 25), 0, wx.DefaultValidator,"ID_BUTTON1")
 
         # Create controls
-        self.Choice_group = wx.Choice(self, wx.ID_ANY, pos=(32, 32), size=(256, 21))
+        self.Choice_group = wx.Choice(self, wx.ID_ANY, pos=(32, 70), size=(256, 21))
+        self.CheckBox_enable = wx.CheckBox(self, wx.ID_ANY, "Enable", pos=(328, 72))
+
         self.Choice_group.Append("Groupe_1")
         self.Choice_group.Append("Groupe_2")
         self.Choice_group.Append("Groupe_3")
@@ -817,9 +824,11 @@ class Setting_DLG(wx.Dialog):
         self.Choice_group.Append("Groupe_6")
         self.Choice_group.SetSelection(0)  # Select the first item
 
-        self.Button_Exo_Add = wx.Button(self, wx.ID_ANY, ">>", pos=(232, 88))
-        self.ListBox_available_exe = wx.ListBox(self, wx.ID_ANY, pos=(32, 80), size=(184, 248))
-        self.ListBox_group_exo = wx.ListBox(self, wx.ID_ANY, pos=(328, 80), size=(176, 248))
+        self.Button_Exo_Add = wx.Button(self, wx.ID_ANY, ">>", pos=(232, 160))
+        self.Button_Exo_Remove = wx.Button(self, wx.ID_ANY, "<<", pos=(232, 200))
+
+        self.ListBox_available_exe = wx.ListBox(self, wx.ID_ANY, pos=(32, 100), size=(184, 220))
+        self.ListBox_group_exo = wx.ListBox(self, wx.ID_ANY, pos=(328, 100), size=(176, 220))
 
         self.CheckBox_monday = wx.CheckBox(self, wx.ID_ANY, "Monday", pos=(520, 96))
         self.CheckBox_Tuesday = wx.CheckBox(self, wx.ID_ANY, "Tuesday", pos=(520, 128))
@@ -828,15 +837,20 @@ class Setting_DLG(wx.Dialog):
         self.CheckBox_friday = wx.CheckBox(self, wx.ID_ANY, "Friday", pos=(520, 224))
         self.CheckBox_saturday = wx.CheckBox(self, wx.ID_ANY, "Saturday", pos=(520, 256))
         self.CheckBox_sunday = wx.CheckBox(self, wx.ID_ANY, "Sunday", pos=(520, 288))
-        self.CheckBox_enable = wx.CheckBox(self, wx.ID_ANY, "Enable", pos=(328, 32))
 
-        self.Button_Exo_Remove = wx.Button(self, wx.ID_ANY, "Delete", pos=(232, 120))
         self.Button_OK = wx.Button(self, wx.ID_OK, "OK", pos=(328, 360), size=(104, 23))
         self.Button_Cancel = wx.Button(self, wx.ID_CANCEL, "Cancel", pos=(448, 360), size=(104, 23))
 
         # Event Handlers
         self.Bind(wx.EVT_BUTTON, self.OnButton_Add, self.Button_Exo_Add)  # Example Add Button Event
         self.Bind(wx.EVT_BUTTON, self.OnButton_Remove, self.Button_Exo_Remove)  # Example Remove Button Event
+
+        self.ListBox_group_exo.Append("signe_de_comparaison")
+        self.ListBox_group_exo.Append("soustraction_2ch_ver")
+
+        self.ListBox_available_exe.Append("Angle")
+
+        self.update_list_exo()
 
     def OnButton_Add(self, event):
         selected_item = self.ListBox_available_exe.GetSelection()
@@ -851,6 +865,18 @@ class Setting_DLG(wx.Dialog):
             item_text = self.ListBox_group_exo.GetString(selected_item)
             self.ListBox_available_exe.Append(item_text)
             self.ListBox_group_exo.Delete(selected_item)
+
+    def update_list_exo(self):
+        all_exo_path = os.path.join(os.getcwd(), "images")
+        if not os.path.exists(all_exo_path):
+            return None
+
+        for exo in os.listdir(all_exo_path):
+            # item_path = os.path.join(exo_path, item)
+            exo_path = os.path.join(all_exo_path, exo)
+            if os.path.isdir(exo_path):
+                self.list_all_exo.append(exo)
+                self.ListBox_available_exe.Append(exo)
 
 
 if __name__ == "__main__":
