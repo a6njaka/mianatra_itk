@@ -591,7 +591,11 @@ class MyFrame(wx.Frame):
         self.choice_answer_available = True
 
     def OnSettings(self, event):
-        wx.MessageBox("Settings", "Info", wx.OK | wx.ICON_INFORMATION)
+        frame = wx.Frame(self, title="Minatra Settings")
+        # dlg = Setting_DLG(self, title='Settings', style=wx.CLOSE_BOX | wx.CAPTION)
+        dlg = Setting_DLG(frame)
+        dlg.CenterOnParent()
+        dlg.ShowModal()
 
     def OnRestart(self, event):
         wx.MessageBox("OnRestart", "Info", wx.OK | wx.ICON_INFORMATION)
@@ -797,6 +801,55 @@ class MyFrame(wx.Frame):
         # else:
         #     print("MP3 not correct!")
         #     print(f"MP3 not correct! --2-> {mp3_files}")
+
+class Setting_DLG(wx.Dialog):
+    def __init__(self, parent, id=wx.ID_ANY, title="Minatra Settings"):
+        super().__init__(parent, id, title, size=(623, 440))
+
+        # Create controls
+        self.Choice_group = wx.Choice(self, wx.ID_ANY, pos=(32, 32), size=(256, 21))
+        self.Choice_group.Append("Groupe_1")
+        self.Choice_group.Append("Groupe_2")
+        self.Choice_group.Append("Groupe_3")
+        self.Choice_group.Append("Groupe_4")
+        self.Choice_group.Append("Groupe_5")
+        self.Choice_group.Append("Groupe_6")
+        self.Choice_group.SetSelection(0)  # Select the first item
+
+        self.Button_Exo_Add = wx.Button(self, wx.ID_ANY, ">>", pos=(232, 88))
+        self.ListBox_available_exe = wx.ListBox(self, wx.ID_ANY, pos=(32, 80), size=(184, 248))
+        self.ListBox_group_exo = wx.ListBox(self, wx.ID_ANY, pos=(328, 80), size=(176, 248))
+
+        self.CheckBox_monday = wx.CheckBox(self, wx.ID_ANY, "Monday", pos=(520, 96))
+        self.CheckBox_Tuesday = wx.CheckBox(self, wx.ID_ANY, "Tuesday", pos=(520, 128))
+        self.CheckBox_wednessday = wx.CheckBox(self, wx.ID_ANY, "Wednesday", pos=(520, 160))
+        self.CheckBox_thusday = wx.CheckBox(self, wx.ID_ANY, "Thursday", pos=(520, 192))
+        self.CheckBox_friday = wx.CheckBox(self, wx.ID_ANY, "Friday", pos=(520, 224))
+        self.CheckBox_saturday = wx.CheckBox(self, wx.ID_ANY, "Saturday", pos=(520, 256))
+        self.CheckBox_sunday = wx.CheckBox(self, wx.ID_ANY, "Sunday", pos=(520, 288))
+        self.CheckBox_enable = wx.CheckBox(self, wx.ID_ANY, "Enable", pos=(328, 32))
+
+        self.Button_Exo_Remove = wx.Button(self, wx.ID_ANY, "Delete", pos=(232, 120))
+        self.Button_OK = wx.Button(self, wx.ID_OK, "OK", pos=(328, 360), size=(104, 23))
+        self.Button_Cancel = wx.Button(self, wx.ID_CANCEL, "Cancel", pos=(448, 360), size=(104, 23))
+
+        # Event Handlers
+        self.Bind(wx.EVT_BUTTON, self.OnButton_Add, self.Button_Exo_Add)  # Example Add Button Event
+        self.Bind(wx.EVT_BUTTON, self.OnButton_Remove, self.Button_Exo_Remove)  # Example Remove Button Event
+
+    def OnButton_Add(self, event):
+        selected_item = self.ListBox_available_exe.GetSelection()
+        if selected_item != wx.NOT_FOUND:
+            item_text = self.ListBox_available_exe.GetString(selected_item)
+            self.ListBox_group_exo.Append(item_text)
+            self.ListBox_available_exe.Delete(selected_item)
+
+    def OnButton_Remove(self, event):
+        selected_item = self.ListBox_group_exo.GetSelection()
+        if selected_item != wx.NOT_FOUND:
+            item_text = self.ListBox_group_exo.GetString(selected_item)
+            self.ListBox_available_exe.Append(item_text)
+            self.ListBox_group_exo.Delete(selected_item)
 
 
 if __name__ == "__main__":
