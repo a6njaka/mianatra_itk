@@ -11,6 +11,8 @@ from openpyxl.styles import Font
 from openpyxl.styles import PatternFill
 import io
 from PIL import Image
+import subprocess
+import json
 
 
 class MediaPlayer:
@@ -662,7 +664,6 @@ class MyFrame(wx.Frame):
             self.background_staticbitmap.SetBitmap(new_bitmap)
             self.home_panel.Refresh()
 
-
         # self.SetStatusText("Background image changed.")
         self.home_panel.Layout()
 
@@ -799,19 +800,25 @@ class MyFrame(wx.Frame):
         #     print("MP3 not correct!")
         #     print(f"MP3 not correct! --2-> {mp3_files}")
 
+
 class Setting_DLG(wx.Dialog):
     def __init__(self, *args, **kw):
         super(Setting_DLG, self).__init__(*args, **kw)
-        self.SetSize((623, 440))
+        self.SetSize((640, 440))
         self.list_all_exo = []
+        self.exo_schedule = "exo_schedule.json"
+        self.json_data = {}
 
-        wx.StaticText(self, wx.ID_ANY, "Exo folder:", wx.Point(32, 35), wx.Size(60, 15))
-        self.TextCtrl_1 = wx.TextCtrl(self, 124, f"{os.getcwd()}", wx.Point(100, 32), wx.Size(350, 21), wx.TE_READONLY, wx.DefaultValidator, "ID_TEXTCTRL1")
-        button1 = wx.Button(self, wx.ID_ANY, "Browse ...", wx.Point(480, 30), wx.Size(90, 25), 0, wx.DefaultValidator,"ID_BUTTON1")
+        self.StaticText_cwd = wx.StaticText(self, wx.ID_ANY, "Exo folder:", wx.Point(32, 35), wx.Size(60, 15))
+        self.TextCtrl_1 = wx.TextCtrl(self, 124, f"{os.getcwd()}", wx.Point(100, 32), wx.Size(380, 21), wx.TE_READONLY, wx.DefaultValidator, "ID_TEXTCTRL1")
+        self.Browse_button = wx.Button(self, wx.ID_ANY, "Browse ...", wx.Point(500, 30), wx.Size(90, 25), 0, wx.DefaultValidator, "ID_BUTTON1")
 
         # Create controls
         self.Choice_group = wx.Choice(self, wx.ID_ANY, pos=(32, 70), size=(256, 21))
         self.CheckBox_enable = wx.CheckBox(self, wx.ID_ANY, "Enable", pos=(328, 72))
+        self.StaticText2 = wx.StaticText(self, wx.ID_ANY, "Max exo:", pos=(400, 72))
+        self.SpinCtrl_max_exo = wx.SpinCtrl(self, wx.ID_ANY, "0", pos=(460, 68), size=(50, 21), style=wx.SP_ARROW_KEYS, min=0, max=100)  # Important to set min and max here
+        self.SpinCtrl_max_exo.SetValue(1)  # Set the initial value as an integer
 
         self.Choice_group.Append("Groupe_1")
         self.Choice_group.Append("Groupe_2")
@@ -821,26 +828,30 @@ class Setting_DLG(wx.Dialog):
         self.Choice_group.Append("Groupe_6")
         self.Choice_group.SetSelection(0)  # Select the first item
 
-        self.Button_Exo_Add = wx.Button(self, wx.ID_ANY, ">>", pos=(232, 160))
-        self.Button_Exo_Remove = wx.Button(self, wx.ID_ANY, "<<", pos=(232, 200))
+        self.StaticBox1 = wx.StaticBox(self, wx.ID_ANY, "Details", pos=(24, 100), size=(580, 250))
 
-        self.ListBox_available_exe = wx.ListBox(self, wx.ID_ANY, pos=(32, 100), size=(184, 220))
-        self.ListBox_group_exo = wx.ListBox(self, wx.ID_ANY, pos=(328, 100), size=(176, 220))
+        self.Button_Exo_Add = wx.Button(self, wx.ID_ANY, ">>", pos=(232, 170))
+        self.Button_Exo_Remove = wx.Button(self, wx.ID_ANY, "<<", pos=(232, 210))
 
-        self.CheckBox_monday = wx.CheckBox(self, wx.ID_ANY, "Monday", pos=(520, 96))
-        self.CheckBox_Tuesday = wx.CheckBox(self, wx.ID_ANY, "Tuesday", pos=(520, 128))
-        self.CheckBox_wednessday = wx.CheckBox(self, wx.ID_ANY, "Wednesday", pos=(520, 160))
-        self.CheckBox_thusday = wx.CheckBox(self, wx.ID_ANY, "Thursday", pos=(520, 192))
-        self.CheckBox_friday = wx.CheckBox(self, wx.ID_ANY, "Friday", pos=(520, 224))
-        self.CheckBox_saturday = wx.CheckBox(self, wx.ID_ANY, "Saturday", pos=(520, 256))
-        self.CheckBox_sunday = wx.CheckBox(self, wx.ID_ANY, "Sunday", pos=(520, 288))
+        self.ListBox_available_exe = wx.ListBox(self, wx.ID_ANY, pos=(32, 120), size=(184, 220))
+        self.ListBox_group_exo = wx.ListBox(self, wx.ID_ANY, pos=(328, 120), size=(176, 220))
+
+        self.CheckBox_monday = wx.CheckBox(self, wx.ID_ANY, "Monday", pos=(520, 121))
+        self.CheckBox_Tuesday = wx.CheckBox(self, wx.ID_ANY, "Tuesday", pos=(520, 153))
+        self.CheckBox_wednessday = wx.CheckBox(self, wx.ID_ANY, "Wednesday", pos=(520, 185))
+        self.CheckBox_thusday = wx.CheckBox(self, wx.ID_ANY, "Thursday", pos=(520, 217))
+        self.CheckBox_friday = wx.CheckBox(self, wx.ID_ANY, "Friday", pos=(520, 249))
+        self.CheckBox_saturday = wx.CheckBox(self, wx.ID_ANY, "Saturday", pos=(520, 281))
+        self.CheckBox_sunday = wx.CheckBox(self, wx.ID_ANY, "Sunday", pos=(520, 313))
 
         self.Button_OK = wx.Button(self, wx.ID_OK, "OK", pos=(328, 360), size=(104, 23))
         self.Button_Cancel = wx.Button(self, wx.ID_CANCEL, "Cancel", pos=(448, 360), size=(104, 23))
 
         # Event Handlers
-        self.Bind(wx.EVT_BUTTON, self.OnButton_Add, self.Button_Exo_Add)  # Example Add Button Event
-        self.Bind(wx.EVT_BUTTON, self.OnButton_Remove, self.Button_Exo_Remove)  # Example Remove Button Event
+        self.Bind(wx.EVT_BUTTON, self.on_button_add, self.Button_Exo_Add)
+        self.Bind(wx.EVT_BUTTON, self.on_button_remove, self.Button_Exo_Remove)
+        self.Bind(wx.EVT_BUTTON, self.on_browse_button, self.Browse_button)
+        self.StaticText_cwd.Bind(wx.EVT_LEFT_DCLICK, self.on_cwd_double_click)
 
         self.ListBox_group_exo.Append("signe_de_comparaison")
         self.ListBox_group_exo.Append("soustraction_2ch_ver")
@@ -848,15 +859,42 @@ class Setting_DLG(wx.Dialog):
         self.ListBox_available_exe.Append("Angle")
 
         self.update_list_exo()
+        self.read_json_exo_schedule()
 
-    def OnButton_Add(self, event):
+    def on_browse_button(self, event):
+        i = self.Choice_group.GetSelection()
+        print(i)
+        self.read_and_update_group_exo(i)
+
+    def read_json_exo_schedule(self):
+        with open(self.exo_schedule) as json_file:
+            self.json_data = json.load(json_file)
+
+    def read_and_update_group_exo(self, group_index):
+        self.ListBox_group_exo.Clear()
+        if len(self.json_data["Itokiana"]) > group_index:
+            for exo in self.json_data["Itokiana"][group_index]["exo_group"]:
+                self.ListBox_group_exo.Append(exo)
+
+    @staticmethod
+    def on_cwd_double_click(event):
+        cwd = os.getcwd()
+        try:
+            # Windows: Use subprocess to open File Explorer
+            subprocess.Popen(["explorer", cwd])
+        except Exception as e:
+            wx.MessageBox(f"Error opening directory: {e}", "Error", wx.OK | wx.ICON_ERROR)
+
+        event.Skip()  # Important: Allow other events to process
+
+    def on_button_add(self, event):
         selected_item = self.ListBox_available_exe.GetSelection()
         if selected_item != wx.NOT_FOUND:
             item_text = self.ListBox_available_exe.GetString(selected_item)
             self.ListBox_group_exo.Append(item_text)
             self.ListBox_available_exe.Delete(selected_item)
 
-    def OnButton_Remove(self, event):
+    def on_button_remove(self, event):
         selected_item = self.ListBox_group_exo.GetSelection()
         if selected_item != wx.NOT_FOUND:
             item_text = self.ListBox_group_exo.GetString(selected_item)
