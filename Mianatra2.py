@@ -806,6 +806,7 @@ class Setting_DLG(wx.Dialog):
         super(Setting_DLG, self).__init__(*args, **kw)
         self.SetSize((640, 440))
         self.list_all_exo = []
+        self.list_group_exo = []
         self.exo_schedule = "exo_schedule.json"
         self.json_data = {}
 
@@ -839,7 +840,7 @@ class Setting_DLG(wx.Dialog):
         self.CheckBox_monday = wx.CheckBox(self, wx.ID_ANY, "Monday", pos=(520, 121))
         self.CheckBox_Tuesday = wx.CheckBox(self, wx.ID_ANY, "Tuesday", pos=(520, 153))
         self.CheckBox_wednessday = wx.CheckBox(self, wx.ID_ANY, "Wednesday", pos=(520, 185))
-        self.CheckBox_thusday = wx.CheckBox(self, wx.ID_ANY, "Thursday", pos=(520, 217))
+        self.CheckBox_thursday = wx.CheckBox(self, wx.ID_ANY, "Thursday", pos=(520, 217))
         self.CheckBox_friday = wx.CheckBox(self, wx.ID_ANY, "Friday", pos=(520, 249))
         self.CheckBox_saturday = wx.CheckBox(self, wx.ID_ANY, "Saturday", pos=(520, 281))
         self.CheckBox_sunday = wx.CheckBox(self, wx.ID_ANY, "Sunday", pos=(520, 313))
@@ -852,14 +853,16 @@ class Setting_DLG(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.on_button_remove, self.Button_Exo_Remove)
         self.Bind(wx.EVT_BUTTON, self.on_browse_button, self.Browse_button)
         self.StaticText_cwd.Bind(wx.EVT_LEFT_DCLICK, self.on_cwd_double_click)
-
-        self.ListBox_group_exo.Append("signe_de_comparaison")
-        self.ListBox_group_exo.Append("soustraction_2ch_ver")
-
-        self.ListBox_available_exe.Append("Angle")
+        self.Choice_group.Bind(wx.EVT_CHOICE, self.on_choice_group_changed)
 
         self.update_list_exo()
         self.read_json_exo_schedule()
+        self.on_choice_group_changed(None)
+
+    def on_choice_group_changed(self, event):
+        index = self.Choice_group.GetSelection()
+        self.read_and_update_group_exo(index)
+        self.update_list_exo()
 
     def on_browse_button(self, event):
         i = self.Choice_group.GetSelection()
@@ -872,9 +875,49 @@ class Setting_DLG(wx.Dialog):
 
     def read_and_update_group_exo(self, group_index):
         self.ListBox_group_exo.Clear()
-        if len(self.json_data["Itokiana"]) > group_index:
-            for exo in self.json_data["Itokiana"][group_index]["exo_group"]:
+        self.list_group_exo = []
+        user = "Itokiana"
+        if len(self.json_data[user]) > group_index:
+            for exo in self.json_data[user][group_index]["exo_group"]:
                 self.ListBox_group_exo.Append(exo)
+                self.list_group_exo.append(exo)
+            try:
+                self.SpinCtrl_max_exo.SetValue(int(self.json_data[user][group_index]["exo_number"]))
+            except Exception as e:
+                print(f"Error exo_number: {e}")
+            try:
+                self.CheckBox_enable.SetValue(int(self.json_data[user][group_index]["Activate"]))
+            except Exception as e:
+                print(f"Error Activate: {e}")
+            try:
+                days = self.json_data[user][group_index]["exo_weekdays"]
+                if "Monday" in days:
+                    self.CheckBox_monday.SetValue(True)
+                if "Tuesday" in days:
+                    self.CheckBox_Tuesday.SetValue(True)
+                if "Wednesday" in days:
+                    self.CheckBox_wednessday.SetValue(True)
+                if "Thursday" in days:
+                    self.CheckBox_thursday.SetValue(True)
+                if "Friday" in days:
+                    self.CheckBox_friday.SetValue(True)
+                if "Saturday" in days:
+                    self.CheckBox_saturday.SetValue(True)
+                if "Sunday" in days:
+                    self.CheckBox_sunday.SetValue(True)
+            except Exception as e:
+                print(f"Error exo_weekdays: {e}")
+
+        else:
+            self.SpinCtrl_max_exo.SetValue(0)
+            self.CheckBox_enable.SetValue(False)
+            self.CheckBox_monday.SetValue(False)
+            self.CheckBox_Tuesday.SetValue(False)
+            self.CheckBox_wednessday.SetValue(False)
+            self.CheckBox_thursday.SetValue(False)
+            self.CheckBox_friday.SetValue(False)
+            self.CheckBox_saturday.SetValue(False)
+            self.CheckBox_sunday.SetValue(False)
 
     @staticmethod
     def on_cwd_double_click(event):
@@ -902,6 +945,7 @@ class Setting_DLG(wx.Dialog):
             self.ListBox_group_exo.Delete(selected_item)
 
     def update_list_exo(self):
+        self.ListBox_available_exe.Clear()
         all_exo_path = os.path.join(os.getcwd(), "images")
         if not os.path.exists(all_exo_path):
             return None
@@ -911,7 +955,8 @@ class Setting_DLG(wx.Dialog):
             exo_path = os.path.join(all_exo_path, exo)
             if os.path.isdir(exo_path):
                 self.list_all_exo.append(exo)
-                self.ListBox_available_exe.Append(exo)
+                if exo not in self.list_group_exo:
+                    self.ListBox_available_exe.Append(exo)
 
 
 if __name__ == "__main__":
