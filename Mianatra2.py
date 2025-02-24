@@ -100,7 +100,11 @@ class MyFrame(wx.Frame):
         # Create a file menu
         file_menu = wx.Menu()
         restart_item = file_menu.Append(wx.ID_ANY, "Restart\tCtrl+R", "Open settings")
+        restart_item = file_menu.Append(wx.ID_ANY, "Dashboard", "Open settings")
+        restart_item = file_menu.Append(wx.ID_ANY, "Test Exo", "Open settings")
+        file_menu.AppendSeparator()
         file_menu.Append(wx.ID_ANY, "Settings\tCtrl+Shift+S", "Open settings")
+        file_menu.AppendSeparator()
         file_menu.Append(wx.ID_EXIT, "Exit\tAlt+F4", "Exit the application")
         menu_bar.Append(file_menu, "&File")
 
@@ -590,11 +594,13 @@ class MyFrame(wx.Frame):
         self.choice_answer_available = True
 
     def OnSettings(self, event):
-        # frame = wx.Frame(self, title="Minatra Settings")
         dlg = Setting_DLG(self, title='Minatra Settings', style=wx.CLOSE_BOX | wx.CAPTION)
-        # dlg = Setting_DLG(frame)
         dlg.CenterOnParent()
-        dlg.ShowModal()
+        res = dlg.ShowModal()
+        if res == wx.ID_OK:
+            json_path = os.path.join(os.getcwd(), "exo_schedule.json")
+            with open(json_path, 'w') as outfile:
+                json.dump(dlg.json_data, outfile, indent=3)
 
     def OnRestart(self, event):
         wx.MessageBox("OnRestart", "Info", wx.OK | wx.ICON_INFORMATION)
@@ -834,12 +840,12 @@ class Setting_DLG(wx.Dialog):
         self.Button_Exo_Add = wx.Button(self, wx.ID_ANY, ">>", pos=(232, 170))
         self.Button_Exo_Remove = wx.Button(self, wx.ID_ANY, "<<", pos=(232, 210))
 
-        self.ListBox_available_exe = wx.ListBox(self, wx.ID_ANY, pos=(32, 120), size=(184, 220))
+        self.ListBox_available_exo = wx.ListBox(self, wx.ID_ANY, pos=(32, 120), size=(184, 220))
         self.ListBox_group_exo = wx.ListBox(self, wx.ID_ANY, pos=(328, 120), size=(176, 220))
 
         self.CheckBox_monday = wx.CheckBox(self, wx.ID_ANY, "Monday", pos=(520, 121))
         self.CheckBox_Tuesday = wx.CheckBox(self, wx.ID_ANY, "Tuesday", pos=(520, 153))
-        self.CheckBox_wednessday = wx.CheckBox(self, wx.ID_ANY, "Wednesday", pos=(520, 185))
+        self.CheckBox_wednesday = wx.CheckBox(self, wx.ID_ANY, "Wednesday", pos=(520, 185))
         self.CheckBox_thursday = wx.CheckBox(self, wx.ID_ANY, "Thursday", pos=(520, 217))
         self.CheckBox_friday = wx.CheckBox(self, wx.ID_ANY, "Friday", pos=(520, 249))
         self.CheckBox_saturday = wx.CheckBox(self, wx.ID_ANY, "Saturday", pos=(520, 281))
@@ -854,10 +860,47 @@ class Setting_DLG(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.on_browse_button, self.Browse_button)
         self.StaticText_cwd.Bind(wx.EVT_LEFT_DCLICK, self.on_cwd_double_click)
         self.Choice_group.Bind(wx.EVT_CHOICE, self.on_choice_group_changed)
+        self.SpinCtrl_max_exo.Bind(wx.EVT_SPINCTRL, self.update_json)
+        self.CheckBox_monday.Bind(wx.EVT_CHECKBOX, self.update_json)
+        self.CheckBox_Tuesday.Bind(wx.EVT_CHECKBOX, self.update_json)
+        self.CheckBox_wednesday.Bind(wx.EVT_CHECKBOX, self.update_json)
+        self.CheckBox_thursday.Bind(wx.EVT_CHECKBOX, self.update_json)
+        self.CheckBox_friday.Bind(wx.EVT_CHECKBOX, self.update_json)
+        self.CheckBox_saturday.Bind(wx.EVT_CHECKBOX, self.update_json)
+        self.CheckBox_sunday.Bind(wx.EVT_CHECKBOX, self.update_json)
+        self.CheckBox_enable.Bind(wx.EVT_CHECKBOX, self.update_json)
 
         self.update_list_exo()
         self.read_json_exo_schedule()
         self.on_choice_group_changed(None)
+        self.Choice_group.SetFocus()
+
+    def update_json(self, event):
+        group_tmp = {
+            "Activate": self.CheckBox_enable.GetValue(),
+            "exo_group": [self.ListBox_group_exo.GetString(i) for i in range(self.ListBox_group_exo.GetCount())],
+            "exo_number": self.SpinCtrl_max_exo.GetValue(),
+            "exo_group_name": self.Choice_group.GetStringSelection(),
+            "exo_weekdays": []
+        }
+        group_index = self.Choice_group.GetSelection()
+
+        if self.CheckBox_monday.GetValue():
+            group_tmp["exo_weekdays"].append(self.CheckBox_monday.GetLabel())
+        if self.CheckBox_Tuesday.GetValue():
+            group_tmp["exo_weekdays"].append(self.CheckBox_Tuesday.GetLabel())
+        if self.CheckBox_wednesday.GetValue():
+            group_tmp["exo_weekdays"].append(self.CheckBox_wednesday.GetLabel())
+        if self.CheckBox_thursday.GetValue():
+            group_tmp["exo_weekdays"].append(self.CheckBox_thursday.GetLabel())
+        if self.CheckBox_friday.GetValue():
+            group_tmp["exo_weekdays"].append(self.CheckBox_friday.GetLabel())
+        if self.CheckBox_saturday.GetValue():
+            group_tmp["exo_weekdays"].append(self.CheckBox_saturday.GetLabel())
+        if self.CheckBox_sunday.GetValue():
+            group_tmp["exo_weekdays"].append(self.CheckBox_sunday.GetLabel())
+
+        self.json_data["Itokiana"][group_index] = group_tmp
 
     def on_choice_group_changed(self, event):
         index = self.Choice_group.GetSelection()
@@ -868,6 +911,12 @@ class Setting_DLG(wx.Dialog):
         i = self.Choice_group.GetSelection()
         print(i)
         self.read_and_update_group_exo(i)
+
+    @staticmethod
+    def sort_list_box(listbox):
+        items = [listbox.GetString(i) for i in range(listbox.GetCount())]
+        items.sort()  # In place sort
+        listbox.Set(items)
 
     def read_json_exo_schedule(self):
         with open(self.exo_schedule) as json_file:
@@ -893,18 +942,35 @@ class Setting_DLG(wx.Dialog):
                 days = self.json_data[user][group_index]["exo_weekdays"]
                 if "Monday" in days:
                     self.CheckBox_monday.SetValue(True)
+                else:
+                    self.CheckBox_monday.SetValue(False)
                 if "Tuesday" in days:
                     self.CheckBox_Tuesday.SetValue(True)
+                else:
+                    self.CheckBox_Tuesday.SetValue(False)
                 if "Wednesday" in days:
-                    self.CheckBox_wednessday.SetValue(True)
+                    self.CheckBox_wednesday.SetValue(True)
+                else:
+                    self.CheckBox_wednesday.SetValue(False)
                 if "Thursday" in days:
                     self.CheckBox_thursday.SetValue(True)
+                else:
+                    self.CheckBox_thursday.SetValue(False)
                 if "Friday" in days:
                     self.CheckBox_friday.SetValue(True)
+                else:
+                    self.CheckBox_friday.SetValue(False)
+
                 if "Saturday" in days:
                     self.CheckBox_saturday.SetValue(True)
+                else:
+                    self.CheckBox_saturday.SetValue(False)
+
                 if "Sunday" in days:
                     self.CheckBox_sunday.SetValue(True)
+                else:
+                    self.CheckBox_sunday.SetValue(False)
+
             except Exception as e:
                 print(f"Error exo_weekdays: {e}")
 
@@ -913,11 +979,13 @@ class Setting_DLG(wx.Dialog):
             self.CheckBox_enable.SetValue(False)
             self.CheckBox_monday.SetValue(False)
             self.CheckBox_Tuesday.SetValue(False)
-            self.CheckBox_wednessday.SetValue(False)
+            self.CheckBox_wednesday.SetValue(False)
             self.CheckBox_thursday.SetValue(False)
             self.CheckBox_friday.SetValue(False)
             self.CheckBox_saturday.SetValue(False)
             self.CheckBox_sunday.SetValue(False)
+        self.sort_list_box(self.ListBox_available_exo)
+        self.sort_list_box(self.ListBox_group_exo)
 
     @staticmethod
     def on_cwd_double_click(event):
@@ -931,21 +999,27 @@ class Setting_DLG(wx.Dialog):
         event.Skip()  # Important: Allow other events to process
 
     def on_button_add(self, event):
-        selected_item = self.ListBox_available_exe.GetSelection()
+        selected_item = self.ListBox_available_exo.GetSelection()
         if selected_item != wx.NOT_FOUND:
-            item_text = self.ListBox_available_exe.GetString(selected_item)
+            item_text = self.ListBox_available_exo.GetString(selected_item)
             self.ListBox_group_exo.Append(item_text)
-            self.ListBox_available_exe.Delete(selected_item)
+            self.ListBox_available_exo.Delete(selected_item)
+        self.sort_list_box(self.ListBox_available_exo)
+        self.sort_list_box(self.ListBox_group_exo)
+        self.update_json(None)
 
     def on_button_remove(self, event):
         selected_item = self.ListBox_group_exo.GetSelection()
         if selected_item != wx.NOT_FOUND:
             item_text = self.ListBox_group_exo.GetString(selected_item)
-            self.ListBox_available_exe.Append(item_text)
+            self.ListBox_available_exo.Append(item_text)
             self.ListBox_group_exo.Delete(selected_item)
+        self.sort_list_box(self.ListBox_available_exo)
+        self.sort_list_box(self.ListBox_group_exo)
+        self.update_json(None)
 
     def update_list_exo(self):
-        self.ListBox_available_exe.Clear()
+        self.ListBox_available_exo.Clear()
         all_exo_path = os.path.join(os.getcwd(), "images")
         if not os.path.exists(all_exo_path):
             return None
@@ -956,7 +1030,7 @@ class Setting_DLG(wx.Dialog):
             if os.path.isdir(exo_path):
                 self.list_all_exo.append(exo)
                 if exo not in self.list_group_exo:
-                    self.ListBox_available_exe.Append(exo)
+                    self.ListBox_available_exo.Append(exo)
 
 
 if __name__ == "__main__":
