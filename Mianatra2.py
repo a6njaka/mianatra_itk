@@ -73,6 +73,7 @@ class MyFrame(wx.Frame):
 
         self.bitmap_buttons = []
         self.playing_video = False
+        self.ID_SETTING = wx.NewIdRef()
 
         self.choice_answer_available = False
         self.log_txt_file = "log_exo_itokiana.txt"
@@ -103,7 +104,7 @@ class MyFrame(wx.Frame):
         restart_item = file_menu.Append(wx.ID_ANY, "Dashboard", "Open settings")
         restart_item = file_menu.Append(wx.ID_ANY, "Test Exo", "Open settings")
         file_menu.AppendSeparator()
-        file_menu.Append(wx.ID_ANY, "Settings\tCtrl+Shift+S", "Open settings")
+        file_menu.Append(self.ID_SETTING, "Settings\tCtrl+Shift+S", "Open settings")
         file_menu.AppendSeparator()
         file_menu.Append(wx.ID_EXIT, "Exit\tAlt+F4", "Exit the application")
         menu_bar.Append(file_menu, "&File")
@@ -181,7 +182,7 @@ class MyFrame(wx.Frame):
         self.ok_button.Bind(wx.EVT_BUTTON, self.on_ok_button)
         self.background_staticbitmap.Bind(wx.EVT_LEFT_DOWN, self.on_background_click)
         self.Bind(wx.EVT_MENU, self.OnRestart, restart_item)
-        self.Bind(wx.EVT_MENU, self.OnSettings, file_menu.FindItemByPosition(1))
+        self.Bind(wx.EVT_MENU, self.OnSettings, id=self.ID_SETTING)
         self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
         self.home_panel.Bind(wx.EVT_MOTION, self.on_home_panel_motion)
