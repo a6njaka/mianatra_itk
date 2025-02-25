@@ -74,6 +74,7 @@ class MyFrame(wx.Frame):
         self.bitmap_buttons = []
         self.playing_video = False
         self.ID_SETTING = wx.NewIdRef()
+        self.ID_RESTART = wx.NewIdRef()
 
         self.choice_answer_available = False
         self.log_txt_file = "log_exo_itokiana.txt"
@@ -103,7 +104,7 @@ class MyFrame(wx.Frame):
 
         # Create a file menu
         file_menu = wx.Menu()
-        restart_item = file_menu.Append(wx.ID_ANY, "Restart\tCtrl+R", "Open settings")
+        restart_item = file_menu.Append(self.ID_RESTART, "Restart\tCtrl+R", "Open settings")
         restart_item = file_menu.Append(wx.ID_ANY, "Dashboard", "Open settings")
         restart_item = file_menu.Append(wx.ID_ANY, "Test Exo", "Open settings")
         file_menu.AppendSeparator()
@@ -170,7 +171,7 @@ class MyFrame(wx.Frame):
         main_sizer.Add(self.ok_button, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
         self.player = MediaPlayer(self.video_panel, self)
-        self.video_panel.SetBackgroundColour(wx.Colour(200, 0, 0))
+        # self.video_panel.SetBackgroundColour(wx.Colour(200, 0, 0))
 
         self.home_panel.SetSizer(main_sizer)
         self.valiny.Hide()
@@ -184,7 +185,7 @@ class MyFrame(wx.Frame):
         self.valiny.Bind(wx.EVT_TEXT_ENTER, self.on_enter_pressed)
         self.ok_button.Bind(wx.EVT_BUTTON, self.on_ok_button)
         self.background_staticbitmap.Bind(wx.EVT_LEFT_DOWN, self.on_background_click)
-        self.Bind(wx.EVT_MENU, self.OnRestart, restart_item)
+        self.Bind(wx.EVT_MENU, self.OnRestart, id=self.ID_RESTART)
         self.Bind(wx.EVT_MENU, self.OnSettings, id=self.ID_SETTING)
         self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
@@ -598,6 +599,7 @@ class MyFrame(wx.Frame):
         self.choice_answer_available = True
 
     def OnSettings(self, event):
+        # todo: fix issue, restarting while the video is playing
         dlg = Setting_DLG(self, title='Minatra Settings', style=wx.CLOSE_BOX | wx.CAPTION)
         dlg.CenterOnParent()
         res = dlg.ShowModal()
@@ -607,7 +609,27 @@ class MyFrame(wx.Frame):
                 json.dump(dlg.json_data, outfile, indent=3)
 
     def OnRestart(self, event):
-        wx.MessageBox("OnRestart", "Info", wx.OK | wx.ICON_INFORMATION)
+        img_path = os.path.join("images", "orange_ice_mint.jpg")
+        self.player.player.stop()
+        # self.video_panel.Hide()
+        if os.path.isfile(img_path):
+            self.background_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
+        else:
+            self.background_image = wx.Image(854, 480)
+        if self.background_image.GetWidth() > 854:
+            new_width = 854
+            new_height = int(854 * self.background_image.GetHeight() / self.background_image.GetWidth())
+            self.background_image = self.background_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
+
+        self.background_bitmap = wx.Bitmap(self.background_image)
+        self.background_staticbitmap.SetBitmap(self.background_bitmap)
+        self.home_panel.Refresh()
+
+        self.ok_button.Show()
+        self.valiny.Hide()
+        self.ok_button.SetLabel("START")
+        self.hide_bitmap_buttons()
+        self.home_panel.Layout()
 
     def OnExit(self, event):
         self.Close(True)
@@ -691,6 +713,7 @@ class MyFrame(wx.Frame):
         if self.ok_button.GetLabel() == "START":
             print("  -->>START")
             self.ok_button.SetLabel("OK")
+            self.exo_done = []
             self.load_all_exo()
             self.verify_correctness_all_exo()
             self.stage_index_done = []
