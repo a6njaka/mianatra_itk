@@ -72,4 +72,4 @@ def get_image_data(data):
     angle_str = f"{angle}"
     answer = re.compile(rf"^\s*{re.escape(angle_str)}\s*(°|degrés?|degres?)$")
 
-    return image1, image2, [], answer, f"{angle_str} °"
+    return image1, image2, [], [], answer, f"{angle_str} °"
