@@ -881,7 +881,7 @@ class Setting_DLG(wx.Dialog):
 
     def update_json(self, event):
         group_tmp = {
-            "Activate": self.CheckBox_enable.GetValue(),
+            "activate": self.CheckBox_enable.GetValue(),
             "exo_group": [self.ListBox_group_exo.GetString(i) for i in range(self.ListBox_group_exo.GetCount())],
             "exo_number": self.SpinCtrl_max_exo.GetValue(),
             "exo_group_name": self.Choice_group.GetStringSelection(),
@@ -939,9 +939,9 @@ class Setting_DLG(wx.Dialog):
             except Exception as e:
                 print(f"Error exo_number: {e}")
             try:
-                self.CheckBox_enable.SetValue(int(self.json_data[user][group_index]["Activate"]))
+                self.CheckBox_enable.SetValue(int(self.json_data[user][group_index]["activate"]))
             except Exception as e:
-                print(f"Error Activate: {e}")
+                print(f"Error activate: {e}")
             try:
                 days = self.json_data[user][group_index]["exo_weekdays"]
                 if "Monday" in days:
