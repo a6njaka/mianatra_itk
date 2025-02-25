@@ -81,7 +81,10 @@ class MyFrame(wx.Frame):
 
         # Load background image
         img_path = os.path.join("images", "orange_ice_mint.jpg")
-        self.background_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
+        if os.path.isfile(img_path):
+            self.background_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
+        else:
+            self.background_image = wx.Image(854, 480)
 
         # Limit the width of the background image to 800 pixels while maintaining the aspect ratio
         if self.background_image.GetWidth() > 854:
