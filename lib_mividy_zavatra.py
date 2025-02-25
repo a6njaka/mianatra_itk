@@ -111,4 +111,4 @@ def get_image_data(folder_path, level=1):
     image_data2 = pil_image2.tobytes()
 
     answer = f"{final_price}"
-    return image_data1, image_data2, [], re.compile(rf"^\s*{re.escape(answer)}\s*(Ar|Ariary)?$", re.IGNORECASE), f"{final_price_str}={answer}"
+    return image_data1, image_data2, [], [], re.compile(rf"^\s*{re.escape(answer)}\s*(Ar|Ariary)?$", re.IGNORECASE), f"{final_price_str}={answer}"
