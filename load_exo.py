@@ -20,6 +20,10 @@ import lib_smallest_number_under_10
 import lib_compare_number
 import lib_analog_clock
 import lib_angle
+import lib_addition_par_10
+import lib_addition_par_100
+import lib_addition_par_1000
+import lib_object_count
 from datetime import date
 import os
 import re
@@ -141,7 +145,7 @@ class ExoSchedule:
             data = json.load(json_file)
             for schedule in data['Itokiana']:
                 # print("-->",schedule["exo_number"])
-                if today_weekday in schedule['exo_weekdays']:
+                if schedule['activate'] and today_weekday in schedule['exo_weekdays']:
                     n = min(len(schedule['exo_group']), schedule['exo_number'])
                     random_values = random.sample(schedule['exo_group'], n)
                     for exo in random_values:
@@ -183,7 +187,7 @@ class ExoSchedule:
                             for _ in range(int(data["max"])):
                                 try:
                                     # TODO: avoid duplicated exo
-                                    image1, image2, choices, answer, text = library.get_image_data(data)
+                                    image1, image2, choices, exo_mp3, answer, text = library.get_image_data(data)
 
                                     # print(f"-1->choices: {choices}")
                                     if image1 is not None:
@@ -191,13 +195,13 @@ class ExoSchedule:
                                             "image1": image1,
                                             "image2": image2,
                                             "choices": choices,
-                                            "mp3": [],
+                                            "mp3": exo_mp3,
                                             "answer": answer,
                                             "text": text
                                         }
                                         exo_question_mp3 = os.path.join(exo_path, "exo_question.mp3")
-                                        if os.path.isfile(exo_question_mp3):
-                                            exo_tmp["mp3"].append(exo_question_mp3)
+                                        if os.path.isfile(exo_question_mp3) and exo_tmp["mp3"] == []:
+                                            exo_tmp["mp3"] = [exo_question_mp3]
                                         self.all_exo[exo]["exo"].append(exo_tmp)
                                 except Exception as e:
                                     print(f"Exception: {e}")
@@ -217,7 +221,6 @@ class ExoSchedule:
                         print(f"Error 12: {e}")
             else:
                 print(f"JSON file not found: {json_config_path}")
-
 
 # p1 = ExoSchedule()
 # p1.display_all_exo()
