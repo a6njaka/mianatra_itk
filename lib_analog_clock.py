@@ -71,4 +71,4 @@ def get_image_data(data={}):
     draw2.text((20, 20), f"{hours}:{minutes:02d}", fill=(0, 0, 0), font=font)
 
     answer = re.compile(f"^(0?{hours} *: *0?{minutes}|0?{hours}(h|heurs?) *0?{minutes}(mn|min|minutes?)?)")
-    return image1, image2, [], answer, f"{hours}:{minutes:02d}"
+    return image1, image2, [], [], answer, f"{hours}:{minutes:02d}"
