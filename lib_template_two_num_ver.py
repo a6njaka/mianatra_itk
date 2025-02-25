@@ -71,7 +71,7 @@ def operation2number_vertical(a, b, operation="+"):
     pil_image2 = image2.convert('RGB')
 
     answer = f"{result}"
-    return pil_image1, pil_image2, [], re.compile(rf"^\s*0*{re.escape(answer)}\s*$"), f"{a}{operation}{b}={result}"
+    return pil_image1, pil_image2, [], [], re.compile(rf"^\s*0*{re.escape(answer)}\s*$"), f"{a}{operation}{b}={result}"
 
 
 # operation2number_vertical(123, 44, operation="*")
