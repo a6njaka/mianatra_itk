@@ -73,7 +73,7 @@ def get_image_data(data):
     text = f"{a} vs {b}|{a}<{b}\t{a}={b}\t{a}>{b}"
     choices = [image_text_center1("<"), image_text_center1("="), image_text_center1(">")]
 
-    return image_data1, image_data2, choices, answer, text
+    return image_data1, image_data2, choices, [], answer, text
 
 
 def image_text_center1(text, size=(120, 80), font_size=80):
