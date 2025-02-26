@@ -81,7 +81,7 @@ def get_image_data(data):
             image_data1 = img1.convert('RGB')
             image_data2 = img2.convert('RGB')
 
-            image_data1.save(r"C:\Users\NJAKA\Desktop\01.jpg")
+            # image_data1.save(r"C:\Users\NJAKA\Desktop\01.jpg")
 
             answer = f"{answer}"
             return image_data1, image_data2, [], [mp3_question], re.compile(rf"^\s*0*{re.escape(answer)}\s*$", re.IGNORECASE), f"{article_name}={answer}"
