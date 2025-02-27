@@ -110,9 +110,6 @@ def get_image_data(data):
         pil_image1 = img1.convert('RGB')
         pil_image2 = img2.convert('RGB')
 
-        image_data1 = pil_image1.tobytes()
-        image_data2 = pil_image2.tobytes()
-
         answer = f"{final_price}"
-        return image_data1, image_data2, [], [], re.compile(rf"^\s*{re.escape(answer)}\s*(Ar|Ariary)?$", re.IGNORECASE), f"{final_price_str}={answer}"
+        return pil_image1, pil_image2, [], [], re.compile(rf"^\s*{re.escape(answer)}\s*(Ar|Ariary)?$", re.IGNORECASE), f"{final_price_str}={answer}"
     return None, None, None, None, None
