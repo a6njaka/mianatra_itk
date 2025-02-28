@@ -447,7 +447,8 @@ class MyFrame(wx.Frame):
         match = exo_answer.search(user_answer)
         if f"{user_answer}".strip() == "":
             # self.player.play_media(r"mp3/wrong.mp3")
-            time.sleep(1)
+            # time.sleep(1)
+            pass
         elif match:
             self.valiny.SetValue("")
             self.stage_index_done.append(self.stage_current_index)
@@ -458,20 +459,21 @@ class MyFrame(wx.Frame):
             self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2'])
             # self.valiny.Hide()
             self.home_panel.Layout()
-            time.sleep(2)
+            # time.sleep(20)
             # self.valiny.Show()
             # self.valiny.Enable(True)
             subject = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text']
             subject, user_answer = self.split_subject_answer(subject, user_answer)
             self.update_log_file(["Marina", self.current_exo_name, self.stage_current_index, subject, user_answer])
 
+            time.sleep(2)
             return True
         else:
             print("    --->>DISO")
             self.SetStatusText("DISO !")
             self.valiny.SetValue("")
             self.player.play_media(r"mp3/wrong.mp3")
-            time.sleep(2)
+            # time.sleep(20)
             if self.stage_min < self.stage_max:
                 self.stage_min += 1
             subject = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text']
