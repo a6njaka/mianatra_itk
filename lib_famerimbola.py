@@ -141,7 +141,7 @@ def get_image_data(data):
         pil_image1.save(r"C:\Users\NJAKA\Desktop\01.jpg")
 
         print(answer)
-        return pil_image1, pil_image2, [], [], re.compile(rf"^\s*{re.escape(answer)}\s*(Ar|Ariary)?$", re.IGNORECASE), f"{final_price_str}={answer}"
+        return pil_image1, pil_image2, [], [], re.compile(rf"^\s*0*{re.escape(answer)}\s*(Ar|Ariary)?$", re.IGNORECASE), f"{vola_noentina}-({final_price_str})={answer}"
     return None, None, None, None, None
 
 
