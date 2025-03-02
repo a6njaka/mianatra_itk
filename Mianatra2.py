@@ -624,6 +624,7 @@ class MyFrame(wx.Frame):
             self.background_image = self.background_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
 
         self.background_bitmap = wx.Bitmap(self.background_image)
+        self.background_staticbitmap.Show()
         self.background_staticbitmap.SetBitmap(self.background_bitmap)
         self.home_panel.Refresh()
 
