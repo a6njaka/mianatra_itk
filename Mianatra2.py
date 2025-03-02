@@ -68,8 +68,10 @@ class MyFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title=title, size=(800, 450), style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE)
 
         # Change the current working directory
-        os.chdir(r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2")
+        # os.chdir(r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2")
         # os.chdir(r"C:\Users\NJAKA\Mianatra2")
+        self.app_data_folder = f"{os.getenv('LOCALAPPDATA')}/Mianatra2"
+        self.settings_file = f"{self.app_data_folder}/Minatra2_setting.json"
 
         self.bitmap_buttons = []
         self.playing_video = False
@@ -213,7 +215,36 @@ class MyFrame(wx.Frame):
         # self.SetBackgroundColour(wx.Colour(200, 200, 200))
         self.Show()
         self.Maximize()
+        self.load_settings()
         self.ok_button.SetFocus()
+
+    def load_settings(self):
+        print("---->>load_settings")
+        if os.path.isfile(self.settings_file):
+            with open(self.settings_file) as json_file:
+                data = json.load(json_file)
+                if 'exo_folder' in data and os.path.isdir(f"{data['exo_folder']}"):
+                    os.chdir(data['exo_folder'])
+        else:
+            self.save_settings()
+
+    def save_settings(self, exo_dir=os.getcwd()):
+        print("---->>save_settings")
+
+        try:
+            os.mkdir(self.app_data_folder)
+        except Exception as e:
+            print(f"An error was occurred (mkdir): {e}")
+
+        try:
+            if os.path.isdir(exo_dir):
+                data = {'exo_folder': exo_dir}
+
+                with open(self.settings_file, 'w') as outfile:
+                    json.dump(data, outfile, indent=3)
+        except Exception as e:
+            wx.MessageBox(f"Cannot create the settings file:\n'{self.settings_file}' --> {e}")
+
 
     def after_video_ends(self):  # Method to be called after video ends
         print("->Next Step in MyFrame")
@@ -609,6 +640,9 @@ class MyFrame(wx.Frame):
             json_path = os.path.join(os.getcwd(), "exo_schedule.json")
             with open(json_path, 'w') as outfile:
                 json.dump(dlg.json_data, outfile, indent=3)
+            exo_folder = dlg.TextCtrl_1.GetValue()
+            if os.path.isdir(exo_folder):
+                self.save_settings(exo_folder)
 
     def OnRestart(self, event):
         img_path = os.path.join("images", "orange_ice_mint.jpg")
@@ -711,10 +745,10 @@ class MyFrame(wx.Frame):
 
     def on_ok_button(self, event):
         print(f"---->>OK_BUTTON")
-        # if self.ok_button.GetLabel() == "OK":
-        #     self.get_exo()
+
         if self.ok_button.GetLabel() == "START":
             print("  -->>START")
+            print(f"Exo Folder: {os.getcwd()}")
             self.ok_button.SetLabel("OK")
             self.exo_done = []
             self.load_all_exo()
@@ -938,9 +972,14 @@ class Setting_DLG(wx.Dialog):
         self.update_list_exo()
 
     def on_browse_button(self, event):
-        i = self.Choice_group.GetSelection()
-        print(i)
-        self.read_and_update_group_exo(i)
+        dirdialog1 = wx.DirDialog(self, "Select Exo Folder", wx.EmptyString,
+                                  wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST, wx.DefaultPosition, wx.DefaultSize,
+                                  "wxDirDialog")
+        dlg = dirdialog1.ShowModal()
+        if dlg == wx.ID_OK:
+            new_dir = dirdialog1.GetPath()
+            self.TextCtrl_1.SetValue(new_dir)
+            os.chdir(new_dir)
 
     @staticmethod
     def sort_list_box(listbox):
