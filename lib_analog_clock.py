@@ -26,8 +26,10 @@ def draw_hand(draw, center, length, angle, color, width):
     draw.line([center, (end_x, end_y)], fill=color, width=width)
 
 
-def get_image_data(data={}):
+def get_image_data(data=None):
     """Generate an image of a clock showing the given time."""
+    if data is None:
+        data = {}
     hours = random.randint(1, 12)
     minutes = random.randint(0, 11) * 5
     width, height = 854, 480
