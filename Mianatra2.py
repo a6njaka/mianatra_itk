@@ -68,7 +68,7 @@ class MyFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title=title, size=(800, 450), style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE)
 
         # Change the current working directory
-        # os.chdir(r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2")
+        os.chdir(r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2")
         # os.chdir(r"C:\Users\NJAKA\Mianatra2")
         self.app_data_folder = f"{os.getenv('LOCALAPPDATA')}/Mianatra2"
         self.settings_file = f"{self.app_data_folder}/Minatra2_setting.json"
@@ -215,7 +215,7 @@ class MyFrame(wx.Frame):
         # self.SetBackgroundColour(wx.Colour(200, 200, 200))
         self.Show()
         self.Maximize()
-        self.load_settings()
+        # self.load_settings()
         self.ok_button.SetFocus()
 
     def load_settings(self):
