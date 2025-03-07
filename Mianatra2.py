@@ -245,7 +245,6 @@ class MyFrame(wx.Frame):
         except Exception as e:
             wx.MessageBox(f"Cannot create the settings file:\n'{self.settings_file}' --> {e}")
 
-
     def after_video_ends(self):  # Method to be called after video ends
         print("->Next Step in MyFrame")
         self.playing_video = False
@@ -874,7 +873,7 @@ class MyFrame(wx.Frame):
 class Setting_DLG(wx.Dialog):
     def __init__(self, *args, **kw):
         super(Setting_DLG, self).__init__(*args, **kw)
-        self.SetSize((640, 440))
+        self.SetSize((640, 460))
         self.list_all_exo = []
         self.list_group_exo = []
         self.exo_schedule = "exo_schedule.json"
@@ -915,13 +914,19 @@ class Setting_DLG(wx.Dialog):
         self.CheckBox_saturday = wx.CheckBox(self, wx.ID_ANY, "Saturday", pos=(520, 281))
         self.CheckBox_sunday = wx.CheckBox(self, wx.ID_ANY, "Sunday", pos=(520, 313))
 
-        self.Button_OK = wx.Button(self, wx.ID_OK, "OK", pos=(328, 360), size=(104, 23))
-        self.Button_Cancel = wx.Button(self, wx.ID_CANCEL, "Cancel", pos=(448, 360), size=(104, 23))
+        self.text_exo_info = wx.StaticText(self, wx.ID_ANY, "", wx.Point(32, 355), wx.Size(560, 15))
+        self.number_total_exo = wx.StaticText(self, wx.ID_ANY, "Total exo: 0", wx.Point(32, 375), wx.Size(120, 15))
+
+        self.Button_OK = wx.Button(self, wx.ID_OK, "OK", pos=(328, 380), size=(104, 23))
+        self.Button_Cancel = wx.Button(self, wx.ID_CANCEL, "Cancel", pos=(448, 380), size=(104, 23))
 
         # Event Handlers
         self.Bind(wx.EVT_BUTTON, self.on_button_add, self.Button_Exo_Add)
         self.Bind(wx.EVT_BUTTON, self.on_button_remove, self.Button_Exo_Remove)
         self.Bind(wx.EVT_BUTTON, self.on_browse_button, self.Browse_button)
+        self.Bind(wx.EVT_LISTBOX, self.listbox_available_exo_click, self.ListBox_available_exo)
+        self.Bind(wx.EVT_LISTBOX, self.listbox_group_exo_click, self.ListBox_group_exo)
+
         self.StaticText_cwd.Bind(wx.EVT_LEFT_DCLICK, self.on_cwd_double_click)
         self.Choice_group.Bind(wx.EVT_CHOICE, self.on_choice_group_changed)
         self.SpinCtrl_max_exo.Bind(wx.EVT_SPINCTRL, self.update_json)
@@ -936,6 +941,7 @@ class Setting_DLG(wx.Dialog):
 
         self.update_list_exo()
         self.read_json_exo_schedule()
+        self.update_total_exo_txt()
         self.on_choice_group_changed(None)
         self.Choice_group.SetFocus()
 
@@ -965,6 +971,20 @@ class Setting_DLG(wx.Dialog):
             group_tmp["exo_weekdays"].append(self.CheckBox_sunday.GetLabel())
 
         self.json_data["Itokiana"][group_index] = group_tmp
+        self.update_total_exo_txt()
+
+
+    def update_total_exo_txt(self):
+        total_exo = 0
+        for exo in self.json_data["Itokiana"]:
+            try:
+                if exo["activate"]:
+                    min_val = min(exo["exo_number"], len(exo["exo_group"]))
+                    total_exo += min_val
+            except Exception as e:
+                print(f"Error total exo = {e}")
+        self.number_total_exo.SetLabel(f"Total exo: {total_exo}")
+
 
     def on_choice_group_changed(self, event):
         index = self.Choice_group.GetSelection()
@@ -980,6 +1000,36 @@ class Setting_DLG(wx.Dialog):
             new_dir = dirdialog1.GetPath()
             self.TextCtrl_1.SetValue(new_dir)
             os.chdir(new_dir)
+
+    def listbox_available_exo_click(self, event):
+        self.ListBox_group_exo.Deselect(self.ListBox_group_exo.GetSelection())
+        info = self.get_exo_info(self.ListBox_available_exo.GetStringSelection())
+        self.text_exo_info.SetLabel(info)
+
+    def listbox_group_exo_click(self, event):
+        self.ListBox_available_exo.Deselect(self.ListBox_available_exo.GetSelection())
+        info = self.get_exo_info(self.ListBox_group_exo.GetStringSelection())
+        self.text_exo_info.SetLabel(info)
+
+    def get_exo_info(self, exo):
+        exo_path = os.path.join(self.TextCtrl_1.GetValue(), "images", exo)
+        ret = []
+        if os.path.isdir(exo_path):
+            json_config = os.path.join(f"{exo_path}", "config.json")
+            if os.path.isfile(json_config):
+                with open(json_config) as json_file:
+                    data = json.load(json_file)
+                    if "min" in data:
+                        ret.append(f"Min= {data['min']}")
+                    if "max" in data:
+                        ret.append(f"Max= {data['max']}")
+                    if "level" in data:
+                        ret.append(f"Level= {data['level']}")
+                    if "creation date" in data:
+                        ret.append(f"Date= {data['creation date']}")
+        info = ", ".join(map(str, ret))
+        exo = f"{exo}".upper()
+        return f"{exo}: {info}"
 
     @staticmethod
     def sort_list_box(listbox):
