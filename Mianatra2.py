@@ -666,6 +666,7 @@ class MyFrame(wx.Frame):
         self.ok_button.SetLabel("START")
         self.hide_bitmap_buttons()
         self.home_panel.Layout()
+        self.ok_button.SetFocus()
 
     def OnExit(self, event):
         self.Close(True)
