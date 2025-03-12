@@ -66,7 +66,6 @@ class MediaPlayer:
 class MyFrame(wx.Frame):
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title, size=(800, 450), style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE)
-
         # Change the current working directory
         os.chdir(r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2")
         # os.chdir(r"C:\Users\NJAKA\Mianatra2")
@@ -247,6 +246,7 @@ class MyFrame(wx.Frame):
 
     def after_video_ends(self):  # Method to be called after video ends
         print("->Next Step in MyFrame")
+        self.valiny.SetValue("")
         self.playing_video = False
         if self.current_exo_name is not None:
             self.get_exo_index()
@@ -344,6 +344,7 @@ class MyFrame(wx.Frame):
         elif self.stage_type == "entry":
             self.hide_bitmap_buttons()
             self.valiny.Show()
+            print("----->TEST01")
             self.valiny.SetValue("")
             self.valiny.SetFocus()
             self.ok_button.Show()
@@ -485,6 +486,7 @@ class MyFrame(wx.Frame):
             print("    --->>MARINA")
             self.SetStatusText("MARINA !")
             self.valiny.SetValue("")
+            self.Refresh()
             self.player.play_media(r"mp3/right.mp3")
             self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2'])
             # self.valiny.Hide()
@@ -938,13 +940,18 @@ class Setting_DLG(wx.Dialog):
         self.CheckBox_friday.Bind(wx.EVT_CHECKBOX, self.update_json)
         self.CheckBox_saturday.Bind(wx.EVT_CHECKBOX, self.update_json)
         self.CheckBox_sunday.Bind(wx.EVT_CHECKBOX, self.update_json)
-        self.CheckBox_enable.Bind(wx.EVT_CHECKBOX, self.update_json)
+        self.CheckBox_enable.Bind(wx.EVT_CHECKBOX, self.on_checkbox_enable)
 
         self.update_list_exo()
         self.read_json_exo_schedule()
         self.update_total_exo_txt()
         self.on_choice_group_changed(None)
         self.Choice_group.SetFocus()
+
+    def on_checkbox_enable(self, event):
+        self.update_json(event)
+        self.Choice_group.SetFocus()
+
 
     def update_json(self, event):
         group_tmp = {
