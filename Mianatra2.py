@@ -116,7 +116,7 @@ class MyFrame(wx.Frame):
 
         # Create a help menu
         help_menu = wx.Menu()
-        help_menu.Append(wx.ID_ABOUT, "About", "About this application")
+        help_menu.Append(wx.ID_ABOUT, "About\tF1", "About this application")
         menu_bar.Append(help_menu, "&Help")
 
         # Set the menu bar
@@ -674,7 +674,7 @@ class MyFrame(wx.Frame):
         self.Close(True)
 
     def OnAbout(self, event):
-        wx.MessageBox("Fianarana 1.0", "About", wx.OK | wx.ICON_INFORMATION)
+        wx.MessageBox("Fianarana 1.0\n\nDeveloper: Njaka ANDRIAMAHENINA\nEmail: a6njaka@gmail.com", "About", wx.OK | wx.ICON_INFORMATION)
 
     def OnTool1(self, event):
         print("-->OnTool1 Clicked")
