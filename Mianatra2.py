@@ -1046,8 +1046,21 @@ class Setting_DLG(wx.Dialog):
         listbox.Set(items)
 
     def read_json_exo_schedule(self):
+        group_tmp = {
+            "activate": False,
+            "exo_group": [],
+            "exo_number": 0,
+            "exo_group_name": "",
+            "exo_weekdays": []
+        }
         with open(self.exo_schedule) as json_file:
             self.json_data = json.load(json_file)
+            if "Itokiana" in self.json_data:
+                n = len(self.json_data["Itokiana"])
+                max_group = 6
+                for i in range(max_group + 1):
+                    if i > n:
+                        self.json_data["Itokiana"].append(group_tmp)
 
     def read_and_update_group_exo(self, group_index):
         self.ListBox_group_exo.Clear()
