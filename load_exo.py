@@ -146,7 +146,7 @@ class ExoSchedule:
             data = json.load(json_file)
             for schedule in data['Itokiana']:
                 # print("-->",schedule["exo_number"])
-                if schedule['activate'] and today_weekday in schedule['exo_weekdays']:
+                if 'activate' in schedule and schedule['activate'] and today_weekday in schedule['exo_weekdays']:
                     n = min(len(schedule['exo_group']), schedule['exo_number'])
                     random_values = random.sample(schedule['exo_group'], n)
                     for exo in random_values:
