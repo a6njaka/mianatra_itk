@@ -11,9 +11,17 @@ class FileDropTarget(wx.FileDropTarget):
 
     def OnDropFiles(self, x, y, filenames):
         for file in filenames:
-            if file.lower().endswith(('.mp4', '.mkv', '.avi', '.mov', '.flv', '.wmv', '.ts', '.aac')):
+            if os.path.isdir(file):
+                self.add_folder_recursive(file)
+            elif file.lower().endswith(('.mp4', '.mkv', '.avi', '.mov', '.flv', '.wmv', '.ts', '.aac')):
                 self.listbox.Append(file)
         return True
+
+    def add_folder_recursive(self, folder):
+        for root, _, files in os.walk(folder):
+            for file in files:
+                if file.lower().endswith(('.mp4', '.mkv', '.avi', '.mov', '.flv', '.wmv', '.ts', '.aac')):
+                    self.listbox.Append(os.path.join(root, file))
 
 
 class VideoToMP3Converter(wx.Frame):
@@ -71,6 +79,8 @@ class VideoToMP3Converter(wx.Frame):
         btn_add_folder.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_BUTTON))
         btn_add_folder.Bind(wx.EVT_BUTTON, self.add_folder)
 
+        self.keep_subfolder_chk = wx.CheckBox(panel, label="Keep Subfolder Structure")
+
         # Output folder selection
         self.output_dir = wx.TextCtrl(panel, style=wx.TE_READONLY)
         btn_output = wx.Button(panel, label=' Select Output Folder', size=(180, 30))
@@ -99,6 +109,7 @@ class VideoToMP3Converter(wx.Frame):
         hbox.Add(btn_add_folder, proportion=1, flag=wx.ALL, border=5)
         vbox.Add(hbox, flag=wx.EXPAND)
 
+        vbox.Add(self.keep_subfolder_chk, flag=wx.ALL, border=5)
         vbox.Add(wx.StaticText(panel, label='Output Folder:'), flag=wx.ALL, border=5)
         vbox.Add(self.output_dir, flag=wx.EXPAND | wx.ALL, border=5)
         vbox.Add(btn_output, flag=wx.ALIGN_CENTER | wx.BOTTOM, border=5)
@@ -127,7 +138,7 @@ class VideoToMP3Converter(wx.Frame):
         self.btn_convert.Enable(bool(self.file_list.GetCount()))
 
     def add_file_dialog(self, event):
-        with wx.FileDialog(self, "Choose video files", wildcard="Video files (*.mp4;*.mkv;*.avi;*.mov;*.flv;*.wmv,*.ts,*.aac)|*.mp4;*.mkv;*.avi;*.mov;*.flv;*.wmv;*.ts;*.aac", style=wx.FD_OPEN | wx.FD_MULTIPLE) as file_dialog:
+        with wx.FileDialog(self, "Choose video files", wildcard="Video files (*.mp4;*.mkv;*.avi;*.mov;*.flv;*.wmv;*.ts;*.aac)|*.mp4;*.mkv;*.avi;*.mov;*.flv;*.wmv;*.ts;*.aac", style=wx.FD_OPEN | wx.FD_MULTIPLE) as file_dialog:
             if file_dialog.ShowModal() == wx.ID_OK:
                 for file in file_dialog.GetPaths():
                     self.file_list.Append(file)
