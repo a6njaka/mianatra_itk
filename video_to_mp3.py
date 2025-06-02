@@ -2,6 +2,7 @@ import os
 import subprocess
 import wx
 import threading
+import pathlib
 
 
 class FileDropTarget(wx.FileDropTarget):
@@ -82,7 +83,8 @@ class VideoToMP3Converter(wx.Frame):
         self.keep_subfolder_chk = wx.CheckBox(panel, label="Keep Subfolder Structure")
 
         # Output folder selection
-        self.output_dir = wx.TextCtrl(panel, style=wx.TE_READONLY)
+        default_music_path = str(pathlib.Path.home() / "Music")
+        self.output_dir = wx.TextCtrl(panel, value=default_music_path, style=wx.TE_READONLY)
         btn_output = wx.Button(panel, label=' Select Output Folder', size=(180, 30))
         btn_output.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FOLDER, wx.ART_BUTTON))
         btn_output.Bind(wx.EVT_BUTTON, self.select_output_folder)
@@ -177,9 +179,29 @@ class VideoToMP3Converter(wx.Frame):
         total_files = len(video_files)
         for index, file in enumerate(video_files):
             output_path = os.path.join(output_folder, os.path.splitext(os.path.basename(file))[0] + '.mp3')
-            command = ['ffmpeg', '-i', file, '-vn', '-ar', '44100', '-ac', '2', '-ab', selected_bitrate, '-f', 'mp3', output_path]
-            process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, creationflags=subprocess.CREATE_NO_WINDOW)
-            process.wait()
+
+            # Correction : PAS DE guillemets autour des chemins si on utilise une liste
+            command = [
+                'ffmpeg',
+                '-i', file,
+                '-vn',
+                '-ar', '44100',
+                '-ac', '2',
+                '-ab', selected_bitrate,
+                '-f', 'mp3',
+                output_path
+            ]
+            try:
+                process = subprocess.Popen(
+                    command,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    creationflags=subprocess.CREATE_NO_WINDOW
+                )
+                process.wait()
+            except FileNotFoundError:
+                wx.CallAfter(wx.MessageBox, 'FFmpeg not found. Make sure it is installed and added to PATH.', 'Error', wx.OK | wx.ICON_ERROR)
+                return
 
             progress = int(((index + 1) / total_files) * 100)
             wx.CallAfter(self.progress_bar.SetValue, progress)
