@@ -1,0 +1,10 @@
+{
+    "min": 5,
+    "max": 8,
+    "level": 2,
+    "rand": true,
+    "type": "entry",
+    "case sensitive": false,
+    "library": "lib_read_number_fr",
+    "comment": "Compter les forms"
+}

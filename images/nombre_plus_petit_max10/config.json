@@ -1,0 +1,10 @@
+{
+   "min": 10,
+   "max": 15,
+   "level": 3,
+   "rand": true,
+   "type": "entry",
+   "case sensitive": true,
+   "library": "lib_smallest_number_under_10",
+   "comment": "Nombre le plus petit inf\u00e9rieur \u00e0 10"
+}

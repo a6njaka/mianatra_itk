@@ -1,0 +1,10 @@
+{
+    "min": 5,
+    "max": 10,
+    "level": 1,
+    "rand": true,
+    "type": "entry",
+    "case sensitive": true,
+    "library": "lib_soustraction_2ch_ver",
+    "comment": "Soustraction"
+}

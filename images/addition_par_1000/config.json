@@ -1,0 +1,10 @@
+{
+   "min": 10,
+   "max": 15,
+   "level": 1,
+   "rand": true,
+   "type": "entry",
+   "case sensitive": false,
+   "library": "lib_addition_par_1000",
+   "comment": "Addition par 1000"
+}

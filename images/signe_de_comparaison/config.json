@@ -1,0 +1,10 @@
+{
+   "min": 20,
+   "max": 25,
+   "level": 1,
+   "rand": true,
+   "type": "choices",
+   "case sensitive": true,
+   "library": "lib_compare_number",
+   "comment": "Utilisation de signe de comparaison"
+}

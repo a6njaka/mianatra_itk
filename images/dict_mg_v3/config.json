@@ -1,0 +1,9 @@
+{
+    "min": 5,
+    "max": 8,
+    "level": 0,
+    "rand": true,
+    "type": "entry",
+    "case sensitive": true,
+    "comment": "Dict\u00e9e malagasy v2"
+}

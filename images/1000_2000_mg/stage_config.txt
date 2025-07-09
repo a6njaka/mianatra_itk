@@ -1,0 +1,5 @@
+MaxStage = 10
+Comment = Manisa 1000, 2000
+CaseSensitive = True
+Rand = Yes
+

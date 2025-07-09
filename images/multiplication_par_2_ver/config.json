@@ -1,0 +1,10 @@
+{
+   "min": 10,
+   "max": 15,
+   "level": 1,
+   "rand": true,
+   "type": "entry",
+   "case sensitive": true,
+   "library": "lib_multiplication_par_2_ver",
+   "comment": "Multiplication par 2"
+}

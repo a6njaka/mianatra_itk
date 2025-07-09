@@ -1,0 +1,5 @@
+MaxStage = 10
+Comment = 100,200,300...MG
+CaseSensitive = True
+Rand = Yes
+

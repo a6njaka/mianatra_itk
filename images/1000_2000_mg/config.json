@@ -1,0 +1,9 @@
+{
+    "min": 5,
+    "max": 10,
+    "level": 0,
+    "rand": true,
+    "type": "entry",
+    "case sensitive": true,
+    "comment": "Manisa 1000, 2000"
+}

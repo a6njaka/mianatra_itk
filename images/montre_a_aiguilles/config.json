@@ -1,0 +1,11 @@
+{
+   "min": 10,
+   "max": 15,
+   "level": 3,
+   "rand": true,
+   "type": "entry",
+   "case sensitive": true,
+   "library": "lib_analog_clock",
+   "comment": "Exercice montre à aiguilles",
+   "creation date": "08/02/2025"
+}

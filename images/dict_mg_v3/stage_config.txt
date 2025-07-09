@@ -1,0 +1,5 @@
+MaxStage = 8
+Comment = Dictée malagasy v2
+CaseSensitive = True
+Rand = Yes
+

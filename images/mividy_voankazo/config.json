@@ -1,0 +1,9 @@
+{
+    "min": 10,
+    "max": 15,
+    "level": 2,
+    "rand": true,
+    "type": "entry",
+    "case sensitive": true,
+    "comment": "10 20 30 ..."
+}
