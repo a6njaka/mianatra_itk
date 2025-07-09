@@ -1,0 +1,86 @@
+{
+   "Itokiana": [
+      {
+         "Activate": true,
+         "exo_group": [
+            "angle",
+            "10_20_mg",
+            "100_200_mg",
+            "1000_2000_mg"
+         ],
+         "exo_number": 3,
+         "exo_weekdays": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "montre_a_aiguilles",
+            "Saturday",
+            "Sunday"
+         ]
+      },
+      {
+         "Activate": true,
+         "exo_group": [
+            "signe_de_comparaison",
+            "soustraction_2ch_ver",
+            "lib_addition_par_1000",
+            "lib_addition_par_100",
+            "lib_addition_par_10"
+         ],
+         "exo_number": 4,
+         "exo_weekdays": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "signe_de_comparaison",
+            "Sunday"
+         ]
+      },
+      {
+         "Activate": true,
+         "exo_group": [
+            "addition_3ch_hor",
+            "addition_2ch_ver",
+            "lecture_comparaison",
+            "read_number_fr",
+            "line_ab_length",
+            "dict_mg_v3",
+            "mividy_voankazo"
+         ],
+         "exo_number": 7,
+         "exo_weekdays": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+         ]
+      },
+      {
+         "Activate": true,
+         "exo_group": [
+            "multiplication_par_2_ver",
+            "multiplication_par_3_ver",
+            "multiplication_par_4_ver",
+            "multiplication_par_5_ver"
+         ],
+         "exo_number": 1,
+         "exo_weekdays": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+         ]
+      }
+   ]
+}

@@ -1,18 +1,13 @@
 {
    "Itokiana": [
       {
-         "Activate": true,
+         "activate": true,
          "exo_group": [
-            "dict_mg_v4",
-            "dict_mg_v2",
-            "Addition_vola_1",
-            "adittion_b2",
-            "addition_3ch_hor",
-            "vola_moins_isa1",
-            "num_lettre_v1",
-            "addition_1p2p3"
+            "famerimbola1",
+            "soustraction_2ch_ver"
          ],
-         "exo_number": 0,
+         "exo_number": 3,
+         "exo_group_name": "Groupe_1",
          "exo_weekdays": [
             "Monday",
             "Tuesday",
@@ -24,11 +19,34 @@
          ]
       },
       {
-         "Activate": true,
+         "activate": true,
          "exo_group": [
-            "mividy_voankazo"
+            "angle",
+            "count_object",
+            "line_ab_length",
+            "mividy_voankazo",
+            "nombre_plus_petit_max10"
+         ],
+         "exo_number": 3,
+         "exo_group_name": "Groupe_2",
+         "exo_weekdays": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+         ]
+      },
+      {
+         "activate": true,
+         "exo_group": [
+            "count_gouter",
+            "count_object"
          ],
          "exo_number": 1,
+         "exo_group_name": "Groupe_3",
          "exo_weekdays": [
             "Monday",
             "Tuesday",
@@ -40,11 +58,12 @@
          ]
       },
       {
-         "Activate": true,
+         "activate": true,
          "exo_group": [
-            "addition_3ch_hor"
+            "montre_a_aiguilles"
          ],
-         "exo_number": 0,
+         "exo_number": 1,
+         "exo_group_name": "Groupe_4",
          "exo_weekdays": [
             "Monday",
             "Tuesday",
@@ -54,6 +73,28 @@
             "Saturday",
             "Sunday"
          ]
+      },
+      {
+         "activate": false,
+         "exo_group": [],
+         "exo_number": 1,
+         "exo_group_name": "Groupe_5",
+         "exo_weekdays": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+         ]
+      },
+      {
+         "activate": false,
+         "exo_group": [],
+         "exo_number": 0,
+         "exo_group_name": "",
+         "exo_weekdays": []
       }
    ]
 }
