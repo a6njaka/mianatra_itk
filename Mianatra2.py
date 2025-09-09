@@ -13,6 +13,13 @@ import io
 from PIL import Image
 import subprocess
 import json
+import threading
+
+# -------------------------------------------------------------------------
+# Multithreaded version of Mianatra2.py
+# Key idea: run blocking tasks in background threads and use wx.CallAfter
+# to update UI from those threads.
+# -------------------------------------------------------------------------
 
 
 class MediaPlayer:
@@ -29,46 +36,77 @@ class MediaPlayer:
         )
 
     def play_media(self, file_path):
+        """
+        Start media playback. Uses the same vlc player as before.
+        This function returns quickly and is safe to call from the main thread.
+        """
         self.file_path = file_path
         if self.is_playing:
-            self.player.stop()
+            try:
+                self.player.stop()
+            except Exception:
+                pass
             self.is_playing = False
 
         Media = self.Instance.media_new(file_path)
         self.player.set_media(Media)
 
-        # Get the handle of the panel
-        handle = self.panel.GetHandle()
-        self.player.set_hwnd(handle)
-
-        # Set video dimensions
-        # self.player.video_set_aspect_ratio("854:x")
+        # Get the handle of the panel (platform-dependent)
+        try:
+            handle = self.panel.GetHandle()
+            # On Windows, set_hwnd; on other platforms, set_xwindow or set_nsobject
+            if hasattr(self.player, "set_hwnd"):
+                self.player.set_hwnd(handle)
+            elif hasattr(self.player, "set_xwindow"):
+                self.player.set_xwindow(handle)
+            elif hasattr(self.player, "set_nsobject"):
+                self.player.set_nsobject(handle)
+        except Exception:
+            pass
 
         self.player.play()
         self.is_playing = True
 
-        if re.search("mp3$", file_path) is not None:
-            self.panel.Hide()
+        # Hide panel for audio-only files
+        if re.search(r"mp3$", file_path, re.I) is not None:
+            wx.CallAfter(self.panel.Hide)
         else:
-            self.panel.Show()
+            wx.CallAfter(self.panel.Show)
         self.parent_frame.playing_video = True
 
     def on_media_end(self, event):
-        if self.is_playing:  # Check if still playing to avoid multiple calls
+        """
+        When media ends, hide the panel and call after_video_ends if appropriate.
+        This callback is from libvlc event thread; use wx.CallAfter for UI.
+        """
+        if self.is_playing:
             self.is_playing = False
-            self.panel.Hide()  # Hide the panel when video ends
+            wx.CallAfter(self.panel.Hide)
             print("Video playback finished. Panel hidden.")
-            if re.search("course.*\\.(mp4|avi)$", self.file_path, re.I):
-                self.parent_frame.after_video_ends()
+            if re.search(r"course.*\.(mp4|avi)$", self.file_path, re.I):
+                # Use CallAfter because after_video_ends updates UI
+                wx.CallAfter(self.parent_frame.after_video_ends)
                 self.parent_frame.playing_video = False
 
 
 class MyFrame(wx.Frame):
     def __init__(self, parent, title):
-        wx.Frame.__init__(self, parent, title=title, size=(800, 450), style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE)
-        # Change the current working directory
+        wx.Frame.__init__(
+            self,
+            parent,
+            title=title,
+            size=(800, 450),
+            style=wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE,
+        )
+
+        # Change the current working directory (update to your path)
         # os.chdir(r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2")
-        os.chdir(r"C:\Users\NJAKA\Mianatra2")
+        # Keep the original path but it's safer to comment in/out based on your environment
+        try:
+            os.chdir(r"C:\Users\NJAKA\Mianatra2")
+        except Exception:
+            pass
+
         self.app_data_folder = f"{os.getenv('LOCALAPPDATA')}/Mianatra2"
         self.settings_file = f"{self.app_data_folder}/Minatra2_setting.json"
 
@@ -88,11 +126,15 @@ class MyFrame(wx.Frame):
         else:
             self.background_image = wx.Image(854, 480)
 
-        # Limit the width of the background image to 800 pixels while maintaining the aspect ratio
+        # Limit width while preserving aspect ratio
         if self.background_image.GetWidth() > 854:
             new_width = 854
-            new_height = int(854 * self.background_image.GetHeight() / self.background_image.GetWidth())
-            self.background_image = self.background_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
+            new_height = int(
+                854 * self.background_image.GetHeight() / self.background_image.GetWidth()
+            )
+            self.background_image = self.background_image.Scale(
+                new_width, new_height, wx.IMAGE_QUALITY_HIGH
+            )
 
         self.background_bitmap = wx.Bitmap(self.background_image)
 
@@ -136,32 +178,31 @@ class MyFrame(wx.Frame):
 
         # Create a status bar
         self.status_bar = self.CreateStatusBar()
-        self.status_bar.SetFieldsCount(5)  # Split into 4 parts
+        self.status_bar.SetFieldsCount(5)  # Split into 5 parts
         self.status_bar.SetStatusWidths([-1, -1, -1, -1, 100])  # Set relative widths
 
         # Add a progress bar to the last part
         self.add_progress_bar_to_status_bar()
         self.progress_bar.SetValue(0)
 
+        # In the __init__ method, replace the main_sizer setup with this:
+
         # Create a sizer to layout controls
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Add a StaticBitmap for the background
         self.background_staticbitmap = wx.StaticBitmap(self.home_panel, -1, self.background_bitmap)
-        main_sizer.Add(self.background_staticbitmap, 1, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 10)  # Set proportion to 1 to make it expand
+        main_sizer.Add(self.background_staticbitmap, 10, wx.EXPAND | wx.ALL, 10)
 
-        self.bitmap_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        main_sizer.Add(self.bitmap_sizer, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
-
+        # Add the video panel
         self.video_panel = wx.Panel(self.home_panel, style=wx.SIMPLE_BORDER)
-        # self.video_panel.SetMaxSize((854, 480))
         main_sizer.Add(self.video_panel, 1, wx.EXPAND | wx.ALL, 0)
-
         self.video_panel.Hide()
+
         # Create textCtrl
         self.valiny = wx.TextCtrl(self.home_panel, -1, "", size=(854, -1), style=wx.TE_LEFT | wx.TE_PROCESS_ENTER)
         self.valiny.SetFont(wx.Font(21, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
-        self.valiny.SetFocus()  # Set initial focus to textCtrl
+        self.valiny.SetFocus()
         main_sizer.Add(self.valiny, 0, wx.ALIGN_CENTER | wx.BOTTOM, 10)
 
         # Create OK button
@@ -171,15 +212,20 @@ class MyFrame(wx.Frame):
         self.ok_button.SetFont(font)
         main_sizer.Add(self.ok_button, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
-        self.player = MediaPlayer(self.video_panel, self)
-        # self.video_panel.SetBackgroundColour(wx.Colour(200, 0, 0))
+        # Create bitmap sizer - this should be added AFTER other elements
+        self.bitmap_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        main_sizer.Add(self.bitmap_sizer, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
+        self.player = MediaPlayer(self.video_panel, self)
         self.home_panel.SetSizer(main_sizer)
         self.valiny.Hide()
+
+        # Create the bitmap buttons AFTER the sizer is set
         self.create_bitmap_buttons()
 
         self.home_panel.Layout()
 
+        # Bind events
         self.Bind(wx.EVT_TOOL, self.OnTool1, tool1)
         self.Bind(wx.EVT_TOOL, self.OnTool2, tool2)
         self.Bind(wx.EVT_SIZE, self.on_resize)
@@ -192,12 +238,14 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
         self.home_panel.Bind(wx.EVT_MOTION, self.on_home_panel_motion)
 
+        # Exercise data
         self.all_exo = {}
         self.current_exo_name = ""
         self.exo_done = []
         self.exo_list = []
         self.all_exo_completed = False
 
+        # Stage settings
         self.stage_min = 2
         self.stage_max = 5
         self.stage_rand = False
@@ -210,42 +258,51 @@ class MyFrame(wx.Frame):
         self.stage_current_index = None
         self.stage_index_done = []
 
-        # self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
-        # self.SetBackgroundColour(wx.Colour(200, 200, 200))
         self.Show()
         self.Maximize()
-        # self.load_settings()
         self.ok_button.SetFocus()
+        self.audio_thread = None
+        self.audio_player = None
+        self.audio_lock = threading.Lock()
 
+    # --------------------------
+    # Settings and utilities
+    # --------------------------
     def load_settings(self):
         print("---->>load_settings")
         if os.path.isfile(self.settings_file):
-            with open(self.settings_file) as json_file:
-                data = json.load(json_file)
-                if 'exo_folder' in data and os.path.isdir(f"{data['exo_folder']}"):
-                    os.chdir(data['exo_folder'])
+            try:
+                with open(self.settings_file) as json_file:
+                    data = json.load(json_file)
+                    if "exo_folder" in data and os.path.isdir(f"{data['exo_folder']}"):
+                        os.chdir(data["exo_folder"])
+            except Exception as e:
+                print(f"Error loading settings: {e}")
         else:
             self.save_settings()
 
     def save_settings(self, exo_dir=os.getcwd()):
         print("---->>save_settings")
-
         try:
-            os.mkdir(self.app_data_folder)
+            os.makedirs(self.app_data_folder, exist_ok=True)
         except Exception as e:
-            print(f"An error was occurred (mkdir): {e}")
+            print(f"An error occurred (mkdir): {e}")
 
         try:
             if os.path.isdir(exo_dir):
-                data = {'exo_folder': exo_dir}
-
-                with open(self.settings_file, 'w') as outfile:
+                data = {"exo_folder": exo_dir}
+                with open(self.settings_file, "w") as outfile:
                     json.dump(data, outfile, indent=3)
         except Exception as e:
             wx.MessageBox(f"Cannot create the settings file:\n'{self.settings_file}' --> {e}")
 
-    def after_video_ends(self):  # Method to be called after video ends
+    def after_video_ends(self):
+        """
+        Called after a 'course' video ends.
+        Updates UI and proceeds to next exercise step safely using wx.CallAfter.
+        """
         print("->Next Step in MyFrame")
+        # Clear input and mark not playing
         self.valiny.SetValue("")
         self.playing_video = False
         if self.current_exo_name is not None:
@@ -254,37 +311,59 @@ class MyFrame(wx.Frame):
                 self.display_exo()
 
     def update_log_file(self, text):
-        text_list = [text]
-        if type(text) is list:
-            text_list = text
-            text = " | ".join(map(str, text))
-        daty = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        try:
-            with open(self.log_txt_file, "a") as file:
-                file.write(f"{daty} | {text}" + "\n")
-        except PermissionError:
-            pass
+        """
+        Non-blocking log update: delegate actual file I/O to a background thread.
+        Accepts either string or list (list of columns for excel).
+        """
+        def _write_log(text_obj):
+            text_list = [text_obj]
+            if isinstance(text_obj, list):
+                text_list = text_obj
+                text_str = " | ".join(map(str, text_obj))
+            else:
+                text_str = str(text_obj)
 
-        # Log for excel
-        print(f"-->Excel: {text_list}")
-        if os.path.isfile(self.log_excel_file):
-            book = load_workbook(self.log_excel_file)
-            sheet = book.active
-        else:
-            book = Workbook()
-            sheet = book.active
-            sheet.append(("Daty", "Marina/Diso", "Fanazarana", "Index", "Fanazavana", "Valiny natao"))
-            column_width = {"A": 25, "B": 15, "C": 30, "D": 15, "E": 30, "F": 30}
-            for col in column_width:
-                sheet.column_dimensions[col].width = column_width[col]
-                sheet[f"{col}1"].font = Font(bold=True)
-                sheet[f"{col}1"].fill = PatternFill(start_color="00A9E6", fill_type="solid")
-        sheet.append([daty] + text_list)
-        try:
-            book.save(self.log_excel_file)
-        except PermissionError:
-            pass
-        book.close()
+            daty = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            # Append to txt log
+            try:
+                with open(self.log_txt_file, "a", encoding="utf-8") as file:
+                    file.write(f"{daty} | {text_str}\n")
+            except PermissionError:
+                pass
+            except Exception as e:
+                print(f"Error writing txt log: {e}")
+
+            # Excel logging
+            try:
+                if os.path.isfile(self.log_excel_file):
+                    book = load_workbook(self.log_excel_file)
+                    sheet = book.active
+                else:
+                    book = Workbook()
+                    sheet = book.active
+                    sheet.append(("Daty", "Marina/Diso", "Fanazarana", "Index", "Fanazavana", "Valiny natao"))
+                    column_width = {"A": 25, "B": 15, "C": 30, "D": 15, "E": 30, "F": 30}
+                    for col in column_width:
+                        sheet.column_dimensions[col].width = column_width[col]
+                        sheet[f"{col}1"].font = Font(bold=True)
+                        sheet[f"{col}1"].fill = PatternFill(start_color="00A9E6", fill_type="solid")
+                sheet.append([daty] + list(map(str, text_list)))
+                try:
+                    book.save(self.log_excel_file)
+                except PermissionError:
+                    pass
+                except Exception as e:
+                    print(f"Error saving excel: {e}")
+                finally:
+                    try:
+                        book.close()
+                    except Exception:
+                        pass
+            except Exception as e:
+                print(f"Error in update_log_file excel handling: {e}")
+
+        # Start thread for writing logs
+        threading.Thread(target=_write_log, args=(text,), daemon=True).start()
 
     def add_progress_bar_to_status_bar(self):
         # Create a panel for embedding controls in the status bar
@@ -302,7 +381,7 @@ class MyFrame(wx.Frame):
 
     def update_progress_bar_position(self):
         """Update the position and size of the progress panel based on the status bar field."""
-        rect = self.status_bar.GetFieldRect(4)  # Field index 3 (last field)
+        rect = self.status_bar.GetFieldRect(4)  # last field
         self.progress_panel.SetPosition((rect.x, rect.y))
         self.progress_panel.SetSize((rect.width, rect.height))
         self.progress_panel.Layout()
@@ -310,29 +389,25 @@ class MyFrame(wx.Frame):
     def on_resize(self, event):
         """Handle window resizing and adjust the progress bar's size."""
         self.update_progress_bar_position()
-        event.Skip()  # Ensure the default resize behavior happens
+        event.Skip()
 
     @staticmethod
     def get_images_choices(choices_exo):
         result = []
         for choice in choices_exo:
-            result.append(choice['image'])
+            result.append(choice["image"])
         return result
 
+    # --------------------------
+    # Display and exercise flow
+    # --------------------------
     def display_exo(self):
         print("---->>display_exo")
-
-        # print("*" * 50)
-        # print("   ---->>Verification Start")
-        # for ttt in self.all_exo[self.current_exo_name]:
-        #     print(f"     ->{ttt}: {self.all_exo[self.current_exo_name][ttt]}")
-        # print("   ---->>Verification End")
-
         if self.stage_type == "choices":
             self.valiny.Hide()
             self.ok_button.Hide()
-            choices_config = self.get_images_choices(self.all_exo[self.current_exo_name]['choices'])
-            choices_exo = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['choices']
+            choices_config = self.get_images_choices(self.all_exo[self.current_exo_name]["choices"])
+            choices_exo = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["choices"]
             if len(choices_config) > 0:
                 self.change_bitmap_buttons(choices_config)
             elif len(choices_exo) > 0:
@@ -344,7 +419,6 @@ class MyFrame(wx.Frame):
         elif self.stage_type == "entry":
             self.hide_bitmap_buttons()
             self.valiny.Show()
-            print("----->TEST01")
             self.valiny.SetValue("")
             self.valiny.SetFocus()
             self.ok_button.Show()
@@ -353,18 +427,26 @@ class MyFrame(wx.Frame):
         self.video_panel.Hide()
         self.home_panel.Layout()
 
-        # self.player.player.stop()
-        print("    -->>", "image1 : ", type(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1']))
-        print("    -->>", "image2 : ", type(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2']))
-        print("    -->>", "choices : ", self.all_exo[self.current_exo_name]['choices'])
-        mp3 = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['mp3']
-        print("    -->>", "mp3 : ", mp3)
-        print("    -->>", "answer : ", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['answer'])
-        print("    -->>", "text : ", self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text'])
 
-        self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image1'])
-        self.background_staticbitmap.SetCursor(wx.Cursor(wx.CURSOR_HAND))
-        self.play_combined_mp3(mp3)
+        print("    -->>", "image1 : ", type(self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image1"]))
+        print("    -->>", "image2 : ", type(self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image2"]))
+        print("    -->>", "choices : ", self.all_exo[self.current_exo_name]["choices"])
+        mp3 = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["mp3"]
+        print("    -->>", "mp3 : ", mp3)
+        print("    -->>", "answer : ", self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["answer"])
+        print("    -->>", "text : ", self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["text"])
+
+        # pil_image1 = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image1"]
+        # pil_image2 = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image2"]
+        #
+        # pil_image1.save(r"C:\Users\NJAKA\Desktop\image1.png", 'PNG')
+        # pil_image2.save(r"C:\Users\NJAKA\Desktop\image2.png", 'PNG')
+
+        # Load image and play mp3 (mp3 playback runs in background)
+        self.load_image(self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image1"])
+        if mp3:
+            # play_combined_mp3 is staticmethod that starts a thread
+            self.play_combined_mp3(mp3)
 
     def get_exo_index(self):
         print("--->>get_exo_index")
@@ -399,19 +481,14 @@ class MyFrame(wx.Frame):
         except ZeroDivisionError:
             pass
 
-        # print(f"     --VS-->>{self.exo_done} VS {self.exo_list}")
-
-        # TODO: randomize the exo
         r = False
         nd = [x for x in list1 if x not in list2]
         if len(nd) > 0:
             if r:
-                print(f"     -->exo Name: {nd[0]}")
                 tmp_exo_name = nd[random.choice(list1)]
                 ret = tmp_exo_name
                 self.exo_done.append(ret)
             else:
-                print(f"     -->exo Name: {nd[0]}")
                 tmp_exo_name = nd[0]
                 ret = nd[0]
                 self.exo_done.append(ret)
@@ -432,15 +509,6 @@ class MyFrame(wx.Frame):
         print("---->>verify_correctness_all_exo")
         new_all_exo = {}
         for exo in self.exo_list:
-            # Verification
-            # print("*"*50)
-            # print(f"   ---->>Verification Start: {exo}")
-            # # print(f"   ---->>Nb exo: {len(self.all_exo[exo]['exo'])}")
-            # for ttt in self.all_exo[exo]:
-            #     print(f"   ->{ttt}: {type(self.all_exo[exo][ttt])}")
-            #     if ttt == "exo":
-            #         print(f"        ---->>Nb exo: {len(self.all_exo[exo]['exo'])}")
-            # print("   ---->>Verification End")
             try:
                 if not len(self.all_exo[exo]["exo"]) == 0:
                     new_all_exo[exo] = self.all_exo[exo]
@@ -448,7 +516,6 @@ class MyFrame(wx.Frame):
                 else:
                     print(f"    -1->Removed '{exo}'")
                     print(f"    -1->Removed '{self.all_exo[exo]['exo']}'")
-
             except KeyError as e:
                 print(f"    -2->Removed '{exo}' --> {e}")
         self.all_exo = new_all_exo
@@ -466,6 +533,9 @@ class MyFrame(wx.Frame):
                 return tmp[0], tmp_answer_dic[answer]
         return subject, answer
 
+    # --------------------------
+    # Verify answer -> threaded handlers
+    # --------------------------
     def verify_answer(self, user_answer=""):
         print("--->>verify_answer")
         print(f"    --1->>{self.current_exo_name}")
@@ -477,8 +547,6 @@ class MyFrame(wx.Frame):
 
         match = exo_answer.search(user_answer)
         if f"{user_answer}".strip() == "":
-            # self.player.play_media(r"mp3/wrong.mp3")
-            # time.sleep(1)
             pass
         elif match:
             self.valiny.SetValue("")
@@ -489,16 +557,12 @@ class MyFrame(wx.Frame):
             self.Refresh()
             self.player.play_media(r"mp3/right.mp3")
             self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2'])
-            # self.valiny.Hide()
             self.home_panel.Layout()
-            # time.sleep(20)
-            # self.valiny.Show()
-            # self.valiny.Enable(True)
             subject = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text']
             subject, user_answer = self.split_subject_answer(subject, user_answer)
             self.update_log_file(["Marina", self.current_exo_name, self.stage_current_index, subject, user_answer])
 
-            time.sleep(2)
+            time.sleep(2) # time to display the correct answer
             return True
         else:
             print("    --->>DISO")
@@ -513,6 +577,9 @@ class MyFrame(wx.Frame):
             self.update_log_file(["Diso", self.current_exo_name, self.stage_current_index, subject, user_answer])
             return False
 
+    # --------------------------
+    # Level / media config
+    # --------------------------
     def get_level_config(self):
         print("---->>get_level_config")
         if self.current_exo_name in self.exo_list:
@@ -534,51 +601,74 @@ class MyFrame(wx.Frame):
             print(f"     ->library: {self.stage_library}")
             print(f"     ->stage_comment: {self.stage_comment}")
 
-            directory = os.path.join('images', self.current_exo_name)
+            directory = os.path.join("images", self.current_exo_name)
             course_video = ""
-            files = [f for f in os.listdir(directory)]
+            files = [f for f in os.listdir(directory)] if os.path.isdir(directory) else []
             for file in files:
-                if re.search("course.*\\.(mp4|avi)$", file, re.I):
+                if re.search(r"course.*\.(mp4|avi)$", file, re.I):
                     course_video = os.path.join(directory, file)
                     break
 
             if os.path.isfile(course_video):
-                self.background_staticbitmap.Hide()
+                wx.CallAfter(self.background_staticbitmap.Hide)
                 self.playing_video = True
-                self.valiny.Hide()
-                self.ok_button.Hide()
-                self.video_panel.Show()
-                self.player.play_media(course_video)
-                self.home_panel.Layout()
+                wx.CallAfter(self.valiny.Hide)
+                wx.CallAfter(self.ok_button.Hide)
+                wx.CallAfter(self.video_panel.Show)
+                # Play media (play_media returns quickly)
+                try:
+                    self.player.play_media(course_video)
+                except Exception as e:
+                    print(f"Error playing course video: {e}")
+                wx.CallAfter(self.home_panel.Layout)
             else:
                 if self.current_exo_name is not None:
                     self.get_exo_index()
                     if self.stage_current_index is not None:
                         self.display_exo()
 
+    # --------------------------
+    # Bitmap buttons (choices)
+    # --------------------------
     def create_bitmap_buttons(self):
+        """Create initial bitmap buttons - only called once at startup"""
+        # Clear any existing buttons
+        self.hide_bitmap_buttons()
+
+        # Destroy any existing buttons
+        for button in self.bitmap_buttons:
+            try:
+                button.Destroy()
+            except:
+                pass
+
+        self.bitmap_buttons = []
+
         for index in range(10):
+            # Create a transparent placeholder
             img = wx.Image(100, 100)
+            img.Clear()  # Transparent
             bitmap = wx.Bitmap(img)
+
             bitmap_button = wx.BitmapButton(self.home_panel, -1, bitmap)
-            bitmap_button.SetMinSize(bitmap.GetSize())
+            bitmap_button.SetMinSize((100, 100))
             bitmap_button.Bind(wx.EVT_BUTTON, self.on_bitmap_click)
             bitmap_button.Bind(wx.EVT_MOTION, self.on_bitmap_motion)
             bitmap_button.SetCursor(wx.Cursor(wx.CURSOR_HAND))
             bitmap_button.index = index
+
             self.bitmap_buttons.append(bitmap_button)
-            self.bitmap_sizer.Add(bitmap_button, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-        self.choice_answer_available = True
-        self.hide_bitmap_buttons()
+            self.bitmap_sizer.Add(bitmap_button, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
+
+        self.hide_bitmap_buttons()  # Start with buttons hidden
+        self.home_panel.Layout()
 
     def on_home_panel_motion(self, event):
         self.dc.Clear()
-        # self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
 
     def on_bitmap_motion(self, event):
         """Draws a rectangle around the hovered bitmap button."""
         bitmap_button = event.GetEventObject()
-        # self.dc.SetPen(wx.Pen("red", 2))
         self.dc.SetBrush(wx.TRANSPARENT_BRUSH)
         x, y = bitmap_button.GetPosition()
         width, height = bitmap_button.GetSize()
@@ -586,27 +676,39 @@ class MyFrame(wx.Frame):
 
     def change_bitmap_buttons(self, new_img, max_height=150):
         print("---->>change_bitmap_buttons")
+
+        # First hide all current buttons
         self.hide_bitmap_buttons()
-        for img in new_img:
-            print(f"   -img->>{type(img)}")
+
+        # Clear the old buttons list but don't destroy them yet
+        old_buttons = self.bitmap_buttons[:]  # Keep reference to old buttons
+        self.bitmap_buttons = []
+
+        # Create new buttons
         for index, img_data in enumerate(new_img):
             try:
                 if isinstance(img_data, bytes):
-                    width, height = 120, 80  # Default size, should be passed correctly
-                    pil_img = Image.frombytes('RGB', (width, height), img_data)
+                    width, height = 120, 80
+                    pil_img = Image.frombytes("RGB", (width, height), img_data)
                 elif isinstance(img_data, Image.Image):
                     pil_img = img_data
                 else:
                     full_path = os.path.join("images", img_data)
-                    img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
+                    if os.path.isfile(full_path):
+                        img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
+                    else:
+                        print(f"Image file not found: {full_path}")
+                        continue
 
                 if isinstance(img_data, (bytes, Image.Image)):
                     stream = io.BytesIO()
-                    pil_img.save(stream, format='PNG')
+                    pil_img.save(stream, format="PNG")
                     stream.seek(0)
                     img = wx.Image(stream, wx.BITMAP_TYPE_PNG)
+                elif isinstance(img_data, str):
+                    # Handle string paths
+                    img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
 
-                # Calculate scaled dimensions while maintaining aspect ratio
                 width, height = img.GetSize()
                 if height > max_height:
                     scale_factor = max_height / height
@@ -614,32 +716,72 @@ class MyFrame(wx.Frame):
                     img = img.Scale(new_width, max_height)
 
                 bitmap = wx.Bitmap(img)
-                self.bitmap_buttons[index].SetBitmapLabel(bitmap)
-                self.bitmap_buttons[index].SetMinSize(bitmap.GetSize())
-                self.bitmap_buttons[index].Show()
+
+                # Reuse existing button if available, else create new
+                if index < len(old_buttons):
+                    bitmap_button = old_buttons[index]
+                    bitmap_button.SetBitmapLabel(bitmap)
+                    bitmap_button.SetMinSize(bitmap.GetSize())
+                else:
+                    bitmap_button = wx.BitmapButton(self.home_panel, -1, bitmap)
+                    bitmap_button.SetMinSize(bitmap.GetSize())
+                    bitmap_button.Bind(wx.EVT_BUTTON, self.on_bitmap_click)
+                    bitmap_button.Bind(wx.EVT_MOTION, self.on_bitmap_motion)
+                    bitmap_button.SetCursor(wx.Cursor(wx.CURSOR_HAND))
+
+                bitmap_button.index = index
+                self.bitmap_buttons.append(bitmap_button)
+
             except Exception as e:
                 print(f"Error loading image: {e}")
+                # Create a placeholder button for error cases
+                placeholder = wx.BitmapButton(self.home_panel, -1, wx.Bitmap(100, 100))
+                placeholder.index = index
+                self.bitmap_buttons.append(placeholder)
+
+        # Destroy any leftover old buttons that weren't reused
+        for i in range(len(new_img), len(old_buttons)):
+            old_buttons[i].Destroy()
+
+        # Now show the new buttons
+        self.show_bitmap_buttons()
 
     def hide_bitmap_buttons(self):
-        """Hides all StaticBitmaps."""
-        for static_bitmap in self.bitmap_buttons:
-            static_bitmap.Hide()
+        """Hide all bitmap buttons and properly clean up"""
+        # Hide and disable all buttons
+        for bitmap_button in self.bitmap_buttons:
+            bitmap_button.Hide()
+            bitmap_button.Disable()
+
+        # Clear the sizer but DON'T delete the windows (we want to reuse them)
+        self.bitmap_sizer.Clear()
+
         self.choice_answer_available = False
+        self.home_panel.Layout()  # Force layout update
 
     def show_bitmap_buttons(self):
-        """Shows all StaticBitmaps."""
-        for static_bitmap in self.bitmap_buttons:
-            static_bitmap.Show()
-        self.choice_answer_available = True
+        """Show all bitmap buttons"""
+        for bitmap_button in self.bitmap_buttons:
+            bitmap_button.Show()
+            bitmap_button.Enable()
 
+        # Re-add buttons to sizer
+        for i, bitmap_button in enumerate(self.bitmap_buttons):
+            self.bitmap_sizer.Add(bitmap_button, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
+
+        self.choice_answer_available = True
+        self.home_panel.Layout()  # Force layout update
+
+    # --------------------------
+    # Menus / Tools
+    # --------------------------
     def OnSettings(self, event):
-        # todo: fix issue, restarting while the video is playing
-        dlg = Setting_DLG(self, title='Minatra Settings', style=wx.CLOSE_BOX | wx.CAPTION)
+        dlg = Setting_DLG(self, title="Minatra Settings", style=wx.CLOSE_BOX | wx.CAPTION)
         dlg.CenterOnParent()
         res = dlg.ShowModal()
         if res == wx.ID_OK:
             json_path = os.path.join(os.getcwd(), "exo_schedule.json")
-            with open(json_path, 'w') as outfile:
+            with open(json_path, "w") as outfile:
                 json.dump(dlg.json_data, outfile, indent=3)
             exo_folder = dlg.TextCtrl_1.GetValue()
             if os.path.isdir(exo_folder):
@@ -647,8 +789,10 @@ class MyFrame(wx.Frame):
 
     def OnRestart(self, event):
         img_path = os.path.join("images", "orange_ice_mint.jpg")
-        self.player.player.stop()
-        # self.video_panel.Hide()
+        try:
+            self.player.player.stop()
+        except Exception:
+            pass
         if os.path.isfile(img_path):
             self.background_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
         else:
@@ -674,7 +818,7 @@ class MyFrame(wx.Frame):
         self.Close(True)
 
     def OnAbout(self, event):
-        wx.MessageBox("Fianarana 1.0\n\nDeveloper: Njaka ANDRIAMAHENINA\nEmail: a6njaka@gmail.com", "About", wx.OK | wx.ICON_INFORMATION)
+        wx.MessageBox("Fianarana 1.2\n\nDeveloper: Njaka ANDRIAMAHENINA\nEmail: a6njaka@gmail.com", "About", wx.OK | wx.ICON_INFORMATION)
 
     def OnTool1(self, event):
         print("-->OnTool1 Clicked")
@@ -686,58 +830,56 @@ class MyFrame(wx.Frame):
     def OnTool2(self, event):
         print("-->OnTool2 Clicked")
         self.background_staticbitmap.Hide()
+        # Example: update the video path for your system
         self.player.play_media(r"D:\Videos\Facebook.mp4")
-        # self.video_panel.Hide()
-        # img_paths = [
-        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\annana-1000.png",
-        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\mangue-700.jpg",
-        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\Orange-600.jpg",
-        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\pastèque-2000.png",
-        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\poire-400.jpg",
-        #     r"D:\Njaka_Project\Njaka_Dev_Itk\bin\Mianatra2\images\mividy_voankazo\source_images\pomme-500.jpg",
-        # ]
-        # self.change_bitmap_buttons(img_paths)
         self.ok_button.Hide()
         self.home_panel.Layout()
 
+    # --------------------------
+    # Image loading helpers
+    # --------------------------
     def load_image(self, img_path):
-        if isinstance(img_path, str) and os.path.isfile(img_path):
-            new_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
-            if new_image.GetWidth() > 854:
-                new_width = 854
-                new_height = int(854 * new_image.GetHeight() / new_image.GetWidth())
-                new_image = new_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
-            new_bitmap = wx.Bitmap(new_image)
-            self.background_staticbitmap.SetBitmap(new_bitmap)
-            self.home_panel.Refresh()
+        """
+        This function updates UI, so it should be called on the main thread.
+        Many callers use wx.CallAfter to ensure safety.
+        """
+        try:
+            if isinstance(img_path, str) and os.path.isfile(img_path):
+                new_image = wx.Image(img_path, wx.BITMAP_TYPE_ANY)
+                if new_image.GetWidth() > 854:
+                    new_width = 854
+                    new_height = int(854 * new_image.GetHeight() / new_image.GetWidth())
+                    new_image = new_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
+                new_bitmap = wx.Bitmap(new_image)
+                self.background_staticbitmap.SetBitmap(new_bitmap)
+                self.home_panel.Refresh()
 
-        # Bytes_Type
-        elif isinstance(img_path, bytes):
-            # if type(img_path) is bytes:
-            # image_data = lib_addition_3ch_hor.get_image(0)
-            image_data = img_path
-            wx_image = wx.Image(854, 480)
-            wx_image.SetData(image_data)
-            wx_bitmap = wx.Bitmap(wx_image)
-            self.background_staticbitmap.SetBitmap(wx_bitmap)
-            self.home_panel.Refresh()
-        elif isinstance(img_path, Image.Image):
-            img_path = img_path.convert("RGB")
-            width, height = img_path.size
-            data = img_path.tobytes()
-            new_image = wx.Image(width, height)
-            new_image.SetData(data)
-            # if new_image.GetWidth() > 854:
-            #     new_width = 854
-            #     new_height = int(854 * new_image.GetHeight() / new_image.GetWidth())
-            #     new_image = new_image.Scale(new_width, new_height, wx.IMAGE_QUALITY_HIGH)
-            new_bitmap = wx.Bitmap(new_image)
-            self.background_staticbitmap.SetBitmap(new_bitmap)
-            self.home_panel.Refresh()
+            elif isinstance(img_path, bytes):
+                image_data = img_path
+                wx_image = wx.Image(854, 480)
+                wx_image.SetData(image_data)
+                wx_bitmap = wx.Bitmap(wx_image)
+                self.background_staticbitmap.SetBitmap(wx_bitmap)
+                self.home_panel.Refresh()
 
-        # self.SetStatusText("Background image changed.")
-        self.home_panel.Layout()
+            elif isinstance(img_path, Image.Image):
+                img_path = img_path.convert("RGB")
+                width, height = img_path.size
+                data = img_path.tobytes()
+                new_image = wx.Image(width, height)
+                new_image.SetData(data)
+                new_bitmap = wx.Bitmap(new_image)
+                self.background_staticbitmap.SetBitmap(new_bitmap)
+                self.home_panel.Refresh()
 
+            self.home_panel.Layout()
+        except Exception as e:
+            print(f"load_image error: {e}")
+
+
+    # --------------------------
+    # Load exercises
+    # --------------------------
     def load_all_exo(self):
         print("---->>load_all_exo")
         p1 = load_exo.ExoSchedule()
@@ -745,6 +887,9 @@ class MyFrame(wx.Frame):
         self.exo_list = list(self.all_exo)
         self.all_exo_completed = False
 
+    # --------------------------
+    # Button handlers and flow
+    # --------------------------
     def on_ok_button(self, event):
         print(f"---->>OK_BUTTON")
 
@@ -758,10 +903,6 @@ class MyFrame(wx.Frame):
             self.stage_index_done = []
             self.get_exo_name()
             self.get_level_config()
-            # if self.current_exo_name is not None:
-            #     self.get_exo_index()
-            #     if self.stage_current_index is not None:
-            #         self.display_exo()
 
         elif self.current_exo_name is None and self.ok_button.GetLabel() != "BRAVO !":
             self.display_exo_complete()
@@ -769,24 +910,25 @@ class MyFrame(wx.Frame):
             if self.verify_answer():
                 self.get_exo_index()
             if self.stage_current_index is not None:
-                self.display_exo()
+                # self.display_exo()
+                while self.player.is_playing:
+                    time.sleep(0.5)
+                wx.CallAfter(self.display_exo)
             else:
                 self.stage_index_done = []
                 self.get_exo_name()
                 self.get_level_config()
-                # if self.current_exo_name is not None:
-                #     self.get_exo_index()
-                #     if self.stage_current_index is not None:
-                #         self.display_exo()
         self.SetStatusText(f"Stage {len(self.stage_index_done) + 1}/{self.stage_min} (Max : {self.stage_max})", 2)
 
     def display_exo_complete(self):
-        # TODO: Display Bravo image
         self.ok_button.SetLabel("BRAVO !")
         img_path = os.path.join("images", "Bravo.jpg")
-        self.player.play_media(r"mp3/bravo.mp3")
-        self.load_image(img_path)
-        self.valiny.Hide()
+        try:
+            self.player.play_media(r"mp3/bravo.mp3")
+        except Exception:
+            pass
+        wx.CallAfter(self.load_image, img_path)
+        wx.CallAfter(self.valiny.Hide)
         self.ok_button.Show()
         self.hide_bitmap_buttons()
         self.home_panel.Layout()
@@ -795,28 +937,24 @@ class MyFrame(wx.Frame):
         all_mp3 = []
         try:
             files_exist = True
-            all_mp3 = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['mp3']
+            all_mp3 = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["mp3"]
             if len(all_mp3) > 0:
                 for mp3 in all_mp3:
                     if not os.path.isfile(mp3):
                         files_exist = False
                         break
                 if files_exist:
+                    # play_combined_mp3 is non-blocking
                     self.play_combined_mp3(all_mp3)
-        except:
-            print(f"MP3 not correct! ---> {all_mp3}")
-
-        # wx.MessageBox("Image Clicked", "Info", wx.OK | wx.ICON_INFORMATION)
+        except Exception as e:
+            print(f"MP3 not correct! ---> {all_mp3} - Error: {e}")
 
     def on_enter_pressed(self, event):
         self.on_ok_button(event)
-        # self.valiny.SetValue("Mety Tsara")  # Display the message when Enter is pressed
 
     def on_bitmap_click(self, event):
         clicked_bitmap = event.GetEventObject()
         index = clicked_bitmap.index
-
-        # wx.MessageBox(f"Vous avez choisi l'image {index + 1}!", "Info", wx.OK | wx.ICON_INFORMATION)
 
         user_choice = f"C{index + 1}"
         if self.verify_answer(user_choice):
@@ -827,51 +965,52 @@ class MyFrame(wx.Frame):
             self.stage_index_done = []
             self.get_exo_name()
             self.get_level_config()
-            # if self.current_exo_name is not None:
-            #     self.get_exo_index()
-            #     if self.stage_current_index is not None:
-            #         self.display_exo()
         self.SetStatusText(f"Stage {len(self.stage_index_done) + 1}/{self.stage_min} (Max : {self.stage_max})", 2)
 
         clicked_bitmap.Refresh()
         self.home_panel.Layout()
 
-    @staticmethod
-    def play_combined_mp3(mp3_files):
-        files_exist = True
-        if len(mp3_files) > 0:
-            for mp3 in mp3_files:
-                if not os.path.isfile(mp3):
-                    files_exist = False
-                    break
-        if files_exist and len(mp3_files) > 0:
-            instance = vlc.Instance()
-            player = instance.media_player_new()
-            media_list = instance.media_list_new()
+    # --------------------------
+    # play_combined_mp3 now runs in background thread
+    # --------------------------
+    def play_combined_mp3(self, mp3_files):
+        # Use wx.CallAfter to run on main thread
+        def play_on_main_thread():
+            with self.audio_lock:
+                if self.audio_player is not None:
+                    return
 
-            for mp3_file in mp3_files:
-                media = instance.media_new(mp3_file)
-                media_list.add_media(media)
+                files_exist = all(os.path.isfile(mp3) for mp3 in mp3_files)
+                if not files_exist:
+                    return
 
-            list_player = instance.media_list_player_new()
-            list_player.set_media_player(player)
-            list_player.set_media_list(media_list)
+                instance = vlc.Instance()
+                player = instance.media_player_new()
+                media_list = instance.media_list_new()
+                for mp3_file in mp3_files:
+                    media = instance.media_new(mp3_file)
+                    media_list.add_media(media)
 
-            list_player.play()
+                list_player = instance.media_list_player_new()
+                list_player.set_media_player(player)
+                list_player.set_media_list(media_list)
 
-            # Wait for playback to finish
-            while list_player.get_state() != vlc.State.Ended:
-                time.sleep(0.1)
+                self.audio_player = list_player
+                list_player.play()
 
-            # Close the player after playback
-            list_player.stop()
-            list_player.release()
-            player.release()
-            instance.release()
-        # else:
-        #     print("MP3 not correct!")
-        #     print(f"MP3 not correct! --2-> {mp3_files}")
+                # Set up a timer to check when playback finishes
+                self.audio_check_timer = wx.Timer(self)
+                self.Bind(wx.EVT_TIMER, self.check_audio_status, self.audio_check_timer)
+                self.audio_check_timer.Start(100)  # Check every 100ms
 
+        wx.CallAfter(play_on_main_thread)
+
+    def check_audio_status(self, event):
+        if self.audio_player and self.audio_player.get_state() == vlc.State.Ended:
+            self.audio_player.stop()
+            self.audio_player.release()
+            self.audio_player = None
+            self.audio_check_timer.Stop()
 
 class Setting_DLG(wx.Dialog):
     def __init__(self, *args, **kw):
@@ -890,8 +1029,8 @@ class Setting_DLG(wx.Dialog):
         self.Choice_group = wx.Choice(self, wx.ID_ANY, pos=(32, 70), size=(256, 21))
         self.CheckBox_enable = wx.CheckBox(self, wx.ID_ANY, "Enable", pos=(328, 72))
         self.StaticText2 = wx.StaticText(self, wx.ID_ANY, "Max exo:", pos=(400, 72))
-        self.SpinCtrl_max_exo = wx.SpinCtrl(self, wx.ID_ANY, "0", pos=(460, 68), size=(50, 21), style=wx.SP_ARROW_KEYS, min=0, max=100)  # Important to set min and max here
-        self.SpinCtrl_max_exo.SetValue(1)  # Set the initial value as an integer
+        self.SpinCtrl_max_exo = wx.SpinCtrl(self, wx.ID_ANY, "0", pos=(460, 68), size=(50, 21), style=wx.SP_ARROW_KEYS, min=0, max=100)
+        self.SpinCtrl_max_exo.SetValue(1)
 
         self.Choice_group.Append("Groupe_1")
         self.Choice_group.Append("Groupe_2")
@@ -899,7 +1038,7 @@ class Setting_DLG(wx.Dialog):
         self.Choice_group.Append("Groupe_4")
         self.Choice_group.Append("Groupe_5")
         self.Choice_group.Append("Groupe_6")
-        self.Choice_group.SetSelection(0)  # Select the first item
+        self.Choice_group.SetSelection(0)
 
         self.StaticBox1 = wx.StaticBox(self, wx.ID_ANY, "Details", pos=(24, 100), size=(580, 250))
 
@@ -952,7 +1091,6 @@ class Setting_DLG(wx.Dialog):
         self.update_json(event)
         self.Choice_group.SetFocus()
 
-
     def update_json(self, event):
         group_tmp = {
             "activate": self.CheckBox_enable.GetValue(),
@@ -978,21 +1116,22 @@ class Setting_DLG(wx.Dialog):
         if self.CheckBox_sunday.GetValue():
             group_tmp["exo_weekdays"].append(self.CheckBox_sunday.GetLabel())
 
-        self.json_data["Itokiana"][group_index] = group_tmp
+        try:
+            self.json_data["Itokiana"][group_index] = group_tmp
+        except Exception:
+            pass
         self.update_total_exo_txt()
-
 
     def update_total_exo_txt(self):
         total_exo = 0
-        for exo in self.json_data["Itokiana"]:
+        for exo in self.json_data.get("Itokiana", []):
             try:
-                if exo["activate"]:
-                    min_val = min(exo["exo_number"], len(exo["exo_group"]))
+                if exo.get("activate"):
+                    min_val = min(exo.get("exo_number", 0), len(exo.get("exo_group", [])))
                     total_exo += min_val
             except Exception as e:
                 print(f"Error total exo = {e}")
         self.number_total_exo.SetLabel(f"Total exo: {total_exo}")
-
 
     def on_choice_group_changed(self, event):
         index = self.Choice_group.GetSelection()
@@ -1042,7 +1181,7 @@ class Setting_DLG(wx.Dialog):
     @staticmethod
     def sort_list_box(listbox):
         items = [listbox.GetString(i) for i in range(listbox.GetCount())]
-        items.sort()  # In place sort
+        items.sort()
         listbox.Set(items)
 
     def read_json_exo_schedule(self):
@@ -1053,67 +1192,45 @@ class Setting_DLG(wx.Dialog):
             "exo_group_name": "",
             "exo_weekdays": []
         }
-        with open(self.exo_schedule) as json_file:
-            self.json_data = json.load(json_file)
-            if "Itokiana" in self.json_data:
-                n = len(self.json_data["Itokiana"])
-                max_group = 6
-                for i in range(max_group + 1):
-                    if i > n:
-                        self.json_data["Itokiana"].append(group_tmp)
+        try:
+            with open(self.exo_schedule) as json_file:
+                self.json_data = json.load(json_file)
+                if "Itokiana" in self.json_data:
+                    n = len(self.json_data["Itokiana"])
+                    max_group = 6
+                    for i in range(max_group + 1):
+                        if i > n:
+                            self.json_data["Itokiana"].append(group_tmp)
+        except Exception:
+            self.json_data = {"Itokiana": []}
 
     def read_and_update_group_exo(self, group_index):
         self.ListBox_group_exo.Clear()
         self.list_group_exo = []
         user = "Itokiana"
-        if len(self.json_data[user]) > group_index:
-            for exo in self.json_data[user][group_index]["exo_group"]:
+        if len(self.json_data.get(user, [])) > group_index:
+            for exo in self.json_data[user][group_index].get("exo_group", []):
                 self.ListBox_group_exo.Append(exo)
                 self.list_group_exo.append(exo)
             try:
-                self.SpinCtrl_max_exo.SetValue(int(self.json_data[user][group_index]["exo_number"]))
+                self.SpinCtrl_max_exo.SetValue(int(self.json_data[user][group_index].get("exo_number", 0)))
             except Exception as e:
                 print(f"Error exo_number: {e}")
             try:
-                self.CheckBox_enable.SetValue(int(self.json_data[user][group_index]["activate"]))
+                self.CheckBox_enable.SetValue(bool(self.json_data[user][group_index].get("activate", False)))
             except Exception as e:
                 print(f"Error activate: {e}")
             try:
-                days = self.json_data[user][group_index]["exo_weekdays"]
-                if "Monday" in days:
-                    self.CheckBox_monday.SetValue(True)
-                else:
-                    self.CheckBox_monday.SetValue(False)
-                if "Tuesday" in days:
-                    self.CheckBox_Tuesday.SetValue(True)
-                else:
-                    self.CheckBox_Tuesday.SetValue(False)
-                if "Wednesday" in days:
-                    self.CheckBox_wednesday.SetValue(True)
-                else:
-                    self.CheckBox_wednesday.SetValue(False)
-                if "Thursday" in days:
-                    self.CheckBox_thursday.SetValue(True)
-                else:
-                    self.CheckBox_thursday.SetValue(False)
-                if "Friday" in days:
-                    self.CheckBox_friday.SetValue(True)
-                else:
-                    self.CheckBox_friday.SetValue(False)
-
-                if "Saturday" in days:
-                    self.CheckBox_saturday.SetValue(True)
-                else:
-                    self.CheckBox_saturday.SetValue(False)
-
-                if "Sunday" in days:
-                    self.CheckBox_sunday.SetValue(True)
-                else:
-                    self.CheckBox_sunday.SetValue(False)
-
+                days = self.json_data[user][group_index].get("exo_weekdays", [])
+                self.CheckBox_monday.SetValue("Monday" in days)
+                self.CheckBox_Tuesday.SetValue("Tuesday" in days)
+                self.CheckBox_wednesday.SetValue("Wednesday" in days)
+                self.CheckBox_thursday.SetValue("Thursday" in days)
+                self.CheckBox_friday.SetValue("Friday" in days)
+                self.CheckBox_saturday.SetValue("Saturday" in days)
+                self.CheckBox_sunday.SetValue("Sunday" in days)
             except Exception as e:
                 print(f"Error exo_weekdays: {e}")
-
         else:
             self.SpinCtrl_max_exo.SetValue(0)
             self.CheckBox_enable.SetValue(False)
@@ -1131,12 +1248,10 @@ class Setting_DLG(wx.Dialog):
     def on_cwd_double_click(event):
         cwd = os.getcwd()
         try:
-            # Windows: Use subprocess to open File Explorer
             subprocess.Popen(["explorer", cwd])
         except Exception as e:
             wx.MessageBox(f"Error opening directory: {e}", "Error", wx.OK | wx.ICON_ERROR)
-
-        event.Skip()  # Important: Allow other events to process
+        event.Skip()
 
     def on_button_add(self, event):
         selected_item = self.ListBox_available_exo.GetSelection()
@@ -1165,7 +1280,6 @@ class Setting_DLG(wx.Dialog):
             return None
 
         for exo in os.listdir(all_exo_path):
-            # item_path = os.path.join(exo_path, item)
             exo_path = os.path.join(all_exo_path, exo)
             if os.path.isdir(exo_path):
                 self.list_all_exo.append(exo)
@@ -1173,7 +1287,10 @@ class Setting_DLG(wx.Dialog):
                     self.ListBox_available_exo.Append(exo)
 
 
+# --------------------------
+# Program entry
+# --------------------------
 if __name__ == "__main__":
     app = wx.App()
-    frame = MyFrame(None, "FIANARANA 1.0")
+    frame = MyFrame(None, "FIANARANA 1.2")
     app.MainLoop()
