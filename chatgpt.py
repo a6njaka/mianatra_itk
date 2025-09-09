@@ -189,39 +189,42 @@ class MyFrame(wx.Frame):
         self.add_progress_bar_to_status_bar()
         self.progress_bar.SetValue(0)
 
-        # Layout controls
+        # In the __init__ method, replace the main_sizer setup with this:
+
+        # Create a sizer to layout controls
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        # StaticBitmap for background
+        # Add a StaticBitmap for the background
         self.background_staticbitmap = wx.StaticBitmap(self.home_panel, -1, self.background_bitmap)
-        main_sizer.Add(self.background_staticbitmap, 1, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 10)
+        main_sizer.Add(self.background_staticbitmap, 1, wx.EXPAND | wx.ALL, 10)
 
-        self.bitmap_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        main_sizer.Add(self.bitmap_sizer, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
-
+        # Add the video panel
         self.video_panel = wx.Panel(self.home_panel, style=wx.SIMPLE_BORDER)
         main_sizer.Add(self.video_panel, 1, wx.EXPAND | wx.ALL, 0)
-
         self.video_panel.Hide()
 
-        # TextCtrl
+        # Create textCtrl
         self.valiny = wx.TextCtrl(self.home_panel, -1, "", size=(854, -1), style=wx.TE_LEFT | wx.TE_PROCESS_ENTER)
         self.valiny.SetFont(wx.Font(21, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
         self.valiny.SetFocus()
         main_sizer.Add(self.valiny, 0, wx.ALIGN_CENTER | wx.BOTTOM, 10)
 
-        # OK button
+        # Create OK button
         self.ok_button = wx.Button(self.home_panel, -1, "START")
         self.ok_button.SetCursor(wx.Cursor(wx.CURSOR_HAND))
         font = wx.Font(20, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
         self.ok_button.SetFont(font)
         main_sizer.Add(self.ok_button, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
-        # Media player
-        self.player = MediaPlayer(self.video_panel, self)
+        # Create bitmap sizer - this should be added AFTER other elements
+        self.bitmap_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        main_sizer.Add(self.bitmap_sizer, 0, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
+        self.player = MediaPlayer(self.video_panel, self)
         self.home_panel.SetSizer(main_sizer)
         self.valiny.Hide()
+
+        # Create the bitmap buttons AFTER the sizer is set
         self.create_bitmap_buttons()
 
         self.home_panel.Layout()
@@ -687,19 +690,37 @@ class MyFrame(wx.Frame):
     # Bitmap buttons (choices)
     # --------------------------
     def create_bitmap_buttons(self):
+        """Create initial bitmap buttons - only called once at startup"""
+        # Clear any existing buttons
+        self.hide_bitmap_buttons()
+
+        # Destroy any existing buttons
+        for button in self.bitmap_buttons:
+            try:
+                button.Destroy()
+            except:
+                pass
+
+        self.bitmap_buttons = []
+
         for index in range(10):
+            # Create a transparent placeholder
             img = wx.Image(100, 100)
+            img.Clear()  # Transparent
             bitmap = wx.Bitmap(img)
+
             bitmap_button = wx.BitmapButton(self.home_panel, -1, bitmap)
-            bitmap_button.SetMinSize(bitmap.GetSize())
+            bitmap_button.SetMinSize((100, 100))
             bitmap_button.Bind(wx.EVT_BUTTON, self.on_bitmap_click)
             bitmap_button.Bind(wx.EVT_MOTION, self.on_bitmap_motion)
             bitmap_button.SetCursor(wx.Cursor(wx.CURSOR_HAND))
             bitmap_button.index = index
+
             self.bitmap_buttons.append(bitmap_button)
-            self.bitmap_sizer.Add(bitmap_button, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-        self.choice_answer_available = True
-        self.hide_bitmap_buttons()
+            self.bitmap_sizer.Add(bitmap_button, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
+
+        self.hide_bitmap_buttons()  # Start with buttons hidden
+        self.home_panel.Layout()
 
     def on_home_panel_motion(self, event):
         self.dc.Clear()
@@ -714,7 +735,15 @@ class MyFrame(wx.Frame):
 
     def change_bitmap_buttons(self, new_img, max_height=150):
         print("---->>change_bitmap_buttons")
+
+        # First hide all current buttons
         self.hide_bitmap_buttons()
+
+        # Clear the old buttons list but don't destroy them yet
+        old_buttons = self.bitmap_buttons[:]  # Keep reference to old buttons
+        self.bitmap_buttons = []
+
+        # Create new buttons
         for index, img_data in enumerate(new_img):
             try:
                 if isinstance(img_data, bytes):
@@ -724,13 +753,20 @@ class MyFrame(wx.Frame):
                     pil_img = img_data
                 else:
                     full_path = os.path.join("images", img_data)
-                    img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
+                    if os.path.isfile(full_path):
+                        img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
+                    else:
+                        print(f"Image file not found: {full_path}")
+                        continue
 
                 if isinstance(img_data, (bytes, Image.Image)):
                     stream = io.BytesIO()
                     pil_img.save(stream, format="PNG")
                     stream.seek(0)
                     img = wx.Image(stream, wx.BITMAP_TYPE_PNG)
+                elif isinstance(img_data, str):
+                    # Handle string paths
+                    img = wx.Image(full_path, wx.BITMAP_TYPE_ANY)
 
                 width, height = img.GetSize()
                 if height > max_height:
@@ -739,21 +775,61 @@ class MyFrame(wx.Frame):
                     img = img.Scale(new_width, max_height)
 
                 bitmap = wx.Bitmap(img)
-                self.bitmap_buttons[index].SetBitmapLabel(bitmap)
-                self.bitmap_buttons[index].SetMinSize(bitmap.GetSize())
-                wx.CallAfter(self.bitmap_buttons[index].Show)
+
+                # Reuse existing button if available, else create new
+                if index < len(old_buttons):
+                    bitmap_button = old_buttons[index]
+                    bitmap_button.SetBitmapLabel(bitmap)
+                    bitmap_button.SetMinSize(bitmap.GetSize())
+                else:
+                    bitmap_button = wx.BitmapButton(self.home_panel, -1, bitmap)
+                    bitmap_button.SetMinSize(bitmap.GetSize())
+                    bitmap_button.Bind(wx.EVT_BUTTON, self.on_bitmap_click)
+                    bitmap_button.Bind(wx.EVT_MOTION, self.on_bitmap_motion)
+                    bitmap_button.SetCursor(wx.Cursor(wx.CURSOR_HAND))
+
+                bitmap_button.index = index
+                self.bitmap_buttons.append(bitmap_button)
+
             except Exception as e:
                 print(f"Error loading image: {e}")
+                # Create a placeholder button for error cases
+                placeholder = wx.BitmapButton(self.home_panel, -1, wx.Bitmap(100, 100))
+                placeholder.index = index
+                self.bitmap_buttons.append(placeholder)
+
+        # Destroy any leftover old buttons that weren't reused
+        for i in range(len(new_img), len(old_buttons)):
+            old_buttons[i].Destroy()
+
+        # Now show the new buttons
+        self.show_bitmap_buttons()
 
     def hide_bitmap_buttons(self):
-        for static_bitmap in self.bitmap_buttons:
-            static_bitmap.Hide()
+        """Hide all bitmap buttons and properly clean up"""
+        # Hide and disable all buttons
+        for bitmap_button in self.bitmap_buttons:
+            bitmap_button.Hide()
+            bitmap_button.Disable()
+
+        # Clear the sizer but DON'T delete the windows (we want to reuse them)
+        self.bitmap_sizer.Clear()
+
         self.choice_answer_available = False
+        self.home_panel.Layout()  # Force layout update
 
     def show_bitmap_buttons(self):
-        for static_bitmap in self.bitmap_buttons:
-            static_bitmap.Show()
+        """Show all bitmap buttons"""
+        for bitmap_button in self.bitmap_buttons:
+            bitmap_button.Show()
+            bitmap_button.Enable()
+
+        # Re-add buttons to sizer
+        for i, bitmap_button in enumerate(self.bitmap_buttons):
+            self.bitmap_sizer.Add(bitmap_button, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
+
         self.choice_answer_available = True
+        self.home_panel.Layout()  # Force layout update
 
     # --------------------------
     # Menus / Tools
