@@ -24,7 +24,8 @@ import threading
 
 class MediaPlayer:
     def __init__(self, panel, parent_frame):
-        self.Instance = vlc.Instance()
+        vlc_args = ['--aout=directsound']
+        self.Instance = vlc.Instance(vlc_args)
         self.player = self.Instance.media_player_new()
         self.is_playing = False
         self.panel = panel
@@ -168,12 +169,8 @@ class MyFrame(wx.Frame):
         toolbar = self.CreateToolBar()
 
         # Add some tools to the toolbar
-        tool1 = toolbar.AddTool(
-            wx.ID_ANY, "Tool 1", wx.ArtProvider.GetBitmap(wx.ART_WX_LOGO, wx.ART_BUTTON), "Tool 1 tooltip"
-        )
-        tool2 = toolbar.AddTool(
-            wx.ID_ANY, "Tool 2", wx.ArtProvider.GetBitmap(wx.ART_FOLDER, wx.ART_BUTTON), "Tool 2 tooltip"
-        )
+        tool1 = toolbar.AddTool(wx.ID_ANY, "Tool 1", wx.ArtProvider.GetBitmap(wx.ART_WX_LOGO, wx.ART_BUTTON), "Tool 1 tooltip")
+        tool2 = toolbar.AddTool(wx.ID_ANY, "Tool 2", wx.ArtProvider.GetBitmap(wx.ART_FOLDER, wx.ART_BUTTON), "Tool 2 tooltip")
 
         # Realize the toolbar
         toolbar.Realize()
@@ -196,7 +193,7 @@ class MyFrame(wx.Frame):
 
         # Add a StaticBitmap for the background
         self.background_staticbitmap = wx.StaticBitmap(self.home_panel, -1, self.background_bitmap)
-        main_sizer.Add(self.background_staticbitmap, 1, wx.EXPAND | wx.ALL, 10)
+        main_sizer.Add(self.background_staticbitmap, 10, wx.EXPAND | wx.ALL, 10)
 
         # Add the video panel
         self.video_panel = wx.Panel(self.home_panel, style=wx.SIMPLE_BORDER)
@@ -1032,13 +1029,15 @@ class MyFrame(wx.Frame):
     # --------------------------
     # play_combined_mp3 now runs in background thread
     # --------------------------
-    def play_combined_mp3(self,mp3_files):
-        def run_player():
+    def play_combined_mp3(self, mp3_files):
+        # Use wx.CallAfter to run on main thread
+        def play_on_main_thread():
             with self.audio_lock:
-                # Check files exist
+                if self.audio_player is not None:
+                    return
+
                 files_exist = all(os.path.isfile(mp3) for mp3 in mp3_files)
                 if not files_exist:
-                    self.audio_player = None
                     return
 
                 instance = vlc.Instance()
@@ -1055,23 +1054,20 @@ class MyFrame(wx.Frame):
                 self.audio_player = list_player
                 list_player.play()
 
-                # Wait until finished
-                while list_player.get_state() != vlc.State.Ended:
-                    time.sleep(0.1)
+                # Set up a timer to check when playback finishes
+                self.audio_check_timer = wx.Timer(self)
+                self.Bind(wx.EVT_TIMER, self.check_audio_status, self.audio_check_timer)
+                self.audio_check_timer.Start(100)  # Check every 100ms
 
-                list_player.stop()
-                list_player.release()
-                player.release()
-                instance.release()
-                self.audio_player = None
+        wx.CallAfter(play_on_main_thread)
 
-        # If already playing, ignore the new request
-        if self.audio_player is not None:
-            print("Audio is already playing. Ignoring new request.")
-            return
+    def check_audio_status(self, event):
+        if self.audio_player and self.audio_player.get_state() == vlc.State.Ended:
+            self.audio_player.stop()
+            self.audio_player.release()
+            self.audio_player = None
+            self.audio_check_timer.Stop()
 
-        self.audio_thread = threading.Thread(target=run_player, daemon=True)
-        self.audio_thread.start()
 class Setting_DLG(wx.Dialog):
     def __init__(self, *args, **kw):
         super(Setting_DLG, self).__init__(*args, **kw)
