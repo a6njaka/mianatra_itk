@@ -168,12 +168,8 @@ class MyFrame(wx.Frame):
         toolbar = self.CreateToolBar()
 
         # Add some tools to the toolbar
-        tool1 = toolbar.AddTool(
-            wx.ID_ANY, "Tool 1", wx.ArtProvider.GetBitmap(wx.ART_WX_LOGO, wx.ART_BUTTON), "Tool 1 tooltip"
-        )
-        tool2 = toolbar.AddTool(
-            wx.ID_ANY, "Tool 2", wx.ArtProvider.GetBitmap(wx.ART_FOLDER, wx.ART_BUTTON), "Tool 2 tooltip"
-        )
+        tool1 = toolbar.AddTool(wx.ID_ANY, "Tool 1", wx.ArtProvider.GetBitmap(wx.ART_WX_LOGO, wx.ART_BUTTON), "Tool 1 tooltip")
+        tool2 = toolbar.AddTool(wx.ID_ANY, "Tool 2", wx.ArtProvider.GetBitmap(wx.ART_FOLDER, wx.ART_BUTTON), "Tool 2 tooltip")
 
         # Realize the toolbar
         toolbar.Realize()
@@ -196,7 +192,7 @@ class MyFrame(wx.Frame):
 
         # Add a StaticBitmap for the background
         self.background_staticbitmap = wx.StaticBitmap(self.home_panel, -1, self.background_bitmap)
-        main_sizer.Add(self.background_staticbitmap, 1, wx.EXPAND | wx.ALL, 10)
+        main_sizer.Add(self.background_staticbitmap, 10, wx.EXPAND | wx.ALL, 10)
 
         # Add the video panel
         self.video_panel = wx.Panel(self.home_panel, style=wx.SIMPLE_BORDER)
@@ -431,6 +427,7 @@ class MyFrame(wx.Frame):
         self.video_panel.Hide()
         self.home_panel.Layout()
 
+
         print("    -->>", "image1 : ", type(self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image1"]))
         print("    -->>", "image2 : ", type(self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image2"]))
         print("    -->>", "choices : ", self.all_exo[self.current_exo_name]["choices"])
@@ -438,6 +435,12 @@ class MyFrame(wx.Frame):
         print("    -->>", "mp3 : ", mp3)
         print("    -->>", "answer : ", self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["answer"])
         print("    -->>", "text : ", self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["text"])
+
+        # pil_image1 = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image1"]
+        # pil_image2 = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image2"]
+        #
+        # pil_image1.save(r"C:\Users\NJAKA\Desktop\image1.png", 'PNG')
+        # pil_image2.save(r"C:\Users\NJAKA\Desktop\image2.png", 'PNG')
 
         # Load image and play mp3 (mp3 playback runs in background)
         self.load_image(self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image1"])
@@ -535,106 +538,44 @@ class MyFrame(wx.Frame):
     # --------------------------
     def verify_answer(self, user_answer=""):
         print("--->>verify_answer")
+        print(f"    --1->>{self.current_exo_name}")
+        print(f"    --2->>{self.stage_current_index}")
         if user_answer == "":
             user_answer = self.valiny.GetValue()
-
         exo_answer = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["answer"]
         print(f"    '{user_answer}' VS '{exo_answer}'")
 
-        # The exo_answer in original code appears to be a compiled regex (call .search)
-        try:
-            match = exo_answer.search(user_answer)
-        except Exception:
-            # If exo_answer is string, fallback to equality
-            match = (str(user_answer).strip().lower() == str(exo_answer).strip().lower())
-
+        match = exo_answer.search(user_answer)
         if f"{user_answer}".strip() == "":
-            return False
+            pass
         elif match:
-            # Offload the rest to a background thread
-            threading.Thread(target=self._handle_correct_answer, args=(user_answer,), daemon=True).start()
+            self.valiny.SetValue("")
+            self.stage_index_done.append(self.stage_current_index)
+            print("    --->>MARINA")
+            self.SetStatusText("MARINA !")
+            self.valiny.SetValue("")
+            self.Refresh()
+            self.player.play_media(r"mp3/right.mp3")
+            self.load_image(self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['image2'])
+            self.home_panel.Layout()
+            subject = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text']
+            subject, user_answer = self.split_subject_answer(subject, user_answer)
+            self.update_log_file(["Marina", self.current_exo_name, self.stage_current_index, subject, user_answer])
+
+            time.sleep(2) # time to display the correct answer
             return True
         else:
-            threading.Thread(target=self._handle_wrong_answer, args=(user_answer,), daemon=True).start()
-            return False
-
-    def _handle_correct_answer(self, user_answer):
-        """
-        Executed in background thread.
-        Do non-UI blocking tasks here, then use wx.CallAfter for UI updates.
-        """
-        try:
-            # mark index as done safely
-            self.stage_index_done.append(self.stage_current_index)
-        except Exception:
-            pass
-
-        print("    --->>MARINA")
-        # Update UI: status text and clear input
-        wx.CallAfter(self.SetStatusText, "MARINA !")
-        wx.CallAfter(self.valiny.SetValue, "")
-
-        # Play right sound (non-blocking)
-        try:
-            self.player.play_media(r"mp3/right.mp3")
-        except Exception as e:
-            print(f"play right mp3 error: {e}")
-
-        # Load image (UI update via CallAfter)
-        try:
-            # new_img = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["image2"]
-            # wx.CallAfter(self.load_image, new_img)
-            wx.CallAfter(self.home_panel.Layout)
-        except Exception:
-            pass
-
-        # Logging: delegate to threaded logger
-        subject = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["text"]
-        subject, user_answer_processed = self.split_subject_answer(subject, user_answer)
-        self.update_log_file(["Marina", self.current_exo_name, self.stage_current_index, subject, user_answer_processed])
-
-        # Sleep in background to keep UI responsive
-        time.sleep(2)
-
-        # After sleep, proceed to next step on the UI thread
-        wx.CallAfter(self._after_correct_flow)
-
-    def _after_correct_flow(self):
-        # Called in UI thread after correct answer background processing is done
-        # This mimics what original code did after sleeping
-        try:
-            self.get_exo_index()
-            if self.stage_current_index is not None:
-                self.display_exo()
-            else:
-                self.stage_index_done = []
-                self.get_exo_name()
-                self.get_level_config()
-        except Exception as e:
-            print(f"_after_correct_flow error: {e}")
-
-    def _handle_wrong_answer(self, user_answer):
-        """
-        Executed in background thread for wrong answers.
-        """
-        print("    --->>DISO")
-        wx.CallAfter(self.SetStatusText, "DISO !")
-        wx.CallAfter(self.valiny.SetValue, "")
-
-        # Play wrong sound
-        try:
+            print("    --->>DISO")
+            self.SetStatusText("DISO !")
+            self.valiny.SetValue("")
             self.player.play_media(r"mp3/wrong.mp3")
-        except Exception as e:
-            print(f"play wrong mp3 error: {e}")
-
-        # Adjust stage_min safely
-        if self.stage_min < self.stage_max:
-            self.stage_min += 1
-
-        # Logging
-        subject = self.all_exo[self.current_exo_name]["exo"][self.stage_current_index]["text"]
-        subject, user_answer_processed = self.split_subject_answer(subject, user_answer)
-        self.update_log_file(["Diso", self.current_exo_name, self.stage_current_index, subject, user_answer_processed])
+            # time.sleep(20)
+            if self.stage_min < self.stage_max:
+                self.stage_min += 1
+            subject = self.all_exo[self.current_exo_name]['exo'][self.stage_current_index]['text']
+            subject, user_answer = self.split_subject_answer(subject, user_answer)
+            self.update_log_file(["Diso", self.current_exo_name, self.stage_current_index, subject, user_answer])
+            return False
 
     # --------------------------
     # Level / media config
@@ -970,7 +911,7 @@ class MyFrame(wx.Frame):
                 self.get_exo_index()
             if self.stage_current_index is not None:
                 # self.display_exo()
-                while self.player.is_playing():
+                while self.player.is_playing:
                     time.sleep(0.5)
                 wx.CallAfter(self.display_exo)
             else:
@@ -1032,13 +973,15 @@ class MyFrame(wx.Frame):
     # --------------------------
     # play_combined_mp3 now runs in background thread
     # --------------------------
-    def play_combined_mp3(self,mp3_files):
-        def run_player():
+    def play_combined_mp3(self, mp3_files):
+        # Use wx.CallAfter to run on main thread
+        def play_on_main_thread():
             with self.audio_lock:
-                # Check files exist
+                if self.audio_player is not None:
+                    return
+
                 files_exist = all(os.path.isfile(mp3) for mp3 in mp3_files)
                 if not files_exist:
-                    self.audio_player = None
                     return
 
                 instance = vlc.Instance()
@@ -1055,23 +998,20 @@ class MyFrame(wx.Frame):
                 self.audio_player = list_player
                 list_player.play()
 
-                # Wait until finished
-                while list_player.get_state() != vlc.State.Ended:
-                    time.sleep(0.1)
+                # Set up a timer to check when playback finishes
+                self.audio_check_timer = wx.Timer(self)
+                self.Bind(wx.EVT_TIMER, self.check_audio_status, self.audio_check_timer)
+                self.audio_check_timer.Start(100)  # Check every 100ms
 
-                list_player.stop()
-                list_player.release()
-                player.release()
-                instance.release()
-                self.audio_player = None
+        wx.CallAfter(play_on_main_thread)
 
-        # If already playing, ignore the new request
-        if self.audio_player is not None:
-            print("Audio is already playing. Ignoring new request.")
-            return
+    def check_audio_status(self, event):
+        if self.audio_player and self.audio_player.get_state() == vlc.State.Ended:
+            self.audio_player.stop()
+            self.audio_player.release()
+            self.audio_player = None
+            self.audio_check_timer.Stop()
 
-        self.audio_thread = threading.Thread(target=run_player, daemon=True)
-        self.audio_thread.start()
 class Setting_DLG(wx.Dialog):
     def __init__(self, *args, **kw):
         super(Setting_DLG, self).__init__(*args, **kw)
