@@ -24,7 +24,7 @@ import threading
 
 class MediaPlayer:
     def __init__(self, panel, parent_frame):
-        self.Instance = vlc.Instance()
+        self.Instance = vlc.Instance( )
         self.player = self.Instance.media_player_new()
         self.is_playing = False
         self.panel = panel
